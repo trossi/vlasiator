@@ -93,14 +93,14 @@ void initializeGrids(
    int argn,
    char **argc,
    dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-   FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & BgBGrid,
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsGrid,
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsDt2Grid,
-   FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> & EGrid,
-   FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> & EGradPeGrid,
-   FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
-   FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+   BFieldFsGrid & perBGrid,
+   BgBFsGrid & BgBGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   EFieldFsGrid & EGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid,
    SysBoundary& sysBoundaries,
    Project& project
 ) {
@@ -1217,7 +1217,7 @@ void initializeStencils(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpi
    }
 }
 
-void mapRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, FsGrid<fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) {
+void mapRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid) {
    phiprof::Timer timer {"Map Refinement Level to FsGrid"};
    const FsGridTools::FsIndex_t *localDims = &technicalGrid.getLocalSize()[0];
 
@@ -1236,7 +1236,7 @@ void mapRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
    }
 }
 
-bool adaptRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, FsGrid<fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid, SysBoundary& sysBoundaries, Project& project, int useStatic) {
+bool adaptRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid, SysBoundary& sysBoundaries, Project& project, int useStatic) {
    phiprof::Timer amrTimer {"Re-refine spatial cells"};
    int refines {0};
    if (useStatic > -1) {

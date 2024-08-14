@@ -50,18 +50,18 @@ namespace SBC {
          Project &project
       ) override ;
       void assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                     FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) override;
+                                     TechnicalFsGrid & technicalGrid) override;
       void applyInitialState(
          dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
-         FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-         FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+         TechnicalFsGrid & technicalGrid,
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid& BgBGrid,
          Project &project
       ) override;
       void updateState(
          dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry> &mpiGrid,
-         FsGrid<std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> &perBGrid,
-         FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+         BFieldFsGrid &perBGrid,
+         BgBFsGrid& BgBGrid,
          creal t
       ) override;
       void getFaces(bool *faces) override;
@@ -70,9 +70,9 @@ namespace SBC {
 
       // Explicit warning functions to inform the user if a doNotCompute cell gets computed
       Real fieldSolverBoundaryCondMagneticField(
-         FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-         FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & bgbGrid,
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid & bgbGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k,
@@ -80,29 +80,29 @@ namespace SBC {
          cuint component
       ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondMagneticField called!" << std::endl; return 0.;}
       void fieldSolverBoundaryCondElectricField(
-         FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> & EGrid,
+         EFieldFsGrid & EGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondElectricField called!" << std::endl;}
       void fieldSolverBoundaryCondHallElectricField(
-         FsGrid< std::array<Real, fsgrids::ehall::N_EHALL>, FS_STENCIL_WIDTH> & EHallGrid,
+         EHallFsGrid & EHallGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondHallElectricField called!" << std::endl;}
       void fieldSolverBoundaryCondGradPeElectricField(
-         FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> & EGradPeGrid,
+         EGradPeFsGrid & EGradPeGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondGradPeElectricField called!" << std::endl;}
       void fieldSolverBoundaryCondDerivatives(
-         FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> & dPerBGrid,
-         FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH> & dMomentsGrid,
+         DPerBFsGrid & dPerBGrid,
+         DMomentsFsGrid & dMomentsGrid,
          cint i,
          cint j,
          cint k,
@@ -110,7 +110,7 @@ namespace SBC {
          cuint component
       ) override{ std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondDerivatives called!" << std::endl;}
       void fieldSolverBoundaryCondBVOLDerivatives(
-         FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
+         VolFsGrid & volGrid,
          cint i,
          cint j,
          cint k,

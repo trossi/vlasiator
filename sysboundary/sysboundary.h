@@ -71,17 +71,17 @@ class SysBoundary {
    bool existSysBoundary(std::string name);
    void checkRefinement(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid);
    void classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                      FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid);
+                      TechnicalFsGrid & technicalGrid);
    void applyInitialState(
                           dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                          FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
-                          FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-                          FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+                          TechnicalFsGrid & technicalGrid,
+                          BFieldFsGrid & perBGrid,
+                          BgBFsGrid& BgBGrid,
                           Project& project
                          );
    void updateState(dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry> &mpiGrid,
-                    FsGrid<std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> &perBGrid,
-                    FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+                    BFieldFsGrid &perBGrid,
+                    BgBFsGrid& BgBGrid,
                     creal t);
    void applySysBoundaryVlasovConditions(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, creal& t, const bool calculate_V_moments);
    unsigned int size() const;

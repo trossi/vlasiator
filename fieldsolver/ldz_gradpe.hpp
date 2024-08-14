@@ -23,11 +23,11 @@
 #include "../definitions.h"
 
 void calculateGradPeTermSimple(
-   FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> & EGradPeGrid,
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsGrid,
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsDt2Grid,
-   FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH> & dMomentsGrid,
-   FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DMomentsFsGrid & dMomentsGrid,
+   TechnicalFsGrid & technicalGrid,
    SysBoundary& sysBoundaries,
    cint& RKCase
 );

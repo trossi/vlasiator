@@ -187,7 +187,7 @@ namespace SBC {
       void offset_FAC();                  /*!< Offset field aligned currents to get overall zero current */
       void normalizeRadius(Node& n, Real R); /*!< Scale all coordinates onto sphere with radius R */
       void updateConnectivity();          /*!< Re-link elements and nodes */
-      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid); /*!< (Re-)create the subcommunicator for ionosphere-internal communication */
+      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid); /*!< (Re-)create the subcommunicator for ionosphere-internal communication */
       void initializeTetrahedron();       /*!< Initialize grid as a base tetrahedron */
       void initializeIcosahedron();       /*!< Initialize grid as a base icosahedron */
       void initializeSphericalFibonacci(int n); /*!< Initialize grid as a spherical fibonacci lattice */
@@ -227,11 +227,11 @@ namespace SBC {
       // Map field-aligned currents, density and temperature
       // down from the simulation boundary onto this grid
       void mapDownBoundaryData(
-         FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,                                                                                                                                                                                                                                
-         FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> & dPerBGrid,
-         FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsGrid,
-         FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid
+         BFieldFsGrid & perBGrid,                                                                                                                                                                                                                                
+         DPerBFsGrid & dPerBGrid,
+         MomentsFsGrid & momentsGrid,
+         VolFsGrid & volGrid,
+         TechnicalFsGrid & technicalGrid
       );
       
       // Returns the surface area of one element on the sphere
@@ -331,18 +331,18 @@ namespace SBC {
          Project &project
       ) override;
       virtual void assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                     FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) override;
+                                     TechnicalFsGrid & technicalGrid) override;
       virtual void applyInitialState(
          dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
-         FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-         FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+         TechnicalFsGrid & technicalGrid,
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid& BgBGrid,
          Project &project
       ) override;
       virtual Real fieldSolverBoundaryCondMagneticField(
-         FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & bGrid,
-         FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & bgbGrid,
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+         BFieldFsGrid & bGrid,
+         BgBFsGrid & bgbGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k,
@@ -350,29 +350,29 @@ namespace SBC {
          cuint component
       ) override;
       virtual void fieldSolverBoundaryCondElectricField(
-         FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> & EGrid,
+         EFieldFsGrid & EGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override;
       virtual void fieldSolverBoundaryCondHallElectricField(
-         FsGrid< std::array<Real, fsgrids::ehall::N_EHALL>, FS_STENCIL_WIDTH> & EHallGrid,
+         EHallFsGrid & EHallGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override;
       virtual void fieldSolverBoundaryCondGradPeElectricField(
-         FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> & EGradPeGrid,
+         EGradPeFsGrid & EGradPeGrid,
          cint i,
          cint j,
          cint k,
          cuint component
       ) override;
       virtual void fieldSolverBoundaryCondDerivatives(
-         FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> & dPerBGrid,
-         FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH> & dMomentsGrid,
+         DPerBFsGrid & dPerBGrid,
+         DMomentsFsGrid & dMomentsGrid,
          cint i,
          cint j,
          cint k,
@@ -380,7 +380,7 @@ namespace SBC {
          cuint component
       ) override;
       virtual void fieldSolverBoundaryCondBVOLDerivatives(
-         FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
+         VolFsGrid & volGrid,
          cint i,
          cint j,
          cint k,
@@ -398,8 +398,8 @@ namespace SBC {
       ) override;
       virtual void updateState(
          dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
-         FsGrid<std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH>& perBGrid,
-         FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+         BFieldFsGrid& perBGrid,
+         BgBFsGrid& BgBGrid,
          creal t
       ) override;
       
@@ -453,7 +453,7 @@ namespace SBC {
       );
       
       std::array<Real, 3> fieldSolverGetNormalDirection(
-         FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k

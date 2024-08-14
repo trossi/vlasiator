@@ -26,6 +26,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <fsgrid.hpp>
 #include "definitions.h"
 
 // Include architecture specific definitions
@@ -421,6 +422,19 @@ namespace fsgrids {
    };
 
 }
+
+
+using BFieldFsGrid = FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH>;
+using EFieldFsGrid = FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH>;
+using EHallFsGrid = FsGrid< std::array<Real, fsgrids::ehall::N_EHALL>, FS_STENCIL_WIDTH>;
+using EGradPeFsGrid = FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH>;
+using MomentsFsGrid = FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH>;
+using DPerBFsGrid = FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH>;
+using DMomentsFsGrid = FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH>;
+using BgBFsGrid = FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>;
+using VolFsGrid = FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH>;
+using TechnicalFsGrid = FsGrid< fsgrids::technical, FS_STENCIL_WIDTH>;
+
 
 // Ionosphere node parameters
 enum ionosphereParameters {

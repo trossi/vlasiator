@@ -30,7 +30,7 @@
 //FieldFunction should be initialized
 void setBackgroundField(
    const FieldFunction& bgFunction,
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & BgBGrid,
+   BgBFsGrid & BgBGrid,
    bool append
    ) {
    using namespace std::placeholders;
@@ -143,7 +143,7 @@ void setBackgroundField(
 }
 
 void setBackgroundFieldToZero(
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & BgBGrid
+   BgBFsGrid & BgBGrid
 ) {
    auto localSize = BgBGrid.getLocalSize().data();
 

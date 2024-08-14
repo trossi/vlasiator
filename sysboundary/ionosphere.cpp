@@ -1043,7 +1043,7 @@ namespace SBC {
    // (Re-)create the subcommunicator for ionosphere-internal communication
    // This needs to be rerun after Vlasov grid load balancing to ensure that
    // ionosphere info is still communicated to the right ranks.
-   void SphericalTriGrid::updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) {
+   void SphericalTriGrid::updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid) {
       phiprof::Timer timer {"ionosphere-updateIonosphereCommunicator"};
 
       // Check if the current rank contains ionosphere boundary cells.
@@ -1113,11 +1113,11 @@ namespace SBC {
 
    // Transport field-aligned currents down from the simulation cells to the ionosphere
    void SphericalTriGrid::mapDownBoundaryData(
-       FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-       FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> & dPerBGrid,
-       FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> & momentsGrid,
-         FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
-       FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) {
+       BFieldFsGrid & perBGrid,
+       DPerBFsGrid & dPerBGrid,
+       MomentsFsGrid & momentsGrid,
+         VolFsGrid & volGrid,
+       TechnicalFsGrid & technicalGrid) {
 
       if(!isCouplingInwards && !isCouplingOutwards) {
          return;
@@ -2472,7 +2472,7 @@ namespace SBC {
    }
 
    void Ionosphere::assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                      FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid) {
+                                      TechnicalFsGrid & technicalGrid) {
       const vector<CellID>& cells = getLocalCells();
       for(uint i=0; i<cells.size(); i++) {
          if(mpiGrid[cells[i]]->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) {
@@ -2496,9 +2496,9 @@ namespace SBC {
 
    void Ionosphere::applyInitialState(
       dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-      FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & perBGrid,
-      FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
+      BgBFsGrid& BgBGrid,
       Project &project
    ) {
       const vector<CellID>& cells = getLocalCells();
@@ -2526,7 +2526,7 @@ namespace SBC {
    }
 
    std::array<Real, 3> Ionosphere::fieldSolverGetNormalDirection(
-      FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+      TechnicalFsGrid & technicalGrid,
       cint i,
       cint j,
       cint k
@@ -2804,9 +2804,9 @@ namespace SBC {
     * -- Retain only the normal components of perturbed face B
     */
    Real Ionosphere::fieldSolverBoundaryCondMagneticField(
-      FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> & bGrid,
-      FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & bgbGrid,
-      FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid,
+      BFieldFsGrid & bGrid,
+      BgBFsGrid & bgbGrid,
+      TechnicalFsGrid & technicalGrid,
       cint i,
       cint j,
       cint k,
@@ -2979,7 +2979,7 @@ namespace SBC {
    }
 
    void Ionosphere::fieldSolverBoundaryCondElectricField(
-      FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> & EGrid,
+      EFieldFsGrid & EGrid,
       cint i,
       cint j,
       cint k,
@@ -2989,7 +2989,7 @@ namespace SBC {
    }
 
    void Ionosphere::fieldSolverBoundaryCondHallElectricField(
-      FsGrid< std::array<Real, fsgrids::ehall::N_EHALL>, FS_STENCIL_WIDTH> & EHallGrid,
+      EHallFsGrid & EHallGrid,
       cint i,
       cint j,
       cint k,
@@ -3021,7 +3021,7 @@ namespace SBC {
    }
 
    void Ionosphere::fieldSolverBoundaryCondGradPeElectricField(
-      FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> & EGradPeGrid,
+      EGradPeFsGrid & EGradPeGrid,
       cint i,
       cint j,
       cint k,
@@ -3031,8 +3031,8 @@ namespace SBC {
    }
 
    void Ionosphere::fieldSolverBoundaryCondDerivatives(
-      FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> & dPerBGrid,
-      FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH> & dMomentsGrid,
+      DPerBFsGrid & dPerBGrid,
+      DMomentsFsGrid & dMomentsGrid,
       cint i,
       cint j,
       cint k,
@@ -3044,7 +3044,7 @@ namespace SBC {
    }
 
    void Ionosphere::fieldSolverBoundaryCondBVOLDerivatives(
-      FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> & volGrid,
+      VolFsGrid & volGrid,
       cint i,
       cint j,
       cint k,
@@ -3534,8 +3534,8 @@ namespace SBC {
    void Ionosphere::getFaces(bool *faces) {}
 
    void Ionosphere::updateState(dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
-                                FsGrid<std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH>& perBGrid,
-                                FsGrid<std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH>& BgBGrid,
+                                BFieldFsGrid& perBGrid,
+                                BgBFsGrid& BgBGrid,
                                 creal t) {}
 
    uint Ionosphere::getIndex() const {return sysboundarytype::IONOSPHERE;}

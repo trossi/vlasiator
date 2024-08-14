@@ -31,12 +31,12 @@
 
 void setBackgroundField(
    const FieldFunction& bgFunction,
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & BgBGrid,
+   BgBFsGrid & BgBGrid,
    bool append=false
 );
 
 void setBackgroundFieldToZero(
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> & BgBGrid
+   BgBFsGrid & BgBGrid
 );
 
 /**

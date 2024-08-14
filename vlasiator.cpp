@@ -136,7 +136,7 @@ void report_cell_and_block_counts(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::
 
 
 void computeNewTimeStep(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-			FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> & technicalGrid, Real &newDt, bool &isChanged) {
+			TechnicalFsGrid & technicalGrid, Real &newDt, bool &isChanged) {
 
    phiprof::Timer computeTimestepTimer {"compute-timestep"};
    // Compute maximum time step. This cannot be done at the first step as the solvers compute the limits for each cell.
@@ -463,19 +463,19 @@ int main(int argn,char* args[]) {
                                   sysBoundaryContainer.isPeriodic(2)};
 
    FsGridCouplingInformation gridCoupling;
-   FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> perBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::bfield::N_BFIELD>, FS_STENCIL_WIDTH> perBDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> EGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::efield::N_EFIELD>, FS_STENCIL_WIDTH> EDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::ehall::N_EHALL>, FS_STENCIL_WIDTH> EHallGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::egradpe::N_EGRADPE>, FS_STENCIL_WIDTH> EGradPeGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> momentsGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::moments::N_MOMENTS>, FS_STENCIL_WIDTH> momentsDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::dperb::N_DPERB>, FS_STENCIL_WIDTH> dPerBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::dmoments::N_DMOMENTS>, FS_STENCIL_WIDTH> dMomentsGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::bgbfield::N_BGB>, FS_STENCIL_WIDTH> BgBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< std::array<Real, fsgrids::volfields::N_VOL>, FS_STENCIL_WIDTH> volGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
-   FsGrid< fsgrids::technical, FS_STENCIL_WIDTH> technicalGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   BFieldFsGrid perBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   BFieldFsGrid perBDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   EFieldFsGrid EGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   EFieldFsGrid EDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   EHallFsGrid EHallGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   EGradPeFsGrid EGradPeGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   MomentsFsGrid momentsGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   MomentsFsGrid momentsDt2Grid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   DPerBFsGrid dPerBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   DMomentsFsGrid dMomentsGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   BgBFsGrid BgBGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   VolFsGrid volGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
+   TechnicalFsGrid technicalGrid(fsGridDimensions, MPI_COMM_WORLD, periodicity,gridCoupling, P::manualFsGridDecomposition);
 
    // Set DX, DY and DZ
    // TODO: This is currently just taking the values from cell 1, and assuming them to be
