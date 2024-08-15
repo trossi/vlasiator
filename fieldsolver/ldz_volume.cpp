@@ -52,7 +52,7 @@ void calculateVolumeAveragedFields(
          for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
             for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
                std::array<Real, Rec::N_REC_COEFFICIENTS> perturbedCoefficients;
-               std::array<Real, fsgrids::volfields::N_VOL> * volGrid0 = volGrid.get(i,j,k);
+               auto volGrid0 = volGrid.get(i,j,k);
 
                // Calculate reconstruction coefficients for this cell:
                // This handles domain edges so no need to skip DO_NOT_COMPUTE or OUTER_BOUNDARY_PADDING cells.
@@ -74,7 +74,7 @@ void calculateVolumeAveragedFields(
                // This avoids out of domain accesses below.
                if(technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE || technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::OUTER_BOUNDARY_PADDING) continue;
                // Calculate volume average of E (FIXME NEEDS IMPROVEMENT):
-               std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j1k1 = EGrid.get(i,j,k);
+               auto EGrid_i1j1k1 = EGrid.get(i,j,k);
                if ( technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY ||
                     (technicalGrid.get(i,j,k)->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY && technicalGrid.get(i,j,k)->sysBoundaryLayer == 1)
                   ) {
@@ -90,9 +90,9 @@ void calculateVolumeAveragedFields(
                   }
                   #endif
 
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j2k2 = EGrid.get(i  ,j+1,k+1);
+                  auto EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
+                  auto EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
+                  auto EGrid_i1j2k2 = EGrid.get(i  ,j+1,k+1);
 
                   CHECK_FLOAT(EGrid_i1j1k1->at(fsgrids::efield::EX));
                   CHECK_FLOAT(EGrid_i1j2k1->at(fsgrids::efield::EX));
@@ -119,9 +119,9 @@ void calculateVolumeAveragedFields(
                   }
                   #endif
 
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i2j1k2 = EGrid.get(i+1,j  ,k+1);
+                  auto EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
+                  auto EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
+                  auto EGrid_i2j1k2 = EGrid.get(i+1,j  ,k+1);
 
                   CHECK_FLOAT(EGrid_i1j1k1->at(fsgrids::efield::EY));
                   CHECK_FLOAT(EGrid_i2j1k1->at(fsgrids::efield::EY));
@@ -148,9 +148,9 @@ void calculateVolumeAveragedFields(
                   }
                   #endif
 
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
-                  std::array<Real, fsgrids::efield::N_EFIELD> * EGrid_i2j2k1 = EGrid.get(i+1,j+1,k  );
+                  auto EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
+                  auto EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
+                  auto EGrid_i2j2k1 = EGrid.get(i+1,j+1,k  );
 
                   CHECK_FLOAT(EGrid_i1j1k1->at(fsgrids::efield::EZ));
                   CHECK_FLOAT(EGrid_i2j1k1->at(fsgrids::efield::EZ));

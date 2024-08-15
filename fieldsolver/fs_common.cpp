@@ -62,7 +62,7 @@ void reconstructionCoefficients(
    creal& reconstructionOrder
 ) {
    std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i1j1k1 = NULL;
-   std::array<Real, fsgrids::dperb::N_DPERB> * der_i1j1k1 = dPerBGrid.get(i,j,k);
+   auto der_i1j1k1 = dPerBGrid.get(i,j,k);
    std::array<Real, fsgrids::bfield::N_BFIELD> * dummyCellParams = NULL;
    std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i2j1k1 = NULL;
    std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i1j2k1 = NULL;

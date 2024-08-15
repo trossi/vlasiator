@@ -235,7 +235,7 @@ namespace SBC {
    void Inflow::fieldSolverBoundaryCondHallElectricField(
       EHallFsGrid& EHallGrid, cint i, cint j, cint k,
       cuint component) {
-      std::array<Real, fsgrids::ehall::N_EHALL>* cp = EHallGrid.get(i, j, k);
+      auto cp = EHallGrid.get(i, j, k);
       switch (component) {
          case 0:
             cp->at(fsgrids::ehall::EXHALL_000_100) = 0.0;

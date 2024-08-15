@@ -284,7 +284,7 @@ void feedMomentsIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& 
     for(auto const &cell: receives.second){ //loop over cellids (dccrg) for receive
       // this part heavily relies on both sender and receiver having cellids sorted!
       for(auto lid: onFsgridMapCells[cell]){
-	std::array<Real, fsgrids::moments::N_MOMENTS> * fsgridData = momentsGrid.get(lid);
+	auto fsgridData = momentsGrid.get(lid);
 	for(int l = 0; l < fsgrids::moments::N_MOMENTS; l++)   {
 	  fsgridData->at(l) = receiveBuffer[l];
 	}
@@ -395,9 +395,9 @@ void getFieldsFromFsGrid(
                // cell's DCCRG volume averages.
                continue;
             }
-            std::array<Real, fsgrids::volfields::N_VOL> * volcell = volumeFieldsGrid.get(fsgridCell);
-            std::array<Real, fsgrids::bgbfield::N_BGB> * bgcell = BgBGrid.get(fsgridCell);
-            std::array<Real, fsgrids::egradpe::N_EGRADPE> * egradpecell = EGradPeGrid.get(fsgridCell);	
+            auto volcell = volumeFieldsGrid.get(fsgridCell);
+            auto bgcell = BgBGrid.get(fsgridCell);
+            auto egradpecell = EGradPeGrid.get(fsgridCell);	
             
             sendBuffer[ii].sums[FieldsToCommunicate::PERBXVOL] += volcell->at(fsgrids::volfields::PERBXVOL);
             sendBuffer[ii].sums[FieldsToCommunicate::PERBYVOL] += volcell->at(fsgrids::volfields::PERBYVOL);

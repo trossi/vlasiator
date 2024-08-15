@@ -329,8 +329,8 @@ namespace projects {
                   for (int z = 0; z < localSize[2]; ++z) {
                      for (int y = 0; y < localSize[1]; ++y) {
                         for (int x = 0; x < localSize[0]; ++x) {
-                           std::array<Real, fsgrids::bgbfield::N_BGB>* BGBcell = BgBGrid.get(x, y, z);
-                           std::array<Real, fsgrids::bfield::N_BFIELD>* PERBcell = perBGrid.get(x, y, z);
+                           auto BGBcell = BgBGrid.get(x, y, z);
+                           auto PERBcell = perBGrid.get(x, y, z);
                            PERBcell->at(fsgrids::bfield::PERBX) = BGBcell->at(fsgrids::bgbfield::BGBXVDCORR);
                            PERBcell->at(fsgrids::bfield::PERBY) = BGBcell->at(fsgrids::bgbfield::BGBYVDCORR);
                            PERBcell->at(fsgrids::bfield::PERBZ) = BGBcell->at(fsgrids::bgbfield::BGBZVDCORR);
@@ -359,7 +359,7 @@ namespace projects {
             for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
                for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
                   for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
-                     std::array<Real, fsgrids::bgbfield::N_BGB>* cell = BgBGrid.get(x, y, z);
+                     auto cell = BgBGrid.get(x, y, z);
                      cell->at(fsgrids::bgbfield::BGBX)=0;
                      cell->at(fsgrids::bgbfield::BGBXVOL)=0.0;
                      cell->at(fsgrids::bgbfield::dBGBydx)=0.0;
@@ -382,7 +382,7 @@ namespace projects {
              for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
                 for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
                    for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
-                      std::array<Real, fsgrids::bgbfield::N_BGB>* cell = BgBGrid.get(x, y, z);
+                      auto cell = BgBGrid.get(x, y, z);
                       cell->at(fsgrids::bgbfield::BGBY)=0.0;
                       cell->at(fsgrids::bgbfield::BGBYVOL)=0.0;
                       cell->at(fsgrids::bgbfield::dBGBxdy)=0.0;
@@ -404,7 +404,7 @@ namespace projects {
             for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
                for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
                   for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
-                     std::array<Real, fsgrids::bgbfield::N_BGB>* cell = BgBGrid.get(x, y, z);
+                     auto cell = BgBGrid.get(x, y, z);
                      cell->at(fsgrids::bgbfield::BGBX)=0;
                      cell->at(fsgrids::bgbfield::BGBY)=0;
                      cell->at(fsgrids::bgbfield::BGBYVOL)=0.0;

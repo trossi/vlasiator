@@ -64,7 +64,7 @@ void propagateMagneticField(
    creal dy = perBGrid.DY;
    creal dz = perBGrid.DZ;
 
-   std::array<Real, fsgrids::bfield::N_BFIELD> * perBGrid0 = perBGrid.get(i,j,k);
+   auto perBGrid0 = perBGrid.get(i,j,k);
    std::array<Real, fsgrids::efield::N_EFIELD> * EGrid0;
    std::array<Real, fsgrids::efield::N_EFIELD> * EGrid1;
    std::array<Real, fsgrids::efield::N_EFIELD> * EGrid2;

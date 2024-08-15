@@ -19,10 +19,10 @@ void calculateDerivatives(
    DPerBFsGrid & dPerBGrid,
    TechnicalFsGrid & technicalGrid
 ) {
-   std::array<Real, fsgrids::dperb::N_DPERB> * dPerB = dPerBGrid.get(i,j,k);
+   auto dPerB = dPerBGrid.get(i,j,k);
 
    std::array<Real, fsgrids::bfield::N_BFIELD> * leftPerB = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD> * centPerB = perBGrid.get(i,j,k);
+   auto centPerB = perBGrid.get(i,j,k);
    std::array<Real, fsgrids::bfield::N_BFIELD>  * rghtPerB = NULL;
    std::array<Real, fsgrids::bfield::N_BFIELD>  * botLeft = NULL;
    std::array<Real, fsgrids::bfield::N_BFIELD>  * botRght = NULL;
