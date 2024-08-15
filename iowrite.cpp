@@ -1687,7 +1687,7 @@ bool writeRestart(
                       BgBFsGrid & BgBGrid,
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<Real> {
-            std::array<FsGridTools::FsIndex_t,3>& gridSize = technicalGrid.getLocalSize();
+            auto& gridSize = technicalGrid.getLocalSize();
             std::vector<Real> retval(gridSize[0]*gridSize[1]*gridSize[2]*fsgrids::efield::N_EFIELD);
             int index=0;
             for(FsGridTools::FsIndex_t z=0; z<gridSize[2]; z++) {
@@ -1713,7 +1713,7 @@ bool writeRestart(
                       BgBFsGrid & BgBGrid,
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<Real> {
-            std::array<FsGridTools::FsIndex_t,3>& gridSize = technicalGrid.getLocalSize();
+            auto& gridSize = technicalGrid.getLocalSize();
             std::vector<Real> retval(gridSize[0]*gridSize[1]*gridSize[2]*fsgrids::bfield::N_BFIELD);
             int index=0;
             for(FsGridTools::FsIndex_t z=0; z<gridSize[2]; z++) {
