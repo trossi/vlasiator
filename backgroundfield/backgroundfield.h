@@ -45,8 +45,9 @@ void setBackgroundFieldToZero(
    vector dipole correction terms inside the background field FSgrid
    object to zero (see setPerturbedField below).
 */
-template<long unsigned int numFields> void setPerturbedFieldToZero(
-   FsGrid< std::array<Real, numFields>, FS_STENCIL_WIDTH> & BGrid,
+template<typename SomeFsGrid>
+void setPerturbedFieldToZero(
+   SomeFsGrid & BGrid,
    int offset=fsgrids::bfield::PERBX
    ) {
    std::array<FsGridTools::FsIndex_t,3> localSize = BGrid.getLocalSize();
@@ -72,9 +73,10 @@ template<long unsigned int numFields> void setPerturbedFieldToZero(
     the corrective terms to vanish the dipole towards the inflow boundary are stored in 
     the backgroundfield FSgrid object at offset fsgrids::bgbfield::BGBXVDCORR
 */
-template<long unsigned int numFields> void setPerturbedField(
+template<typename SomeFsGrid>
+void setPerturbedField(
    const FieldFunction& bfFunction,
-   FsGrid< std::array<Real, numFields>, FS_STENCIL_WIDTH> & BGrid,
+   SomeFsGrid & BGrid,
    int offset=fsgrids::bfield::PERBX,
    bool append=false) {
 

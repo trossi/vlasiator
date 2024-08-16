@@ -824,7 +824,7 @@ bool readCellParamsVariable(
  * \param targetGrid target location where the data will be stored.
  */
 template<unsigned long int N> bool readFsGridVariable(
-   vlsv::ParallelReader& file, const string& variableName, int numWritingRanks, FsGrid<std::array<Real, N>,FS_STENCIL_WIDTH> & targetGrid) {
+   vlsv::ParallelReader& file, const string& variableName, int numWritingRanks, RealFsGrid<N> & targetGrid) {
 
    phiprof::Timer preparations {"preparations"};
 

@@ -38,9 +38,10 @@ int getNumberOfCellsOnMaxRefLvl(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geomet
   onFsgridMapCells          maps remote dccrg CellIDs to local fsgrid cells
 */
 
-template <typename T, int stencil> void computeCoupling(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+template <typename SomeFsGrid>
+void computeCoupling(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 							const std::vector<CellID>& cells,
-							FsGrid< T, stencil>& momentsGrid,
+							SomeFsGrid& momentsGrid,
 							std::map<int, std::set<CellID> >& onDccrgMapRemoteProcess,
 							std::map<int, std::set<CellID> >& onFsgridMapRemoteProcess,
 							std::map<CellID, std::vector<int64_t> >& onFsgridMapCells
