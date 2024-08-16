@@ -541,7 +541,7 @@ std::vector<CellID> mapDccrgIdToFsGridGlobalID(dccrg::Dccrg<SpatialCell,dccrg::C
 
 void feedBoundaryIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 			const std::vector<CellID>& cells,
-			FsGrid< fsgrids::technical, 1, 2> & technicalGrid) {
+			TechnicalFsGrid & technicalGrid) {
 
   int ii;
   //sorted list of dccrg cells. cells is typicall already sorted, but just to make sure....

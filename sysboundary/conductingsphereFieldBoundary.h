@@ -311,7 +311,7 @@ namespace SBC {
     }
     
     ARCH_HOSTDEV void fieldSolverBoundaryCondBVOLDerivatives(
-        const arch::buf<FsGrid< Real, fsgrids::volfields::N_VOL, 2>> & volGrid,
+        const arch::buf<VolFsGrid> & volGrid,
         cint i,
         cint j,
         cint k,
