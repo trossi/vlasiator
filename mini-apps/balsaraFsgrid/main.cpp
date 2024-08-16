@@ -21,18 +21,12 @@ void calculateDerivatives(
 ) {
    auto dPerB = dPerBGrid.get(i,j,k);
 
-   std::array<Real, fsgrids::bfield::N_BFIELD> * leftPerB = NULL;
    auto centPerB = perBGrid.get(i,j,k);
-   std::array<Real, fsgrids::bfield::N_BFIELD>  * rghtPerB = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD>  * botLeft = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD>  * botRght = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD>  * topLeft = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD>  * topRght = NULL;
    
    // Calculate x-derivatives (is not TVD for AMR mesh):
 
-   leftPerB = perBGrid.get(i-1,j,k);
-   rghtPerB = perBGrid.get(i+1,j,k);
+   auto leftPerB = perBGrid.get(i-1,j,k);
+   auto rghtPerB = perBGrid.get(i+1,j,k);
 
    dPerB->at(fsgrids::dperb::dPERBydx)  = limiter(leftPerB->at(fsgrids::bfield::PERBY),centPerB->at(fsgrids::bfield::PERBY),rghtPerB->at(fsgrids::bfield::PERBY));
    dPerB->at(fsgrids::dperb::dPERBzdx)  = limiter(leftPerB->at(fsgrids::bfield::PERBZ),centPerB->at(fsgrids::bfield::PERBZ),rghtPerB->at(fsgrids::bfield::PERBZ));
@@ -82,10 +76,10 @@ void calculateDerivatives(
       dPerB->at(fsgrids::dperb::dPERBzdxy) = 0.0;
    } else {
       // Calculate xy mixed derivatives:
-      botLeft = perBGrid.get(i-1,j-1,k);
-      botRght = perBGrid.get(i+1,j-1,k);
-      topLeft = perBGrid.get(i-1,j+1,k);
-      topRght = perBGrid.get(i+1,j+1,k);
+      auto botLeft = perBGrid.get(i-1,j-1,k);
+      auto botRght = perBGrid.get(i+1,j-1,k);
+      auto topLeft = perBGrid.get(i-1,j+1,k);
+      auto topRght = perBGrid.get(i+1,j+1,k);
          
       dPerB->at(fsgrids::dperb::dPERBzdxy) = FOURTH * (botLeft->at(fsgrids::bfield::PERBZ) + topRght->at(fsgrids::bfield::PERBZ) - botRght->at(fsgrids::bfield::PERBZ) - topLeft->at(fsgrids::bfield::PERBZ));
          

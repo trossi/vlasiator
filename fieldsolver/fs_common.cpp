@@ -61,20 +61,15 @@ void reconstructionCoefficients(
    cint k,
    creal& reconstructionOrder
 ) {
-   std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i1j1k1 = NULL;
    auto der_i1j1k1 = dPerBGrid.get(i,j,k);
-   std::array<Real, fsgrids::bfield::N_BFIELD> * dummyCellParams = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i2j1k1 = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i1j2k1 = NULL;
-   std::array<Real, fsgrids::bfield::N_BFIELD> * cep_i1j1k2 = NULL;
    
-   BFieldFsGrid * params = & perBGrid;
+   auto params = & perBGrid;
    
-   cep_i1j1k1 = params->get(i,j,k);
-   dummyCellParams = cep_i1j1k1;
-   cep_i2j1k1 = dummyCellParams;
-   cep_i1j2k1 = dummyCellParams;
-   cep_i1j1k2 = dummyCellParams;
+   auto cep_i1j1k1 = params->get(i,j,k);
+   auto dummyCellParams = cep_i1j1k1;
+   auto cep_i2j1k1 = dummyCellParams;
+   auto cep_i1j2k1 = dummyCellParams;
+   auto cep_i1j1k2 = dummyCellParams;
    if (params->get(i+1,j,k) != NULL) cep_i2j1k1 = params->get(i+1,j,k);
    if (params->get(i,j+1,k) != NULL) cep_i1j2k1 = params->get(i,j+1,k);
    if (params->get(i,j,k+1) != NULL) cep_i1j1k2 = params->get(i,j,k+1);
@@ -89,9 +84,9 @@ void reconstructionCoefficients(
    
    // Fetch neighbour cell derivatives, or in case the neighbour does not 
    // exist, use dummyDerivatives array:
-   std::array<Real, fsgrids::dperb::N_DPERB> * der_i2j1k1 = &dummyDerivatives;
-   std::array<Real, fsgrids::dperb::N_DPERB> * der_i1j2k1 = &dummyDerivatives;
-   std::array<Real, fsgrids::dperb::N_DPERB> * der_i1j1k2 = &dummyDerivatives;
+   auto der_i2j1k1 = &dummyDerivatives;
+   auto der_i1j2k1 = &dummyDerivatives;
+   auto der_i1j1k2 = &dummyDerivatives;
    if (dPerBGrid.get(i+1,j,k) != NULL) der_i2j1k1 = dPerBGrid.get(i+1,j,k);
    if (dPerBGrid.get(i,j+1,k) != NULL) der_i1j2k1 = dPerBGrid.get(i,j+1,k);
    if (dPerBGrid.get(i,j,k+1) != NULL) der_i1j1k2 = dPerBGrid.get(i,j,k+1);
