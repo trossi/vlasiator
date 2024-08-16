@@ -581,7 +581,7 @@ namespace projects {
          //#pragma omp parallel for
          for (uint i = 0; i < cells.size(); ++i) {
             CellID id = cells[i];
-            std::array<double,3> xyz = mpiGrid.get_center(id);
+            auto xyz = mpiGrid.get_center(id);
                      
             Real radius2 = pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2);
             bool inSphere = radius2 < refine_L1radius*refine_L1radius;
@@ -608,7 +608,7 @@ namespace projects {
          //#pragma omp parallel for
          for (uint i = 0; i < cells.size(); ++i) {
             CellID id = cells[i];
-            std::array<double,3> xyz = mpiGrid.get_center(id);
+            auto xyz = mpiGrid.get_center(id);
                      
             Real radius2 = pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2);
             bool inSphere = radius2 < pow(refine_L2radius, 2);
@@ -635,7 +635,7 @@ namespace projects {
          //#pragma omp parallel for
          for (uint i = 0; i < cells.size(); ++i) {
             CellID id = cells[i];
-            std::array<double,3> xyz = mpiGrid.get_center(id);
+            auto xyz = mpiGrid.get_center(id);
                      
             Real radius2 = pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2);
             bool inNoseCap = (xyz[0]>refine_L3nosexmin) && (radius2<refine_L3radius*refine_L3radius);
@@ -661,7 +661,7 @@ namespace projects {
          //#pragma omp parallel for
          for (uint i = 0; i < cells.size(); ++i) {
             CellID id = cells[i];
-            std::array<double,3> xyz = mpiGrid.get_center(id);
+            auto xyz = mpiGrid.get_center(id);
                      
             Real radius2 = (xyz[0]*xyz[0]+xyz[1]*xyz[1]+xyz[2]*xyz[2]);
 

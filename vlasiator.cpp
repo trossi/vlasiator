@@ -160,7 +160,7 @@ void computeNewTimeStep(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpi
    reduce_vlasov_dt(mpiGrid, cells, dtMaxLocal);
 
    // compute max dt for fieldsolver
-   const std::array<FsGridTools::FsIndex_t, 3> gridDims(technicalGrid.getLocalSize());
+   const auto gridDims = technicalGrid.getLocalSize();
    for (FsGridTools::FsIndex_t k = 0; k < gridDims[2]; k++) {
       for (FsGridTools::FsIndex_t j = 0; j < gridDims[1]; j++) {
          for (FsGridTools::FsIndex_t i = 0; i < gridDims[0]; i++) {

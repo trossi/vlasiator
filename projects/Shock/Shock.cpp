@@ -134,7 +134,7 @@ namespace projects {
          for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
             for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
                for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
-                  const std::array<Real, 3> xyz = perBGrid.getPhysicalCoords(x, y, z);
+                  const auto xyz = perBGrid.getPhysicalCoords(x, y, z);
                   auto cell = perBGrid.get(x, y, z);
                   
                   cell->at(fsgrids::bfield::PERBX) = 0.0;

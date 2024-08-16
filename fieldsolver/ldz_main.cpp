@@ -110,7 +110,7 @@ bool propagateFields(
       exit(1);
    }
    
-   const FsGridTools::FsIndex_t* gridDims = &technicalGrid.getLocalSize()[0];
+   const auto gridDims = &technicalGrid.getLocalSize()[0];
    
    #pragma omp parallel for collapse(2)
    for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
@@ -346,7 +346,7 @@ bool propagateFields(
          Real dtMaxGlobal;
          dtMaxLocal=std::numeric_limits<Real>::max();
 
-         std::array<FsGridTools::FsIndex_t, 3>& localSize = technicalGrid.getLocalSize();
+         auto& localSize = technicalGrid.getLocalSize();
          for(FsGridTools::FsIndex_t z=0; z<localSize[2]; z++) {
             for(FsGridTools::FsIndex_t y=0; y<localSize[1]; y++) {
                for(FsGridTools::FsIndex_t x=0; x<localSize[0]; x++) {

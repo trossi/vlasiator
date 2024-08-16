@@ -194,8 +194,8 @@ namespace SBC {
       cint k,
       cuint component
    ) {
-      array<Real, fsgrids::dperb::N_DPERB> * dPerBGrid0 = dPerBGrid.get(i,j,k);
-      array<Real, fsgrids::dmoments::N_DMOMENTS> * dMomentsGrid0 = dMomentsGrid.get(i,j,k);
+      auto dPerBGrid0 = dPerBGrid.get(i,j,k);
+      auto dMomentsGrid0 = dMomentsGrid.get(i,j,k);
       switch(component) {
          case 0: // x, xx
             dMomentsGrid0->at(fsgrids::dmoments::drhomdx) = 0.0;
@@ -266,7 +266,7 @@ namespace SBC {
       cint k,
       cuint component
    ) {
-      array<Real, fsgrids::volfields::N_VOL> * volGrid0 = volGrid.get(i,j,k);
+      auto volGrid0 = volGrid.get(i,j,k);
       switch(component) {
          case 0:
             volGrid0->at(fsgrids::volfields::dPERBXVOLdx) = 0.0;

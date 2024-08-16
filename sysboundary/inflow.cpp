@@ -110,7 +110,7 @@ namespace SBC {
       }
 
       // Assign boundary flags to local fsgrid cells
-      const std::array<FsGridTools::FsIndex_t, 3> gridDims(technicalGrid.getLocalSize());
+      const auto gridDims = technicalGrid.getLocalSize();
       for (FsGridTools::FsIndex_t k = 0; k < gridDims[2]; k++) {
          for (FsGridTools::FsIndex_t j = 0; j < gridDims[1]; j++) {
             for (FsGridTools::FsIndex_t i = 0; i < gridDims[0]; i++) {
@@ -204,7 +204,7 @@ namespace SBC {
       creal dx = Parameters::dx_ini;
       creal dy = Parameters::dy_ini;
       creal dz = Parameters::dz_ini;
-      const array<FsGridTools::FsIndex_t, 3> globalIndices = technicalGrid.getGlobalIndices(i, j, k);
+      const auto globalIndices = technicalGrid.getGlobalIndices(i, j, k);
       creal x = (convert<Real>(globalIndices[0]) + 0.5) * technicalGrid.DX + Parameters::xmin;
       creal y = (convert<Real>(globalIndices[1]) + 0.5) * technicalGrid.DY + Parameters::ymin;
       creal z = (convert<Real>(globalIndices[2]) + 0.5) * technicalGrid.DZ + Parameters::zmin;
@@ -289,7 +289,7 @@ namespace SBC {
                                  BgBFsGrid& BgBGrid) {
       std::array<bool, 6> isThisCellOnAFace;
 
-      const std::array<FsGridTools::FsIndex_t, 3> gridDims(perBGrid.getLocalSize());
+      const auto gridDims = perBGrid.getLocalSize();
       for (FsGridTools::FsIndex_t k = 0; k < gridDims[2]; k++) {
          for (FsGridTools::FsIndex_t j = 0; j < gridDims[1]; j++) {
             for (FsGridTools::FsIndex_t i = 0; i < gridDims[0]; i++) {

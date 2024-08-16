@@ -398,7 +398,7 @@ void SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
       mpiGrid[cell]->sysBoundaryLayer = 0; /*Initial value*/
 
       std::array<double, 3> dx = mpiGrid.geometry.get_length(cell);
-      std::array<double, 3> x = mpiGrid.get_center(cell);
+      auto x = mpiGrid.get_center(cell);
       if (!isPeriodic(0) && (x[0] > Parameters::xmax - dx[0] || x[0] < Parameters::xmin + dx[0])) {
          continue;
       } else if (!isPeriodic(1) && (x[1] > Parameters::ymax - dx[1] || x[1] < Parameters::ymin + dx[1])) {
@@ -549,7 +549,7 @@ void SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
 
    technicalGrid.updateGhostCells();
 
-   const array<FsGridTools::FsSize_t,3> fsGridDimensions = technicalGrid.getGlobalSize();
+   const auto fsGridDimensions = technicalGrid.getGlobalSize();
 
    // One pass to setup the bit field to know which components the field solver should propagate.
 #pragma omp parallel for collapse(2)
@@ -558,7 +558,7 @@ void SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
          for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
             technicalGrid.get(x, y, z)->SOLVE = 0;
 
-            array<FsGridTools::FsIndex_t, 3> globalIndices = technicalGrid.getGlobalIndices(x, y, z);
+            auto globalIndices = technicalGrid.getGlobalIndices(x, y, z);
 
             if (((globalIndices[0] == 0 || globalIndices[0] == (FsGridTools::FsIndex_t)fsGridDimensions[0] - 1) &&
                  !this->isPeriodic(0)) ||

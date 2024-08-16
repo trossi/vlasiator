@@ -892,7 +892,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
 
   //The visit plugin expects MESH_BBOX as a keyword. We only write one
   //from the first rank.
-  std::array<FsGridTools::FsSize_t, 3>& globalSize = technicalGrid.getGlobalSize();
+  auto& globalSize = technicalGrid.getGlobalSize();
   std::array<FsGridTools::FsSize_t, 6> boundaryBox({globalSize[0], globalSize[1], globalSize[2],
       1,1,1});
 
@@ -940,7 +940,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
   vlsvWriter.writeArray("MESH_GHOST_LOCALIDS", xmlAttributes, 0, 1, &dummyghost);
 
   // writeDomainSizes
-  std::array<FsGridTools::FsIndex_t,3>& localSize = technicalGrid.getLocalSize();
+  auto& localSize = technicalGrid.getLocalSize();
   std::array<uint64_t,2> meshDomainSize({(uint64_t)localSize[0]*(uint64_t)localSize[1]*(uint64_t)localSize[2], 0});
   vlsvWriter.writeArray("MESH_DOMAIN_SIZES", xmlAttributes, 1, 2, &meshDomainSize[0]);
 
@@ -949,7 +949,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
   vlsvWriter.writeParameter("numWritingRanks", &size);
 
   // Save the FSgrid decomposition
-  std::array<FsGridTools::Task_t, 3> decom = technicalGrid.getDecomposition();
+  auto decom = technicalGrid.getDecomposition();
   if(technicalGrid.getRank() == 0) {
       vlsvWriter.writeArray("MESH_DECOMPOSITION", xmlAttributes, 3u, 1u, &decom[0]);
   } else {
@@ -972,7 +972,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
      for(int z=0; z<localSize[2]; z++) {
         for(int y=0; y<localSize[1]; y++) {
            for(int x=0; x<localSize[0]; x++) {
-              std::array<FsGridTools::FsIndex_t,3> globalIndex = technicalGrid.getGlobalIndices(x,y,z);
+              auto globalIndex = technicalGrid.getGlobalIndices(x,y,z);
               globalIds[i++] = globalIndex[2]*globalSize[0]*globalSize[1]+
                  globalIndex[1]*globalSize[0] +
                  globalIndex[0];

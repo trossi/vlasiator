@@ -39,7 +39,7 @@ void setBackgroundField(
    if(append==false) {
       setBackgroundFieldToZero(BgBGrid);
    }
-   const FsGridTools::FsIndex_t* gridDims = &BgBGrid.getLocalSize()[0];
+   const auto gridDims = &BgBGrid.getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
    phiprof::Timer bgTimer {"set Background field"};
    {
@@ -70,7 +70,7 @@ void setBackgroundField(
          for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
             for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
                phiprof::Timer loopTopTimer {loopTopId};
-               std::array<double, 3> start = BgBGrid.getPhysicalCoords(x, y, z);
+               auto start = BgBGrid.getPhysicalCoords(x, y, z);
                double dx[3];
                dx[0] = BgBGrid.DX;
                dx[1] = BgBGrid.DY;

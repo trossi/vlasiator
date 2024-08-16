@@ -205,7 +205,7 @@ namespace SBC {
       }
 
       // Assign boundary flags to local fsgrid cells
-      const array<FsGridTools::FsIndex_t, 3> gridDims(technicalGrid.getLocalSize());
+      const auto gridDims = technicalGrid.getLocalSize();
       for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
          for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
             for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
@@ -326,7 +326,7 @@ namespace SBC {
       cint k,
       cuint component
    ) {
-      array<Real, fsgrids::ehall::N_EHALL> * cp = EHallGrid.get(i,j,k);
+      auto cp = EHallGrid.get(i,j,k);
       switch (component) {
          case 0:
             cp->at(fsgrids::ehall::EXHALL_000_100) = 0.0;

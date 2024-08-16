@@ -50,7 +50,7 @@ void setPerturbedFieldToZero(
    SomeFsGrid & BGrid,
    int offset=fsgrids::bfield::PERBX
    ) {
-   std::array<FsGridTools::FsIndex_t,3> localSize = BGrid.getLocalSize();
+   auto localSize = BGrid.getLocalSize();
 
    #pragma omp parallel for collapse(2)
    for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
@@ -102,14 +102,14 @@ void setPerturbedField(
    faceCoord1[2]=0;
    faceCoord2[2]=1;
 
-   std::array<FsGridTools::FsIndex_t,3> localSize = BGrid.getLocalSize();
+   auto localSize = BGrid.getLocalSize();
 
    // These are threaded now that the stuff around here is threadsafe
    #pragma omp parallel for collapse(2)
    for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
       for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
          for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
-            std::array<double, 3> start = BGrid.getPhysicalCoords(x, y, z);
+            auto start = BGrid.getPhysicalCoords(x, y, z);
             double dx[3];
             dx[0] = BGrid.DX;
             dx[1] = BGrid.DY;

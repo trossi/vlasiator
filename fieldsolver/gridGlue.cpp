@@ -58,14 +58,14 @@ void computeCoupling(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGri
   
   
   //size of fsgrid local part
-  const std::array<FsGridTools::FsIndex_t, 3> gridDims(momentsGrid.getLocalSize());
+  const auto gridDims = momentsGrid.getLocalSize();
   
  
   //Compute what we will receive, and where it should be stored
   for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
     for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
       for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
-        const std::array<FsGridTools::FsIndex_t, 3> globalIndices = momentsGrid.getGlobalIndices(i,j,k);
+        const auto globalIndices = momentsGrid.getGlobalIndices(i,j,k);
         const dccrg::Types<3>::indices_t  indices = {{(uint64_t)globalIndices[0],
                         (uint64_t)globalIndices[1],
                         (uint64_t)globalIndices[2]}}; //cast to avoid warnings
@@ -144,7 +144,7 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
 
    // Get size of local domain and create swapGrid for filtering
-   const FsGridTools::FsIndex_t* mntDims = &momentsGrid.getLocalSize()[0];  
+   const auto mntDims = &momentsGrid.getLocalSize()[0];  
    MomentsFsGrid swapGrid = momentsGrid;  //swap array 
 
    // Filtering Loop
