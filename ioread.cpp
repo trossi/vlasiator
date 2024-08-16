@@ -792,9 +792,9 @@ template<unsigned long int N> bool readFsGridVariable(
    MPI_Comm_size(MPI_COMM_WORLD, &size);
    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
-   int32_t* localSize = targetGrid.getLocalSize();
-   int32_t* localStart = targetGrid.getLocalStart();
-   int32_t* globalSize = targetGrid.getGlobalSize();
+   auto localSize = targetGrid.getLocalSize();
+   auto localStart = targetGrid.getLocalStart();
+   auto globalSize = targetGrid.getGlobalSize();
 
    // Determine our tasks storage size
    size_t storageSize = localSize[0]*localSize[1]*localSize[2];

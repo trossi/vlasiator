@@ -248,8 +248,7 @@ void propagateMagneticFieldSimple(
    cint& RKCase
 ) {
    int timer;
-   //const std::array<int, 3> gridDims = technicalGrid.getLocalSize();
-   const int* gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
    
    phiprof::start("Propagate magnetic field");

@@ -111,7 +111,7 @@ namespace SBC {
    bool SetByUser::setBFromTemplate(TechnicalFsGrid & technicalGrid, BFieldFsGrid & perBGrid) {
 
       array<bool,6> isThisCellOnAFace;
-      int* gridDims = perBGrid.getLocalSize();
+      auto gridDims = perBGrid.getLocalSize();
 
       for (int k=0; k<gridDims[2]; k++) {
          for (int j=0; j<gridDims[1]; j++) {

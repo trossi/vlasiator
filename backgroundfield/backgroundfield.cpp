@@ -65,7 +65,7 @@ void setBackgroundField(
    for (int x = 0; x < localSize[0]; ++x) {
       for (int y = 0; y < localSize[1]; ++y) {
          for (int z = 0; z < localSize[2]; ++z) {
-            std::array<double, 3> start3 = BgBGrid.getPhysicalCoords(x, y, z);
+            auto start3 = BgBGrid.getPhysicalCoords(x, y, z);
             start[0] = start3[0];
             start[1] = start3[1];
             start[2] = start3[2];
@@ -186,7 +186,7 @@ void setPerturbedField(
    for (int x = 0; x < localSize[0]; ++x) {
       for (int y = 0; y < localSize[1]; ++y) {
          for (int z = 0; z < localSize[2]; ++z) {
-            std::array<double, 3> start3 = perBGrid.getPhysicalCoords(x, y, z);
+            auto start3 = perBGrid.getPhysicalCoords(x, y, z);
             start[0] = start3[0];
             start[1] = start3[1];
             start[2] = start3[2];

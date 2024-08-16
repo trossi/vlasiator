@@ -57,7 +57,7 @@ void computeCoupling(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGri
   
   
   //size of fsgrid local part
-  int* gridDims = momentsGrid.getLocalSize();
+  auto gridDims = momentsGrid.getLocalSize();
   
  
   //Compute what we will receive, and where it should be stored
@@ -145,7 +145,7 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
 
    // Get size of local domain and create swapGrid for filtering
-   const int *mntDims= &momentsGrid.getLocalSize()[0];  
+   const auto mntDims= &momentsGrid.getLocalSize()[0];  
    const int maxRefLevel = mpiGrid.mapping.get_maximum_refinement_level();
    MomentsFsGrid swapGrid = momentsGrid;  //swap array 
 

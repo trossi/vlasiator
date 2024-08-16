@@ -312,8 +312,7 @@ void calculateDerivativesSimple(
    cint& RKCase,
    const bool communicateMoments) {
    int timer;
-   //const std::array<int, 3> gridDims = technicalGrid.getLocalSize();
-   const int* gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
    
    phiprof::start("Calculate face derivatives");
@@ -489,8 +488,7 @@ void calculateBVOLDerivativesSimple(
    arch::buf<SysBoundary>& sysBoundaries
 ) {
    int timer;
-   //const std::array<int, 3> gridDims = technicalGrid.getLocalSize();
-   const int* gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
    
    phiprof::start("Calculate volume derivatives");
@@ -650,8 +648,7 @@ void calculateCurvatureSimple(
    arch::buf<SysBoundary>& sysBoundaries
 ) {
    int timer;
-   //const std::array<int, 3> gridDims = technicalGrid.getLocalSize();
-   const int* gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
    
    phiprof::start("Calculate curvature");

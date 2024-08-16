@@ -1392,7 +1392,7 @@ bool validateMesh(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,c
 
 void mapRefinement(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid) {
    phiprof::start("Map Refinement Level to FsGrid");
-   const int *localDims = &technicalGrid.getLocalSize()[0];
+   const auto localDims = &technicalGrid.getLocalSize()[0];
 
    // #pragma omp parallel for collapse(3)
    for (int k=0; k<localDims[2]; k++) {

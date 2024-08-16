@@ -175,7 +175,7 @@ void computeNewTimeStep(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpi
    }
 
    // compute max dt for fieldsolver
-   int* gridDims(technicalGrid.getLocalSize());
+   auto gridDims = technicalGrid.getLocalSize();
    for (int k = 0; k < gridDims[2]; k++) {
       for (int j = 0; j < gridDims[1]; j++) {
          for (int i = 0; i < gridDims[0]; i++) {

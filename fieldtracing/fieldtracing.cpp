@@ -475,7 +475,7 @@ namespace FieldTracing {
       const TReal stepSize = min(1000e3, technicalGrid.DX / 2.);
       std::vector<TReal> nodeTracingStepSize(nodes.size(), stepSize); // In-flight storage of step size, needed when crossing into next MPI domain
       std::vector<TReal> reducedNodeTracingStepSize(nodes.size());
-      int* gridSize = technicalGrid.getGlobalSize();
+      auto gridSize = technicalGrid.getGlobalSize();
       uint64_t maxTracingSteps = 8 * (gridSize[0] * technicalGrid.DX + gridSize[1] * technicalGrid.DY + gridSize[2] * technicalGrid.DZ) / stepSize;
       
       std::vector<int> nodeMapping(nodes.size(), TracingLineEndType::UNPROCESSED);                                 /*!< For reduction of node coupling */

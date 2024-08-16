@@ -170,8 +170,8 @@ namespace FieldTracing {
       b[2] = SBC::ionosphereGrid.dipoleField(r[0],r[1],r[2],Z,0,Z) + SBC::ionosphereGrid.BGB[2];
       
       std::array<int32_t, 3> fsgridCell = getGlobalFsGridCellIndexForCoord(technicalGrid,{(TReal)r[0], (TReal)r[1], (TReal)r[2]});
-      int32_t* localStart = technicalGrid.getLocalStart();
-      int32_t* localSize = technicalGrid.getLocalSize();
+      auto localStart = technicalGrid.getLocalStart();
+      auto localSize = technicalGrid.getLocalSize();
       // Make the global index a local one, bypass the fsgrid function that yields (-1,-1,-1) also for ghost cells.
       fsgridCell[0] -= localStart[0];
       fsgridCell[1] -= localStart[1];

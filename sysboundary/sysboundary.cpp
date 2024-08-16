@@ -488,7 +488,7 @@ bool SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
                                 TechnicalFsGrid& technicalGrid) {
    bool success = true;
    const vector<CellID>& cells = getLocalCells();
-   int* localSize = technicalGrid.getLocalSize();
+   auto localSize = technicalGrid.getLocalSize();
 
    /*set all cells to default value, not_sysboundary and no forcing of the bulkv */
 #pragma omp parallel for
@@ -679,7 +679,7 @@ bool SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
 
    technicalGrid.updateGhostCells();
 
-   int* fsGridDimensions = technicalGrid.getGlobalSize();
+   auto fsGridDimensions = technicalGrid.getGlobalSize();
 
    // One pass to setup the bit field to know which components the field solver should propagate.
 #pragma omp parallel for collapse(3)

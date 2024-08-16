@@ -900,7 +900,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
 
   //The visit plugin expects MESH_BBOX as a keyword. We only write one
   //from the first rank.
-  int32_t* globalSize = technicalGrid.getGlobalSize();
+  auto globalSize = technicalGrid.getGlobalSize();
   std::array<int64_t, 6> boundaryBox({globalSize[0], globalSize[1], globalSize[2],
       1,1,1});
 
@@ -948,7 +948,7 @@ bool writeFsGridMetadata(TechnicalFsGrid & technicalGrid, vlsv::Writer& vlsvWrit
   vlsvWriter.writeArray("MESH_GHOST_LOCALIDS", xmlAttributes, 0, 1, &dummyghost);
 
   // Write cell "globalID" numbers, which are just the global array indices.
-  int32_t* localSize = technicalGrid.getLocalSize();
+  auto localSize = technicalGrid.getLocalSize();
   std::vector<uint64_t> globalIds(localSize[0]*localSize[1]*localSize[2]);
   int i=0;
   for(int z=0; z<localSize[2]; z++) {
