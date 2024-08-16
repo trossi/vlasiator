@@ -62,7 +62,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract total magnetic field
@@ -97,7 +97,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract background B
@@ -129,7 +129,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract values
@@ -161,7 +161,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract E values
@@ -208,7 +208,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract rho valuesg
@@ -243,7 +243,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract charge density
@@ -288,7 +288,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract bulk Velocity
@@ -464,7 +464,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract field solver timestep limit
@@ -501,7 +501,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2],technicalGrid.getRank());
                return retval;
              }
@@ -524,7 +524,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       TechnicalFsGrid& technicalGrid)->std::vector<double> {
 
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract corresponding AMR level
@@ -561,7 +561,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -598,7 +598,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary layer
@@ -660,7 +660,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract EVOL
@@ -694,7 +694,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                          VolFsGrid & volGrid,
                          TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-                  int32_t* gridSize = technicalGrid.getLocalSize();
+                  auto& gridSize = technicalGrid.getLocalSize();
                   std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                   // Iterate through fsgrid cells and extract EHall
@@ -737,7 +737,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
 
                // Iterate through fsgrid cells and extract total BVOL
@@ -789,7 +789,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -857,7 +857,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -883,7 +883,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -909,7 +909,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -935,7 +935,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -961,7 +961,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -987,7 +987,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1013,7 +1013,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1039,7 +1039,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1065,7 +1065,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1091,7 +1091,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1117,7 +1117,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1143,7 +1143,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1169,7 +1169,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1195,7 +1195,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1221,7 +1221,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1249,7 +1249,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1275,7 +1275,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1301,7 +1301,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1327,7 +1327,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1353,7 +1353,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1379,7 +1379,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1405,7 +1405,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1431,7 +1431,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1457,7 +1457,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1483,7 +1483,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1509,7 +1509,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1535,7 +1535,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1561,7 +1561,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1587,7 +1587,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1613,7 +1613,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1639,7 +1639,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1665,7 +1665,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1691,7 +1691,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1717,7 +1717,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1743,7 +1743,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1769,7 +1769,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1795,7 +1795,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1821,7 +1821,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1847,7 +1847,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1873,7 +1873,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1899,7 +1899,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1925,7 +1925,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1953,7 +1953,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -1979,7 +1979,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2005,7 +2005,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2031,7 +2031,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2057,7 +2057,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2083,7 +2083,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2109,7 +2109,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2135,7 +2135,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2161,7 +2161,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2187,7 +2187,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2213,7 +2213,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2239,7 +2239,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2267,7 +2267,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2293,7 +2293,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2319,7 +2319,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2345,7 +2345,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2371,7 +2371,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2397,7 +2397,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract boundary flag
@@ -2444,7 +2444,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract X coordinate
@@ -2471,7 +2471,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract Y coordinate
@@ -2498,7 +2498,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
 
                // Iterate through fsgrid cells and extract Z coordinate
@@ -2525,7 +2525,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DX);
                return retval;
          }
@@ -2543,7 +2543,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DY);
                return retval;
          }
@@ -2561,7 +2561,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
                       VolFsGrid & volGrid,
                       TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DZ);
                return retval;
          }
@@ -3163,7 +3163,7 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
             VolFsGrid & volGrid,
             TechnicalFsGrid & technicalGrid)->std::vector<double> {
                
-               int32_t* gridSize = technicalGrid.getLocalSize();
+               auto& gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
                
                for(int z=0; z<gridSize[2]; z++) {

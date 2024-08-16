@@ -153,7 +153,7 @@ namespace DRO {
       std::vector<double> varBuffer =
          lambda(perBGrid,EGrid,EHallGrid,EGradPeGrid,momentsGrid,dPerBGrid,dMomentsGrid,BgBGrid,volGrid,technicalGrid);
 
-      int32_t* gridSize = technicalGrid.getLocalSize();
+      auto& gridSize = technicalGrid.getLocalSize();
       int vectorSize = varBuffer.size() / (gridSize[0]*gridSize[1]*gridSize[2]);
 
       if(writeAsFloat) {
