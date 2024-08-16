@@ -64,7 +64,7 @@ void propagateMagneticField(
    creal dy = perBGrid.grid()->DY;
    creal dz = perBGrid.grid()->DZ;
    
-   Real* perBGrid0 = perBGrid.get(i,j,k);
+   auto perBGrid0 = perBGrid.get(i,j,k);
    Real* EGrid0;
    Real* EGrid1;
    Real* EGrid2;

@@ -47,7 +47,7 @@ void calculateVolumeAveragedFields(
       if(technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) return;
       
       Real perturbedCoefficients[Rec::N_REC_COEFFICIENTS];
-      Real* volGrid0 = volGrid.get(i,j,k);
+      auto volGrid0 = volGrid.get(i,j,k);
       
       // Calculate reconstruction coefficients for this cell:
       reconstructionCoefficients(
@@ -66,7 +66,7 @@ void calculateVolumeAveragedFields(
       volGrid0[fsgrids::volfields::PERBZVOL] = perturbedCoefficients[Rec::c_0];
 
       // Calculate volume average of E (FIXME NEEDS IMPROVEMENT):
-      Real* EGrid_i1j1k1 = EGrid.get(i,j,k);
+      auto EGrid_i1j1k1 = EGrid.get(i,j,k);
       if ( technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY ||
             (technicalGrid.get(i,j,k)->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY && technicalGrid.get(i,j,k)->sysBoundaryLayer == 1)
       ) {
@@ -86,9 +86,9 @@ void calculateVolumeAveragedFields(
          }
          #endif
 
-         Real* EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
-         Real* EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
-         Real* EGrid_i1j2k2 = EGrid.get(i  ,j+1,k+1);
+         auto EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
+         auto EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
+         auto EGrid_i1j2k2 = EGrid.get(i  ,j+1,k+1);
 
          CHECK_FLOAT(EGrid_i1j1k1[fsgrids::efield::EX])
          CHECK_FLOAT(EGrid_i1j2k1[fsgrids::efield::EX])
@@ -119,9 +119,9 @@ void calculateVolumeAveragedFields(
          }
          #endif
 
-         Real* EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
-         Real* EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
-         Real* EGrid_i2j1k2 = EGrid.get(i+1,j  ,k+1);
+         auto EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
+         auto EGrid_i1j1k2 = EGrid.get(i  ,j  ,k+1);
+         auto EGrid_i2j1k2 = EGrid.get(i+1,j  ,k+1);
 
          CHECK_FLOAT(EGrid_i1j1k1[fsgrids::efield::EY])
          CHECK_FLOAT(EGrid_i2j1k1[fsgrids::efield::EY])
@@ -152,9 +152,9 @@ void calculateVolumeAveragedFields(
          }
          #endif
 
-         Real* EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
-         Real* EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
-         Real* EGrid_i2j2k1 = EGrid.get(i+1,j+1,k  );
+         auto EGrid_i2j1k1 = EGrid.get(i+1,j  ,k  );
+         auto EGrid_i1j2k1 = EGrid.get(i  ,j+1,k  );
+         auto EGrid_i2j2k1 = EGrid.get(i+1,j+1,k  );
 
          CHECK_FLOAT(EGrid_i1j1k1[fsgrids::efield::EZ])
          CHECK_FLOAT(EGrid_i2j1k1[fsgrids::efield::EZ])

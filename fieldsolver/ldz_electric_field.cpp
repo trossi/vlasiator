@@ -120,14 +120,14 @@ ARCH_HOSTDEV void calculateWaveSpeedYZ(
    Real& ret_vS,
    Real& ret_vW
 ) {
-   Real* perb = perBGrid.get(i,j,k);
-   Real* nbr_perb = perBGrid.get(nbi,nbj,nbk);
-   Real* moments = momentsGrid.get(i,j,k);
-   Real* dmoments = dMomentsGrid.get(i,j,k);
-   Real* dperb = dPerBGrid.get(i,j,k);
-   Real* nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
-   Real* bgb = BgBGrid.get(i,j,k);
-   Real*  nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
+   auto perb = perBGrid.get(i,j,k);
+   auto nbr_perb = perBGrid.get(nbi,nbj,nbk);
+   auto moments = momentsGrid.get(i,j,k);
+   auto dmoments = dMomentsGrid.get(i,j,k);
+   auto dperb = dPerBGrid.get(i,j,k);
+   auto nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
+   auto bgb = BgBGrid.get(i,j,k);
+   auto nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
    
    Real A_0, A_X, rhom, p11, p22, p33;
    A_0  = HALF*(nbr_perb[fsgrids::bfield::PERBX] + nbr_bgb[fsgrids::bgbfield::BGBX] + perb[fsgrids::bfield::PERBX] + bgb[fsgrids::bgbfield::BGBX]);
@@ -243,14 +243,14 @@ ARCH_HOSTDEV void calculateWaveSpeedXZ(
    Real& ret_vS,
    Real& ret_vW
 ) {
-   Real* perb = perBGrid.get(i,j,k);
-   Real* nbr_perb = perBGrid.get(nbi,nbj,nbk);
-   Real* moments = momentsGrid.get(i,j,k);
-   Real* dmoments = dMomentsGrid.get(i,j,k);
-   Real* dperb = dPerBGrid.get(i,j,k);
-   Real* nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
-   Real* bgb = BgBGrid.get(i,j,k);
-   Real*  nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
+   auto perb = perBGrid.get(i,j,k);
+   auto nbr_perb = perBGrid.get(nbi,nbj,nbk);
+   auto moments = momentsGrid.get(i,j,k);
+   auto dmoments = dMomentsGrid.get(i,j,k);
+   auto dperb = dPerBGrid.get(i,j,k);
+   auto nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
+   auto bgb = BgBGrid.get(i,j,k);
+   auto nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
    
    Real B_0, B_Y, rhom, p11, p22, p33;
    B_0  = HALF*(nbr_perb[fsgrids::bfield::PERBY] + nbr_bgb[fsgrids::bgbfield::BGBY] + perb[fsgrids::bfield::PERBY] + bgb[fsgrids::bgbfield::BGBY]);
@@ -366,14 +366,14 @@ ARCH_HOSTDEV void calculateWaveSpeedXY(
    Real& ret_vS,
    Real& ret_vW
 ) {
-   Real* perb = perBGrid.get(i,j,k);
-   Real* nbr_perb = perBGrid.get(nbi,nbj,nbk);
-   Real* moments = momentsGrid.get(i,j,k);
-   Real* dmoments = dMomentsGrid.get(i,j,k);
-   Real* dperb = dPerBGrid.get(i,j,k);
-   Real* nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
-   Real* bgb = BgBGrid.get(i,j,k);
-   Real*  nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
+   auto perb = perBGrid.get(i,j,k);
+   auto nbr_perb = perBGrid.get(nbi,nbj,nbk);
+   auto moments = momentsGrid.get(i,j,k);
+   auto dmoments = dMomentsGrid.get(i,j,k);
+   auto dperb = dPerBGrid.get(i,j,k);
+   auto nbr_dperb = dPerBGrid.get(nbi,nbj,nbk);
+   auto bgb = BgBGrid.get(i,j,k);
+   auto nbr_bgb = BgBGrid.get(nbi,nbj,nbk);
    
    Real C_0, C_Z, rhom, p11, p22, p33;
    C_0  = HALF*(nbr_perb[fsgrids::bfield::PERBZ] + nbr_bgb[fsgrids::bgbfield::BGBZ] + perb[fsgrids::bfield::PERBZ] + bgb[fsgrids::bgbfield::BGBZ]);
@@ -494,28 +494,28 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldX(
    Real c_y, c_z;                   // Wave speeds to yz-directions
 
    // Get values at all four neighbours, result is written to SW.
-   Real* perb_SW = perBGrid.get(i  ,j  ,k  );
-   Real* perb_SE = perBGrid.get(i  ,j-1,k  );
-   Real* perb_NE = perBGrid.get(i  ,j-1,k-1);
-   Real* perb_NW = perBGrid.get(i  ,j  ,k-1);
-   Real* bgb_SW = BgBGrid.get(i,j  ,k  );
-   Real* bgb_SE = BgBGrid.get(i,j-1,k  );
-   Real* bgb_NE = BgBGrid.get(i,j-1,k-1);
-   Real* bgb_NW = BgBGrid.get(i,j  ,k-1);
-   Real* moments_SW = momentsGrid.get(i  ,j  ,k  );
-   Real* moments_SE = momentsGrid.get(i  ,j-1,k  );
-   Real* moments_NE = momentsGrid.get(i  ,j-1,k-1);
-   Real* moments_NW = momentsGrid.get(i  ,j  ,k-1);
-   Real* dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
-   Real* dmoments_SE = dMomentsGrid.get(i  ,j-1,k  );
-   Real* dmoments_NE = dMomentsGrid.get(i  ,j-1,k-1);
-   Real* dmoments_NW = dMomentsGrid.get(i  ,j  ,k-1);
-   Real* dperb_SW = dPerBGrid.get(i  ,j  ,k  );
-   Real* dperb_SE = dPerBGrid.get(i  ,j-1,k  );
-   Real* dperb_NE = dPerBGrid.get(i  ,j-1,k-1);
-   Real* dperb_NW = dPerBGrid.get(i  ,j  ,k-1);
+   auto perb_SW = perBGrid.get(i  ,j  ,k  );
+   auto perb_SE = perBGrid.get(i  ,j-1,k  );
+   auto perb_NE = perBGrid.get(i  ,j-1,k-1);
+   auto perb_NW = perBGrid.get(i  ,j  ,k-1);
+   auto bgb_SW = BgBGrid.get(i,j  ,k  );
+   auto bgb_SE = BgBGrid.get(i,j-1,k  );
+   auto bgb_NE = BgBGrid.get(i,j-1,k-1);
+   auto bgb_NW = BgBGrid.get(i,j  ,k-1);
+   auto moments_SW = momentsGrid.get(i  ,j  ,k  );
+   auto moments_SE = momentsGrid.get(i  ,j-1,k  );
+   auto moments_NE = momentsGrid.get(i  ,j-1,k-1);
+   auto moments_NW = momentsGrid.get(i  ,j  ,k-1);
+   auto dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
+   auto dmoments_SE = dMomentsGrid.get(i  ,j-1,k  );
+   auto dmoments_NE = dMomentsGrid.get(i  ,j-1,k-1);
+   auto dmoments_NW = dMomentsGrid.get(i  ,j  ,k-1);
+   auto dperb_SW = dPerBGrid.get(i  ,j  ,k  );
+   auto dperb_SE = dPerBGrid.get(i  ,j-1,k  );
+   auto dperb_NE = dPerBGrid.get(i  ,j-1,k-1);
+   auto dperb_NW = dPerBGrid.get(i  ,j  ,k-1);
    
-   Real* efield_SW = EGrid.get(i,j,k);
+   auto efield_SW = EGrid.get(i,j,k);
    
    Real By_S, Bz_W, Bz_E, By_N, perBy_S, perBz_W, perBz_E, perBy_N;
    Real minRhom = std::numeric_limits<Real>::max();
@@ -855,28 +855,28 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldY(
    Real maxV = 0.0;                 // Max velocity for CFL purposes
    Real c_x,c_z;                    // Wave speeds to xz-directions
    
-   Real* perb_SW = perBGrid.get(i  ,j  ,k  );
-   Real* perb_SE = perBGrid.get(i  ,j  ,k-1);
-   Real* perb_NW = perBGrid.get(i-1,j  ,k  );
-   Real* perb_NE = perBGrid.get(i-1,j  ,k-1);
-   Real* bgb_SW = BgBGrid.get(i  ,j  ,k  );
-   Real* bgb_SE = BgBGrid.get(i  ,j  ,k-1);
-   Real* bgb_NW = BgBGrid.get(i-1,j  ,k  );
-   Real* bgb_NE = BgBGrid.get(i-1,j  ,k-1);
-   Real* moments_SW = momentsGrid.get(i  ,j  ,k  );
-   Real* moments_SE = momentsGrid.get(i  ,j  ,k-1);
-   Real* moments_NW = momentsGrid.get(i-1,j  ,k  );
-   Real* moments_NE = momentsGrid.get(i-1,j  ,k-1);
-   Real* dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
-   Real* dmoments_SE = dMomentsGrid.get(i  ,j  ,k-1);
-   Real* dmoments_NW = dMomentsGrid.get(i-1,j  ,k  );
-   Real* dmoments_NE = dMomentsGrid.get(i-1,j  ,k-1);
-   Real* dperb_SW = dPerBGrid.get(i  ,j  ,k  );
-   Real* dperb_SE = dPerBGrid.get(i  ,j  ,k-1);
-   Real* dperb_NW = dPerBGrid.get(i-1,j  ,k  );
-   Real* dperb_NE = dPerBGrid.get(i-1,j  ,k-1);
+   auto perb_SW = perBGrid.get(i  ,j  ,k  );
+   auto perb_SE = perBGrid.get(i  ,j  ,k-1);
+   auto perb_NW = perBGrid.get(i-1,j  ,k  );
+   auto perb_NE = perBGrid.get(i-1,j  ,k-1);
+   auto bgb_SW = BgBGrid.get(i  ,j  ,k  );
+   auto bgb_SE = BgBGrid.get(i  ,j  ,k-1);
+   auto bgb_NW = BgBGrid.get(i-1,j  ,k  );
+   auto bgb_NE = BgBGrid.get(i-1,j  ,k-1);
+   auto moments_SW = momentsGrid.get(i  ,j  ,k  );
+   auto moments_SE = momentsGrid.get(i  ,j  ,k-1);
+   auto moments_NW = momentsGrid.get(i-1,j  ,k  );
+   auto moments_NE = momentsGrid.get(i-1,j  ,k-1);
+   auto dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
+   auto dmoments_SE = dMomentsGrid.get(i  ,j  ,k-1);
+   auto dmoments_NW = dMomentsGrid.get(i-1,j  ,k  );
+   auto dmoments_NE = dMomentsGrid.get(i-1,j  ,k-1);
+   auto dperb_SW = dPerBGrid.get(i  ,j  ,k  );
+   auto dperb_SE = dPerBGrid.get(i  ,j  ,k-1);
+   auto dperb_NW = dPerBGrid.get(i-1,j  ,k  );
+   auto dperb_NE = dPerBGrid.get(i-1,j  ,k-1);
    
-   Real* efield_SW = EGrid.get(i,j,k);
+   auto efield_SW = EGrid.get(i,j,k);
    
    // Fetch required plasma parameters:
    Real Bz_S, Bx_W, Bx_E, Bz_N, perBz_S, perBx_W, perBx_E, perBz_N;
@@ -1217,28 +1217,28 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldZ(
    Real c_x,c_y;                    // Characteristic speeds to xy-directions
    
    // Get read-only pointers to NE,NW,SE,SW states (SW is rw, result is written there):
-   Real* perb_SW = perBGrid.get(i  ,j  ,k  );
-   Real* perb_SE = perBGrid.get(i-1,j  ,k  );
-   Real* perb_NE = perBGrid.get(i-1,j-1,k  );
-   Real* perb_NW = perBGrid.get(i  ,j-1,k  );
-   Real* bgb_SW = BgBGrid.get(i  ,j  ,k  );
-   Real* bgb_SE = BgBGrid.get(i-1,j  ,k  );
-   Real* bgb_NE = BgBGrid.get(i-1,j-1,k  );
-   Real* bgb_NW = BgBGrid.get(i  ,j-1,k  );
-   Real* moments_SW = momentsGrid.get(i  ,j  ,k  );
-   Real* moments_SE = momentsGrid.get(i-1,j  ,k  );
-   Real* moments_NE = momentsGrid.get(i-1,j-1,k  );
-   Real* moments_NW = momentsGrid.get(i  ,j-1,k  );
-   Real* dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
-   Real* dmoments_SE = dMomentsGrid.get(i-1,j  ,k  );
-   Real* dmoments_NE = dMomentsGrid.get(i-1,j-1,k  );
-   Real* dmoments_NW = dMomentsGrid.get(i  ,j-1,k  );
-   Real* dperb_SW = dPerBGrid.get(i  ,j  ,k  );
-   Real* dperb_SE = dPerBGrid.get(i-1,j  ,k  );
-   Real* dperb_NE = dPerBGrid.get(i-1,j-1,k  );
-   Real* dperb_NW = dPerBGrid.get(i  ,j-1,k  );
+   auto perb_SW = perBGrid.get(i  ,j  ,k  );
+   auto perb_SE = perBGrid.get(i-1,j  ,k  );
+   auto perb_NE = perBGrid.get(i-1,j-1,k  );
+   auto perb_NW = perBGrid.get(i  ,j-1,k  );
+   auto bgb_SW = BgBGrid.get(i  ,j  ,k  );
+   auto bgb_SE = BgBGrid.get(i-1,j  ,k  );
+   auto bgb_NE = BgBGrid.get(i-1,j-1,k  );
+   auto bgb_NW = BgBGrid.get(i  ,j-1,k  );
+   auto moments_SW = momentsGrid.get(i  ,j  ,k  );
+   auto moments_SE = momentsGrid.get(i-1,j  ,k  );
+   auto moments_NE = momentsGrid.get(i-1,j-1,k  );
+   auto moments_NW = momentsGrid.get(i  ,j-1,k  );
+   auto dmoments_SW = dMomentsGrid.get(i  ,j  ,k  );
+   auto dmoments_SE = dMomentsGrid.get(i-1,j  ,k  );
+   auto dmoments_NE = dMomentsGrid.get(i-1,j-1,k  );
+   auto dmoments_NW = dMomentsGrid.get(i  ,j-1,k  );
+   auto dperb_SW = dPerBGrid.get(i  ,j  ,k  );
+   auto dperb_SE = dPerBGrid.get(i-1,j  ,k  );
+   auto dperb_NE = dPerBGrid.get(i-1,j-1,k  );
+   auto dperb_NW = dPerBGrid.get(i  ,j-1,k  );
    
-   Real* efield_SW = EGrid.get(i,j,k);
+   auto efield_SW = EGrid.get(i,j,k);
    
    // Fetch needed plasma parameters/derivatives from the four cells:
    Real Bx_S, By_W, By_E, Bx_N, perBx_S, perBy_W, perBy_E, perBx_N;

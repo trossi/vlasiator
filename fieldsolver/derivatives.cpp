@@ -60,8 +60,8 @@ void calculateDerivatives(
    const arch::buf<SysBoundary>& sysBoundaries,
    cint& RKCase
 ) {
-   Real* dPerB = dPerBGrid.get(i,j,k);
-   Real* dMoments = dMomentsGrid.get(i,j,k);
+   auto dPerB = dPerBGrid.get(i,j,k);
+   auto dMoments = dMomentsGrid.get(i,j,k);
 
    // Get boundary flag for the cell:
    cuint sysBoundaryFlag  = technicalGrid.get(i,j,k)->sysBoundaryFlag;
@@ -74,8 +74,8 @@ void calculateDerivatives(
 
    Real* leftMoments = NULL;
    Real* leftPerB = NULL;
-   Real* centMoments = momentsGrid.get(i,j,k);
-   Real* centPerB = perBGrid.get(i,j,k);
+   auto centMoments = momentsGrid.get(i,j,k);
+   auto centPerB = perBGrid.get(i,j,k);
    #ifdef DEBUG_SOLVERS
    if (centMoments[fsgrids::moments::RHOM] <= 0) {
       std::cerr << __FILE__ << ":" << __LINE__
@@ -419,7 +419,7 @@ void calculateBVOLDerivatives(
    cint k,
    const arch::buf<SysBoundary>& sysBoundaries
 ) {
-   Real* array = volGrid.get(i,j,k);
+   auto array = volGrid.get(i,j,k);
    Real* left = NULL;
    Real* rght = NULL;
    
@@ -568,20 +568,20 @@ void calculateCurvature(
    const arch::buf<SysBoundary>& sysBoundaries
 ) {
    if (technicalGrid.get(i,j,k)->sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY && technicalGrid.get(i,j,k)->sysBoundaryLayer != 1 && technicalGrid.get(i,j,k)->sysBoundaryLayer != 2) {
-      Real* vol = volGrid.get(i,j,k);
-      Real* bg = bgbGrid.get(i,j,k);
-      Real* vol_left_x = volGrid.get(i-1,j,k);
-      Real* vol_rght_x = volGrid.get(i+1,j,k);
-      Real* vol_left_y = volGrid.get(i,j-1,k);
-      Real* vol_rght_y = volGrid.get(i,j+1,k);
-      Real* vol_left_z = volGrid.get(i,j,k-1);
-      Real* vol_rght_z = volGrid.get(i,j,k+1);
-      Real* bg_left_x = bgbGrid.get(i-1,j,k);
-      Real* bg_rght_x = bgbGrid.get(i+1,j,k);
-      Real* bg_left_y = bgbGrid.get(i,j-1,k);
-      Real* bg_rght_y = bgbGrid.get(i,j+1,k);
-      Real* bg_left_z = bgbGrid.get(i,j,k-1);
-      Real* bg_rght_z = bgbGrid.get(i,j,k+1);
+      auto vol = volGrid.get(i,j,k);
+      auto bg = bgbGrid.get(i,j,k);
+      auto vol_left_x = volGrid.get(i-1,j,k);
+      auto vol_rght_x = volGrid.get(i+1,j,k);
+      auto vol_left_y = volGrid.get(i,j-1,k);
+      auto vol_rght_y = volGrid.get(i,j+1,k);
+      auto vol_left_z = volGrid.get(i,j,k-1);
+      auto vol_rght_z = volGrid.get(i,j,k+1);
+      auto bg_left_x = bgbGrid.get(i-1,j,k);
+      auto bg_rght_x = bgbGrid.get(i+1,j,k);
+      auto bg_left_y = bgbGrid.get(i,j-1,k);
+      auto bg_rght_y = bgbGrid.get(i,j+1,k);
+      auto bg_left_z = bgbGrid.get(i,j,k-1);
+      auto bg_rght_z = bgbGrid.get(i,j,k+1);
       
       Real bx = bg[fsgrids::bgbfield::BGBXVOL] + vol[fsgrids::volfields::PERBXVOL];
       Real by = bg[fsgrids::bgbfield::BGBYVOL] + vol[fsgrids::volfields::PERBYVOL];

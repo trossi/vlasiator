@@ -1217,7 +1217,7 @@ namespace SBC {
 
 
                      // Map density, temperature down
-                     Real thisCellRho = momentsGrid.get(lfsc[0]+xoffset,lfsc[1]+yoffset,lfsc[2]+zoffset)[fsgrids::RHOQ] / physicalconstants::CHARGE;
+                     auto thisCellRho = momentsGrid.get(lfsc[0]+xoffset,lfsc[1]+yoffset,lfsc[2]+zoffset)[fsgrids::RHOQ] / physicalconstants::CHARGE;
                      rhoInput[n] += coupling * thisCellRho;
                      temperatureInput[n] += coupling * 1./3. * (
                         momentsGrid.get(lfsc[0]+xoffset,lfsc[1]+yoffset,lfsc[2]+zoffset)[fsgrids::P_11] +

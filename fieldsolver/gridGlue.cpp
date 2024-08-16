@@ -391,9 +391,9 @@ void getFieldsFromFsGrid(
 //        if(technicalGrid.get(fsgridCell)->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) {
 //           continue;
 //        }
-            Real* volcell = volumeFieldsGrid.get(fsgridCell);
-            Real* bgcell = BgBGrid.get(fsgridCell);
-            Real* egradpecell = EGradPeGrid.get(fsgridCell);	
+            auto volcell = volumeFieldsGrid.get(fsgridCell);
+            auto bgcell = BgBGrid.get(fsgridCell);
+            auto egradpecell = EGradPeGrid.get(fsgridCell);	
             
             sendBuffer[ii].sums[FieldsToCommunicate::PERBXVOL] += volcell[fsgrids::volfields::PERBXVOL];
             sendBuffer[ii].sums[FieldsToCommunicate::PERBYVOL] += volcell[fsgrids::volfields::PERBYVOL];
