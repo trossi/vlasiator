@@ -62,18 +62,13 @@ void reconstructionCoefficientsCommon(
    cint k,
    creal& reconstructionOrder
 ) {
-      Real* cep_i1j1k1 = NULL;
    auto der_i1j1k1 = dPerBGrid.get(i,j,k);
-   Real* dummyCellParams = NULL;
-   Real* cep_i2j1k1 = NULL;
-   Real* cep_i1j2k1 = NULL;
-   Real* cep_i1j1k2 = NULL;
    
-   cep_i1j1k1 = perBGrid.get(i,j,k);
-   dummyCellParams = cep_i1j1k1;
-   cep_i2j1k1 = dummyCellParams;
-   cep_i1j2k1 = dummyCellParams;
-   cep_i1j1k2 = dummyCellParams;
+   auto cep_i1j1k1 = perBGrid.get(i,j,k);
+   auto dummyCellParams = cep_i1j1k1;
+   auto cep_i2j1k1 = dummyCellParams;
+   auto cep_i1j2k1 = dummyCellParams;
+   auto cep_i1j1k2 = dummyCellParams;
    if (perBGrid.get(i+1,j,k) != NULL) cep_i2j1k1 = perBGrid.get(i+1,j,k);
    if (perBGrid.get(i,j+1,k) != NULL) cep_i1j2k1 = perBGrid.get(i,j+1,k);
    if (perBGrid.get(i,j,k+1) != NULL) cep_i1j1k2 = perBGrid.get(i,j,k+1);

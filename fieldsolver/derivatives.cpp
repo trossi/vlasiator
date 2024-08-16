@@ -72,8 +72,6 @@ void calculateDerivatives(
    Real Peupstream = Parameters::electronTemperature * Parameters::electronDensity * physicalconstants::K_B;
    Real Peconst = Peupstream * pow(Parameters::electronDensity, -Parameters::electronPTindex);
 
-   Real* leftMoments = NULL;
-   Real* leftPerB = NULL;
    auto centMoments = momentsGrid.get(i,j,k);
    auto centPerB = perBGrid.get(i,j,k);
    #ifdef DEBUG_SOLVERS
@@ -84,19 +82,13 @@ void calculateDerivatives(
       abort();
    }
    #endif
-   Real* rghtMoments = NULL;
-   Real* rghtPerB = NULL;
-   Real* botLeft = NULL;
-   Real* botRght = NULL;
-   Real* topLeft = NULL;
-   Real* topRght = NULL;
    
    // Calculate x-derivatives (is not TVD for AMR mesh):
    if ((sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) || (sysBoundaryLayer == 1)) {
-      leftPerB = perBGrid.get(i-1,j,k);
-      rghtPerB = perBGrid.get(i+1,j,k);
-      leftMoments = momentsGrid.get(i-1,j,k);
-      rghtMoments = momentsGrid.get(i+1,j,k);
+      auto leftPerB = perBGrid.get(i-1,j,k);
+      auto rghtPerB = perBGrid.get(i+1,j,k);
+      auto leftMoments = momentsGrid.get(i-1,j,k);
+      auto rghtMoments = momentsGrid.get(i+1,j,k);
       #ifdef DEBUG_SOLVERS
       if (leftMoments[fsgrids::moments::RHOM] <= 0) {
          std::cerr << __FILE__ << ":" << __LINE__
@@ -154,10 +146,10 @@ void calculateDerivatives(
 
    // Calculate y-derivatives (is not TVD for AMR mesh):
    if ((sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) || (sysBoundaryLayer == 1)) {
-      leftPerB = perBGrid.get(i,j-1,k);
-      rghtPerB = perBGrid.get(i,j+1,k);
-      leftMoments = momentsGrid.get(i,j-1,k);
-      rghtMoments = momentsGrid.get(i,j+1,k);
+      auto leftPerB = perBGrid.get(i,j-1,k);
+      auto rghtPerB = perBGrid.get(i,j+1,k);
+      auto leftMoments = momentsGrid.get(i,j-1,k);
+      auto rghtMoments = momentsGrid.get(i,j+1,k);
 
       if(sysBoundaryLayer == 1 || sysBoundaryLayer == 2) {
          dMoments[fsgrids::dmoments::drhomdy] = (rghtMoments[fsgrids::moments::RHOM]-leftMoments[fsgrids::moments::RHOM])/2;
@@ -202,10 +194,10 @@ void calculateDerivatives(
    
    // Calculate z-derivatives (is not TVD for AMR mesh):
    if ((sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) || (sysBoundaryLayer == 1)) {
-      leftPerB = perBGrid.get(i,j,k-1);
-      rghtPerB = perBGrid.get(i,j,k+1);
-      leftMoments = momentsGrid.get(i,j,k-1);
-      rghtMoments = momentsGrid.get(i,j,k+1);
+      auto leftPerB = perBGrid.get(i,j,k-1);
+      auto rghtPerB = perBGrid.get(i,j,k+1);
+      auto leftMoments = momentsGrid.get(i,j,k-1);
+      auto rghtMoments = momentsGrid.get(i,j,k+1);
       if(sysBoundaryLayer == 1 || sysBoundaryLayer == 2) {
          dMoments[fsgrids::dmoments::drhomdz] = (rghtMoments[fsgrids::moments::RHOM]-leftMoments[fsgrids::moments::RHOM])/2;
          dMoments[fsgrids::dmoments::drhoqdz] = (rghtMoments[fsgrids::moments::RHOQ]-leftMoments[fsgrids::moments::RHOQ])/2;
@@ -254,10 +246,10 @@ void calculateDerivatives(
    } else {
       // Calculate xy mixed derivatives:
       if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) {
-         botLeft = perBGrid.get(i-1,j-1,k);
-         botRght = perBGrid.get(i+1,j-1,k);
-         topLeft = perBGrid.get(i-1,j+1,k);
-         topRght = perBGrid.get(i+1,j+1,k);
+         auto botLeft = perBGrid.get(i-1,j-1,k);
+         auto botRght = perBGrid.get(i+1,j-1,k);
+         auto topLeft = perBGrid.get(i-1,j+1,k);
+         auto topRght = perBGrid.get(i+1,j+1,k);
          dPerB[fsgrids::dperb::dPERBzdxy] = FOURTH * (botLeft[fsgrids::bfield::PERBZ] + topRght[fsgrids::bfield::PERBZ] - botRght[fsgrids::bfield::PERBZ] - topLeft[fsgrids::bfield::PERBZ]);
       } else {
          SBC::SysBoundaryCondition::setCellDerivativesToZero(dPerBGrid, dMomentsGrid, i, j, k, 3);
@@ -265,10 +257,10 @@ void calculateDerivatives(
       
       // Calculate xz mixed derivatives:
       if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) {
-         botLeft = perBGrid.get(i-1,j,k-1);
-         botRght = perBGrid.get(i+1,j,k-1);
-         topLeft = perBGrid.get(i-1,j,k+1);
-         topRght = perBGrid.get(i+1,j,k+1);
+         auto botLeft = perBGrid.get(i-1,j,k-1);
+         auto botRght = perBGrid.get(i+1,j,k-1);
+         auto topLeft = perBGrid.get(i-1,j,k+1);
+         auto topRght = perBGrid.get(i+1,j,k+1);
          dPerB[fsgrids::dperb::dPERBydxz] = FOURTH * (botLeft[fsgrids::bfield::PERBY] + topRght[fsgrids::bfield::PERBY] - botRght[fsgrids::bfield::PERBY] - topLeft[fsgrids::bfield::PERBY]);
       } else {
          SBC::SysBoundaryCondition::setCellDerivativesToZero(dPerBGrid, dMomentsGrid, i, j, k, 4);
@@ -276,10 +268,10 @@ void calculateDerivatives(
       
       // Calculate yz mixed derivatives:
       if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY) {
-         botLeft = perBGrid.get(i,j-1,k-1);
-         botRght = perBGrid.get(i,j+1,k-1);
-         topLeft = perBGrid.get(i,j-1,k+1);
-         topRght = perBGrid.get(i,j+1,k+1);
+         auto botLeft = perBGrid.get(i,j-1,k-1);
+         auto botRght = perBGrid.get(i,j+1,k-1);
+         auto topLeft = perBGrid.get(i,j-1,k+1);
+         auto topRght = perBGrid.get(i,j+1,k+1);
          dPerB[fsgrids::dperb::dPERBxdyz] = FOURTH * (botLeft[fsgrids::bfield::PERBX] + topRght[fsgrids::bfield::PERBX] - botRght[fsgrids::bfield::PERBX] - topLeft[fsgrids::bfield::PERBX]);
       } else {
          SBC::SysBoundaryCondition::setCellDerivativesToZero(dPerBGrid, dMomentsGrid, i, j, k, 5);
@@ -420,8 +412,6 @@ void calculateBVOLDerivatives(
    const arch::buf<SysBoundary>& sysBoundaries
 ) {
    auto array = volGrid.get(i,j,k);
-   Real* left = NULL;
-   Real* rght = NULL;
    
    cuint sysBoundaryFlag = technicalGrid.get(i,j,k)->sysBoundaryFlag;
    cuint sysBoundaryLayer = technicalGrid.get(i,j,k)->sysBoundaryLayer;
@@ -429,8 +419,8 @@ void calculateBVOLDerivatives(
    // Calculate x-derivatives (is not TVD for AMR mesh):
    if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY || sysBoundaryLayer == 1) {
 
-      left = volGrid.get(i-1,j,k);
-      rght = volGrid.get(i+1,j,k);
+      auto left = volGrid.get(i-1,j,k);
+      auto rght = volGrid.get(i+1,j,k);
       
       if (sysBoundaryLayer == 1 || sysBoundaryLayer == 2) {
          array[fsgrids::volfields::dPERBXVOLdx] = (rght[fsgrids::volfields::PERBXVOL]-left[fsgrids::volfields::PERBXVOL])/2;
@@ -447,8 +437,8 @@ void calculateBVOLDerivatives(
    
    // Calculate y-derivatives (is not TVD for AMR mesh):
    if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY || sysBoundaryLayer == 1) {
-      left = volGrid.get(i,j-1,k);
-      rght = volGrid.get(i,j+1,k);
+      auto left = volGrid.get(i,j-1,k);
+      auto rght = volGrid.get(i,j+1,k);
       
       if (sysBoundaryLayer == 1 || sysBoundaryLayer == 2) {
          array[fsgrids::volfields::dPERBXVOLdy] = (rght[fsgrids::volfields::PERBXVOL]-left[fsgrids::volfields::PERBXVOL])/2;
@@ -465,8 +455,8 @@ void calculateBVOLDerivatives(
    
    // Calculate z-derivatives (is not TVD for AMR mesh):
    if (sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY || sysBoundaryLayer == 1) {
-      left = volGrid.get(i,j,k-1);
-      rght = volGrid.get(i,j,k+1);
+      auto left = volGrid.get(i,j,k-1);
+      auto rght = volGrid.get(i,j,k+1);
       
       if (sysBoundaryLayer == 1 || sysBoundaryLayer == 2) {
          array[fsgrids::volfields::dPERBXVOLdz] = (rght[fsgrids::volfields::PERBXVOL]-left[fsgrids::volfields::PERBXVOL])/2;
