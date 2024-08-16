@@ -51,16 +51,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       
       if(lowercase == "fg_b" || lowercase == "b") { // Bulk magnetic field at Yee-Lattice locations
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_b",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -86,16 +86,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_backgroundb" || lowercase == "backgroundb" || lowercase == "fg_b_background") { // Static (typically dipole) magnetic field part
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_b_background",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -118,16 +118,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_perturbedb" || lowercase == "perturbedb" || lowercase == "fg_b_perturbed") { // Fluctuating magnetic field part
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_b_perturbed",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -150,16 +150,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_e" || lowercase == "e") { // Bulk electric field at Yee-lattice locations
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_e",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -197,16 +197,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_rhom") { // Overall mass density (summed over all populations)
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_rhom",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -232,16 +232,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_rhoq") { // Overall charge density (summed over all populations)
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_rhoq",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -277,16 +277,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_v") { // Overall effective bulk density defining the center-of-mass frame from all populations
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_v",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -453,16 +453,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "maxfieldsdt" || lowercase == "fg_maxfieldsdt" || lowercase == "fg_maxdt_fieldsolver") {
          // Maximum timestep constraint as calculated by the fieldsolver
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_maxdt_fieldsolver",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -490,16 +490,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fsgridrank" || lowercase == "fg_rank") {
          // Map of spatial decomposition of the FsGrid into MPI ranks
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_rank",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2],technicalGrid.getRank());
@@ -512,16 +512,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fg_amr_level") {
          // Map of spatial decomposition of the FsGrid into MPI ranks
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_amr_level",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>& perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>& EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>& EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>& EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>& momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>& dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>& dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>& BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH>& volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>& technicalGrid)->std::vector<double> {
+                      BFieldFsGrid& perBGrid,
+                      EFieldFsGrid& EGrid,
+                      EHallFsGrid& EHallGrid,
+                      EGradPeFsGrid& EGradPeGrid,
+                      MomentsFsGrid& momentsGrid,
+                      DPerBFsGrid& dPerBGrid,
+                      DMomentsFsGrid& dMomentsGrid,
+                      BgBFsGrid& BgBGrid,
+                      VolFsGrid& volGrid,
+                      TechnicalFsGrid& technicalGrid)->std::vector<double> {
 
 
                int32_t* gridSize = technicalGrid.getLocalSize();
@@ -550,16 +550,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fsgridboundarytype" || lowercase == "fg_boundarytype") {
          // Type of boundarycells as stored in FSGrid
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_boundarytype",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -587,16 +587,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fsgridboundarylayer" || lowercase == "fg_boundarylayer") {
          // Type of boundarycells as stored in FSGrid
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_boundarylayer",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -649,16 +649,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_vole" || lowercase == "fg_e_vol" || lowercase == "fg_evol") {
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_e_vol",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -683,16 +683,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          for(int index=0; index<fsgrids::N_EHALL; index++) {
             std::string reducer_name = "fg_e_hall_" + std::to_string(index);
             outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid(reducer_name,[index](
-                         FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                         FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                         FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                         FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                         FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                         FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                         FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                         FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                         FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                         FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                         BFieldFsGrid & perBGrid,
+                         EFieldFsGrid & EGrid,
+                         EHallFsGrid & EHallGrid,
+                         EGradPeFsGrid & EGradPeGrid,
+                         MomentsFsGrid & momentsGrid,
+                         DPerBFsGrid & dPerBGrid,
+                         DMomentsFsGrid & dMomentsGrid,
+                         BgBFsGrid & BgBGrid,
+                         VolFsGrid & volGrid,
+                         TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                   int32_t* gridSize = technicalGrid.getLocalSize();
                   std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -726,16 +726,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_volb" || lowercase == "fg_bvol" || lowercase == "fg_b_vol") { // Static (typically dipole) magnetic field part
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_b_vol",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -778,16 +778,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fg_pressure") {
          // Overall scalar pressure from all populations
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_pressure",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -846,16 +846,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
 
       if(lowercase == "fg_derivs") {
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -872,16 +872,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -898,16 +898,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbydx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -924,16 +924,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbydz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -950,16 +950,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -976,16 +976,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1002,16 +1002,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxdyy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1028,16 +1028,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxdzz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1054,16 +1054,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxdyz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1080,16 +1080,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbydxx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1106,16 +1106,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbydzz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1132,16 +1132,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbydxz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1158,16 +1158,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzdxx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1184,16 +1184,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzdyy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1210,16 +1210,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzdxy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1238,16 +1238,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
 
 
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhomdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1264,16 +1264,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhomdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1290,16 +1290,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhomdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1316,16 +1316,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhoqdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1342,16 +1342,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhoqdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1368,16 +1368,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_drhoqdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1394,16 +1394,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp11dx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1420,16 +1420,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp11dy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1446,16 +1446,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp11dz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1472,16 +1472,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp22dx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1498,16 +1498,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp22dy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1524,16 +1524,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp22dz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1550,16 +1550,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp33dx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1576,16 +1576,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp33dy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1602,16 +1602,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dp33dz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1628,16 +1628,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvxdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1654,16 +1654,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvxdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1680,16 +1680,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvxdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1706,16 +1706,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvydx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1732,16 +1732,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvydy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1758,16 +1758,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvydz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1784,16 +1784,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvzdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1810,16 +1810,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvzdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1836,16 +1836,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dvzdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1862,16 +1862,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dpedx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1888,16 +1888,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dpedy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1914,16 +1914,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dpedz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1942,16 +1942,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
 
 
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbxdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1968,16 +1968,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbxdz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -1994,16 +1994,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbydx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2020,16 +2020,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbydz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2046,16 +2046,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbzdx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2072,16 +2072,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbzdy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2098,16 +2098,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbxvoldy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2124,16 +2124,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbxvoldz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2150,16 +2150,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbyvoldx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2176,16 +2176,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbyvoldz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2202,16 +2202,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbzvoldx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2228,16 +2228,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dbgbzvoldy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2256,16 +2256,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
 
 
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxvoldy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2282,16 +2282,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbxvoldz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2308,16 +2308,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbyvoldx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2334,16 +2334,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbyvoldz",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2360,16 +2360,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzvoldx",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2386,16 +2386,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          }
          ));
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dperbzvoldy",[](
-                      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2433,16 +2433,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       }
       if(lowercase == "fg_gridcoordinates") { 
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_x",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2460,16 +2460,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          ));
 	 outputReducer->addMetadata(outputReducer->size()-1,"m","$\\mathrm{m}$","$X_\\mathrm{fg}$","1.0");
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_y",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2487,16 +2487,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          ));
 	 outputReducer->addMetadata(outputReducer->size()-1,"m","$\\mathrm{m}$","$Y_\\mathrm{fg}$","1.0");
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_z",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]);
@@ -2514,16 +2514,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          ));
 	 outputReducer->addMetadata(outputReducer->size()-1,"m","$\\mathrm{m}$","$Z_\\mathrm{fg}$","1.0");
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dx",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DX);
@@ -2532,16 +2532,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          ));
 	 outputReducer->addMetadata(outputReducer->size()-1,"m","$\\mathrm{m}$","$\\delta X_\\mathrm{fg}$","1.0");
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dy",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DY);
@@ -2550,16 +2550,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
          ));
 	 outputReducer->addMetadata(outputReducer->size()-1,"m","$\\mathrm{m}$","$\\delta Y_\\mathrm{fg}$","1.0");
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_dz",[](
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid)->std::vector<double> {
 
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2], technicalGrid.DZ);
@@ -3152,16 +3152,16 @@ void initializeDataReducers(DataReducer * outputReducer, DataReducer * diagnosti
       if(lowercase == "fg_curvature") {
          Parameters::computeCurvature = true;
          outputReducer->addOperator(new DRO::DataReductionOperatorFsGrid("fg_curvature",[](
-            FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-            FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-            FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-            FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-            FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-            FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-            FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-            FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-            FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-            FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid)->std::vector<double> {
+            BFieldFsGrid & perBGrid,
+            EFieldFsGrid & EGrid,
+            EHallFsGrid & EHallGrid,
+            EGradPeFsGrid & EGradPeGrid,
+            MomentsFsGrid & momentsGrid,
+            DPerBFsGrid & dPerBGrid,
+            DMomentsFsGrid & dMomentsGrid,
+            BgBFsGrid & BgBGrid,
+            VolFsGrid & volGrid,
+            TechnicalFsGrid & technicalGrid)->std::vector<double> {
                
                int32_t* gridSize = technicalGrid.getLocalSize();
                std::vector<double> retval(gridSize[0]*gridSize[1]*gridSize[2]*3);
@@ -3413,16 +3413,16 @@ bool DataReducer::writeParameters(const unsigned int& operatorID, vlsv::Writer& 
 /** Write all data thet the given DataReductionOperator wants to obtain from fsgrid into the output file.
  */
 bool DataReducer::writeFsGridData(
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid,
                       const std::string& meshName, const unsigned int operatorID,
                       vlsv::Writer& vlsvWriter,
                       const bool writeAsFloat) {

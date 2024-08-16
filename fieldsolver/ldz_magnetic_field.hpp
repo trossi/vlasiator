@@ -30,10 +30,10 @@
 #include "fs_common.h"
 
 void propagateMagneticField(
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EDt2Grid,
+   arch::buf<BFieldFsGrid> & perBGrid,
+   arch::buf<BFieldFsGrid> & perBDt2Grid,
+   arch::buf<EFieldFsGrid> & EGrid,
+   arch::buf<EFieldFsGrid> & EDt2Grid,
    cint i,
    cint j,
    cint k,
@@ -45,11 +45,11 @@ void propagateMagneticField(
 );
 
 void propagateMagneticFieldSimple(
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EDt2Grid,
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   arch::buf<BFieldFsGrid> & perBGrid,
+   arch::buf<BFieldFsGrid> & perBDt2Grid,
+   arch::buf<EFieldFsGrid> & EGrid,
+   arch::buf<EFieldFsGrid> & EDt2Grid,
+   arch::buf<TechnicalFsGrid> & technicalGrid,
    arch::buf<SysBoundary> & sysBoundaries, 
    creal& dt,
    cint& RKCase

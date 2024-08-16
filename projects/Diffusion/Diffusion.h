@@ -47,9 +47,9 @@ namespace projects {
       virtual void getParameters(void);
       /*! set background field, should set it for all cells */
       virtual void setProjectBField(
-         FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-         FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-         FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid & BgBGrid,
+         TechnicalFsGrid & technicalGrid
       );
       
     protected:

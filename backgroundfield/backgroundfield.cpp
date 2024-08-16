@@ -31,7 +31,7 @@
 //FieldFunction should be initialized
 void setBackgroundField(
    const FieldFunction& bgFunction,
-   FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
+   BgBFsGrid & BgBGrid,
    bool append) {
    
    using namespace std::placeholders;
@@ -133,7 +133,7 @@ void setBackgroundField(
 }
 
 void setBackgroundFieldToZero(
-   FsGrid< Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid
+   BgBFsGrid & BgBGrid
 ) {
    auto localSize = BgBGrid.getLocalSize();
    
@@ -152,7 +152,7 @@ void setBackgroundFieldToZero(
 
 void setPerturbedField(
    const FieldFunction& bfFunction,
-   FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
+   BFieldFsGrid & perBGrid,
    bool append) {
    
    using namespace std::placeholders;
@@ -219,7 +219,7 @@ void setPerturbedField(
 }
 
 void setPerturbedFieldToZero(
-   FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid) {
+   BFieldFsGrid & perBGrid) {
    auto localSize = perBGrid.getLocalSize();
    
    #pragma omp parallel for collapse(3)

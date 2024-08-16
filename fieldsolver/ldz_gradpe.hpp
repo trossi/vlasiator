@@ -23,10 +23,10 @@
 #include "../definitions.h"
 
 void calculateGradPeTerm(
-   const arch::buf<FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>> & EGradPeGrid,
-   const arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<EGradPeFsGrid> & EGradPeGrid,
+   const arch::buf<MomentsFsGrid> & momentsGrid,
+   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -34,11 +34,11 @@ void calculateGradPeTerm(
 );
 
 void calculateGradPeTermSimple(
-   arch::buf<FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>> & EGradPeGrid,
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   arch::buf<EGradPeFsGrid> & EGradPeGrid,
+   arch::buf<MomentsFsGrid> & momentsGrid,
+   arch::buf<MomentsFsGrid> & momentsDt2Grid,
+   arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   arch::buf<TechnicalFsGrid> & technicalGrid,
    arch::buf<SysBoundary>& sysBoundaries,
    cint& RKCase
 );

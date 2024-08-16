@@ -99,7 +99,7 @@ void addTimedBarrier(string name){
 }
 
 void computeNewTimeStep(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-			FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid, Real &newDt, bool &isChanged) {
+			TechnicalFsGrid & technicalGrid, Real &newDt, bool &isChanged) {
 
    phiprof::start("compute-timestep");
    // Compute maximum time step. This cannot be done at the first step as the solvers compute the limits for each cell.
@@ -421,19 +421,19 @@ int main(int argn,char* args[]) {
                                   sysBoundaryContainer.isBoundaryPeriodic(2)};
 
    FsGridCouplingInformation gridCoupling;
-   FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> perBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> perBDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> EGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> EDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> EHallGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> EGradPeGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> momentsGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> momentsDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> dPerBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> dMomentsGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> BgBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> volGrid(fsGridDimensions, comm, periodicity,gridCoupling);
-   FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> technicalGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   BFieldFsGrid perBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   BFieldFsGrid perBDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
+   EFieldFsGrid EGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   EFieldFsGrid EDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
+   EHallFsGrid EHallGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   EGradPeFsGrid EGradPeGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   MomentsFsGrid momentsGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   MomentsFsGrid momentsDt2Grid(fsGridDimensions, comm, periodicity,gridCoupling);
+   DPerBFsGrid dPerBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   DMomentsFsGrid dMomentsGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   BgBFsGrid BgBGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   VolFsGrid volGrid(fsGridDimensions, comm, periodicity,gridCoupling);
+   TechnicalFsGrid technicalGrid(fsGridDimensions, comm, periodicity,gridCoupling);
 
    // Set DX, DY and DZ
    // TODO: This is currently just taking the values from cell 1, and assuming them to be

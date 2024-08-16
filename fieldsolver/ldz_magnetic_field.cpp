@@ -47,10 +47,10 @@
  * \param doZ If true, compute the z component (default true).
  */
 void propagateMagneticField(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
-   const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EDt2Grid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<BFieldFsGrid> & perBDt2Grid,
+   const arch::buf<EFieldFsGrid> & EGrid,
+   const arch::buf<EFieldFsGrid> & EDt2Grid,
    cint i,
    cint j,
    cint k,
@@ -172,11 +172,11 @@ void propagateMagneticField(
  * \sa propagateMagneticFieldSimple propagateMagneticField
  */
 void propagateSysBoundaryMagneticField(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
-   const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EDt2Grid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<BFieldFsGrid> & perBDt2Grid,
+   const arch::buf<EFieldFsGrid> & EGrid,
+   const arch::buf<EFieldFsGrid> & EDt2Grid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -206,9 +206,9 @@ void propagateSysBoundaryMagneticField(
  * \sa propagateMagneticFieldSimple propagateMagneticField
  */
 void SysBoundaryMagneticFieldProjection(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<BFieldFsGrid> & perBDt2Grid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -238,11 +238,11 @@ void SysBoundaryMagneticFieldProjection(
  * \sa propagateMagneticField propagateSysBoundaryMagneticField
  */
 void propagateMagneticFieldSimple(
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EDt2Grid,
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   arch::buf<BFieldFsGrid> & perBGrid,
+   arch::buf<BFieldFsGrid> & perBDt2Grid,
+   arch::buf<EFieldFsGrid> & EGrid,
+   arch::buf<EFieldFsGrid> & EDt2Grid,
+   arch::buf<TechnicalFsGrid> & technicalGrid,
    arch::buf<SysBoundary> & sysBoundaries, 
    creal& dt,
    cint& RKCase

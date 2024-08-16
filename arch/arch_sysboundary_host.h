@@ -35,8 +35,8 @@ class buf<SysBoundary> {
                 Proxy(int _sysBoundaryFlag, const buf<SysBoundary>* _ptr) : sysBoundaryFlag(_sysBoundaryFlag), bufPtr(_ptr) {}
 
                 Real fieldSolverBoundaryCondMagneticField(
-                    const buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-                    const buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+                    const buf<BFieldFsGrid> & bGrid,
+                    const buf<TechnicalFsGrid> & technicalGrid,
                     cint i,
                     cint j,
                     cint k,
@@ -59,8 +59,8 @@ class buf<SysBoundary> {
                 }
 
                 void fieldSolverBoundaryCondMagneticFieldProjection(
-                    const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-                    const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+                    const arch::buf<BFieldFsGrid> & bGrid,
+                    const arch::buf<TechnicalFsGrid> & technicalGrid,
                     cint i,
                     cint j,
                     cint k
@@ -80,8 +80,8 @@ class buf<SysBoundary> {
                 }
 
                 void fieldSolverBoundaryCondDerivatives(
-                    const arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-                    const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
+                    const arch::buf<DPerBFsGrid> & dPerBGrid,
+                    const arch::buf<DMomentsFsGrid> & dMomentsGrid,
                     cint i,
                     cint j,
                     cint k,
@@ -103,7 +103,7 @@ class buf<SysBoundary> {
                 }
 
                 void fieldSolverBoundaryCondGradPeElectricField(
-                    const arch::buf<FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>> & EGradPeGrid,
+                    const arch::buf<EGradPeFsGrid> & EGradPeGrid,
                     cint i,
                     cint j,
                     cint k,
@@ -124,7 +124,7 @@ class buf<SysBoundary> {
                 }
 
                 void fieldSolverBoundaryCondHallElectricField(
-                    const arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
+                    const arch::buf<EHallFsGrid> & EHallGrid,
                     cint i,
                     cint j,
                     cint k,
@@ -146,7 +146,7 @@ class buf<SysBoundary> {
 
 
                 void fieldSolverBoundaryCondElectricField(
-                    const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
+                    const arch::buf<EFieldFsGrid> & EGrid,
                     cint i,
                     cint j,
                     cint k,
@@ -167,7 +167,7 @@ class buf<SysBoundary> {
                 }
 
                 void fieldSolverBoundaryCondBVOLDerivatives(
-                    const arch::buf<FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH>> & volGrid,
+                    const arch::buf<VolFsGrid> & volGrid,
                     cint i,
                     cint j,
                     cint k,

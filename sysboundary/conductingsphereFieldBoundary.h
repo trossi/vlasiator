@@ -19,8 +19,8 @@ namespace SBC {
     * -- Retain only the normal components of perturbed face B
     */
     ARCH_HOSTDEV Real fieldSolverBoundaryCondMagneticField(
-        const arch::buf<FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-        const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+        const arch::buf<BFieldFsGrid> & bGrid,
+        const arch::buf<TechnicalFsGrid> & technicalGrid,
         cint i,
         cint j,
         cint k,
@@ -207,8 +207,8 @@ namespace SBC {
         * -- Retain only the boundary-normal projection of perturbed face B
         */
     ARCH_HOSTDEV void fieldSolverBoundaryCondMagneticFieldProjection(
-        const arch::buf<FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-        const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+        const arch::buf<BFieldFsGrid> & bGrid,
+        const arch::buf<TechnicalFsGrid> & technicalGrid,
         cint i,
         cint j,
         cint k
@@ -243,7 +243,7 @@ namespace SBC {
     }
 
     ARCH_HOSTDEV void fieldSolverBoundaryCondElectricField(
-        const arch::buf<FsGrid< Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
+        const arch::buf<EFieldFsGrid> & EGrid,
         cint i,
         cint j,
         cint k,
@@ -253,7 +253,7 @@ namespace SBC {
     }
     
     ARCH_HOSTDEV void fieldSolverBoundaryCondHallElectricField(
-        const arch::buf<FsGrid< Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
+        const arch::buf<EHallFsGrid> & EHallGrid,
         cint i,
         cint j,
         cint k,
@@ -288,7 +288,7 @@ namespace SBC {
     }
     
     ARCH_HOSTDEV void fieldSolverBoundaryCondGradPeElectricField(
-        const arch::buf<FsGrid< Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>> & EGradPeGrid,
+        const arch::buf<EGradPeFsGrid> & EGradPeGrid,
         cint i,
         cint j,
         cint k,
@@ -298,8 +298,8 @@ namespace SBC {
     }
     
     ARCH_HOSTDEV void fieldSolverBoundaryCondDerivatives(
-        const arch::buf<FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-        const arch::buf<FsGrid< Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
+        const arch::buf<DPerBFsGrid> & dPerBGrid,
+        const arch::buf<DMomentsFsGrid> & dMomentsGrid,
         cint i,
         cint j,
         cint k,

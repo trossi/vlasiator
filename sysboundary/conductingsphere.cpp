@@ -164,7 +164,7 @@ namespace SBC {
    }
    
    bool Conductingsphere::assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid) {
+                                      TechnicalFsGrid & technicalGrid) {
       const vector<CellID>& cells = getLocalCells();
       for(uint i=0; i<cells.size(); i++) {
          if(mpiGrid[cells[i]]->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) {
@@ -189,8 +189,8 @@ namespace SBC {
 
    bool Conductingsphere::applyInitialState(
       const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
       Project &project
    ) {
       const vector<CellID>& cells = getLocalCells();
@@ -206,7 +206,7 @@ namespace SBC {
    }
 
    std::array<Real, 3> Conductingsphere::fieldSolverGetNormalDirection(
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+      TechnicalFsGrid & technicalGrid,
       cint i,
       cint j,
       cint k

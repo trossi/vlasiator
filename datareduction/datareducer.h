@@ -56,16 +56,16 @@ class DataReducer {
    unsigned int size() const;
    bool writeParameters(const unsigned int& operatorID, vlsv::Writer& vlsvWriter);
    bool writeFsGridData(
-                      FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-                      FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGrid,
-                      FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGrid,
-                      FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-                      FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                      FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-                      FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGrid,
-                      FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-                      FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+                      BFieldFsGrid & perBGrid,
+                      EFieldFsGrid & EGrid,
+                      EHallFsGrid & EHallGrid,
+                      EGradPeFsGrid & EGradPeGrid,
+                      MomentsFsGrid & momentsGrid,
+                      DPerBFsGrid & dPerBGrid,
+                      DMomentsFsGrid & dMomentsGrid,
+                      BgBFsGrid & BgBGrid,
+                      VolFsGrid & volGrid,
+                      TechnicalFsGrid & technicalGrid,
                       const std::string& meshName, const unsigned int operatorID,
                       vlsv::Writer& vlsvWriter,
                       const bool writeAsFloat = false);

@@ -445,7 +445,7 @@ bool SysBoundary::checkRefinement(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg:
 }
 
 bool belongsToLayer(const int layer, const int x, const int y, const int z,
-                    FsGrid<fsgrids::technical, 1, FS_STENCIL_WIDTH>& technicalGrid) {
+                    TechnicalFsGrid& technicalGrid) {
 
    bool belongs = false;
 
@@ -485,7 +485,7 @@ bool belongsToLayer(const int layer, const int x, const int y, const int z,
  * \param mpiGrid Grid
  */
 bool SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
-                                FsGrid<fsgrids::technical, 1, FS_STENCIL_WIDTH>& technicalGrid) {
+                                TechnicalFsGrid& technicalGrid) {
    bool success = true;
    const vector<CellID>& cells = getLocalCells();
    int* localSize = technicalGrid.getLocalSize();
@@ -749,8 +749,8 @@ bool SysBoundary::classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell, dccrg::C
  * \retval success If true, the application of all system boundary states succeeded.
  */
 bool SysBoundary::applyInitialState(dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
-                                    FsGrid<fsgrids::technical, 1, FS_STENCIL_WIDTH>&technicalGrid,
-                                    FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>& perBGrid,
+                                    TechnicalFsGrid&technicalGrid,
+                                    BFieldFsGrid& perBGrid,
                                     Project& project) {
    bool success = true;
 

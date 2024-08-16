@@ -88,19 +88,19 @@ bool finalizeFieldPropagator() {
  * 
  */
 bool propagateFields(
-   FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGridObj,
-   FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBDt2GridObj,
-   FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EGridObj,
-   FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> & EDt2GridObj,
-   FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> & EHallGridObj,
-   FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGridObj,
-   FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGridObj,
-   FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsDt2GridObj,
-   FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGridObj,
-   FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> & dMomentsGridObj,
-   FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGridObj,
-   FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGridObj,
-   FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGridObj,
+   BFieldFsGrid & perBGridObj,
+   BFieldFsGrid & perBDt2GridObj,
+   EFieldFsGrid & EGridObj,
+   EFieldFsGrid & EDt2GridObj,
+   EHallFsGrid & EHallGridObj,
+   EGradPeFsGrid & EGradPeGridObj,
+   MomentsFsGrid & momentsGridObj,
+   MomentsFsGrid & momentsDt2GridObj,
+   DPerBFsGrid & dPerBGridObj,
+   DMomentsFsGrid & dMomentsGridObj,
+   BgBFsGrid & BgBGridObj,
+   VolFsGrid & volGridObj,
+   TechnicalFsGrid & technicalGridObj,
    SysBoundary& sysBoundariesObj,
    creal& dt,
    cuint subcycles
@@ -112,19 +112,19 @@ bool propagateFields(
    }
    
    // initialize host/device buffers
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> > technicalGrid(&technicalGridObj);
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> > perBGrid(&perBGridObj);
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> > perBDt2Grid(&perBDt2GridObj);
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> > EGrid(&EGridObj);
-   arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH> > EDt2Grid(&EDt2GridObj);
-   arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH> > EHallGrid(&EHallGridObj);
-   arch::buf<FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> > EGradPeGrid(&EGradPeGridObj);
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> > momentsGrid(&momentsGridObj);
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> > momentsDt2Grid(&momentsDt2GridObj);
-   arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> > dPerBGrid(&dPerBGridObj);
-   arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH> > dMomentsGrid(&dMomentsGridObj);
-   arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> > BgBGrid(&BgBGridObj);
-   arch::buf<FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> > volGrid(&volGridObj);
+   arch::buf<TechnicalFsGrid > technicalGrid(&technicalGridObj);
+   arch::buf<BFieldFsGrid > perBGrid(&perBGridObj);
+   arch::buf<BFieldFsGrid > perBDt2Grid(&perBDt2GridObj);
+   arch::buf<EFieldFsGrid > EGrid(&EGridObj);
+   arch::buf<EFieldFsGrid > EDt2Grid(&EDt2GridObj);
+   arch::buf<EHallFsGrid > EHallGrid(&EHallGridObj);
+   arch::buf<EGradPeFsGrid > EGradPeGrid(&EGradPeGridObj);
+   arch::buf<MomentsFsGrid > momentsGrid(&momentsGridObj);
+   arch::buf<MomentsFsGrid > momentsDt2Grid(&momentsDt2GridObj);
+   arch::buf<DPerBFsGrid > dPerBGrid(&dPerBGridObj);
+   arch::buf<DMomentsFsGrid > dMomentsGrid(&dMomentsGridObj);
+   arch::buf<BgBFsGrid > BgBGrid(&BgBGridObj);
+   arch::buf<VolFsGrid > volGrid(&volGridObj);
    arch::buf<SysBoundary> sysBoundaries(&sysBoundariesObj);
    
    const int* gridDims = &technicalGridObj.getLocalSize()[0];

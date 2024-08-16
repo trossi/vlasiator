@@ -97,8 +97,8 @@ Filter moments after feeding them to FsGrid to alleviate the staircase effect ca
 This is using a 3D, 5-point stencil triangle kernel.
 */
 void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                           FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                           FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid) 
+                           MomentsFsGrid & momentsGrid,
+                           TechnicalFsGrid & technicalGrid) 
 {
 
 
@@ -146,7 +146,7 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
    // Get size of local domain and create swapGrid for filtering
    const int *mntDims= &momentsGrid.getLocalSize()[0];  
    const int maxRefLevel = mpiGrid.mapping.get_maximum_refinement_level();
-   FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> swapGrid = momentsGrid;  //swap array 
+   MomentsFsGrid swapGrid = momentsGrid;  //swap array 
 
    // Filtering Loop
    for (int blurPass = 0; blurPass < Parameters::maxFilteringPasses; blurPass++){
@@ -204,8 +204,8 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
 void feedMomentsIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
                            const std::vector<CellID>& cells,
-                           FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-                           FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+                           MomentsFsGrid & momentsGrid,
+                           TechnicalFsGrid & technicalGrid,
 
                            bool dt2 /*=false*/) {
 
@@ -308,10 +308,10 @@ void feedMomentsIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& 
 }
 
 void getFieldsFromFsGrid(
-   FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volumeFieldsGrid,
-   FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-   FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH> & EGradPeGrid,
-   FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+   VolFsGrid & volumeFieldsGrid,
+   BgBFsGrid & BgBGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   TechnicalFsGrid & technicalGrid,
    dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
    const std::vector<CellID>& cells
 ) {

@@ -86,8 +86,8 @@ typename std::enable_if<I == 0, std::tuple<bool, double, double>>::type test(){
   std::array<bool,3> periodicity{true, true, true};
 
   // Create the 3D grid with a field of type fsgrids::technical
-  FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> technicalGrid(gridDims, comm, periodicity,gridCoupling); 
-  FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> technicalGrid2(gridDims, comm, periodicity,gridCoupling); 
+  TechnicalFsGrid technicalGrid(gridDims, comm, periodicity,gridCoupling); 
+  TechnicalFsGrid technicalGrid2(gridDims, comm, periodicity,gridCoupling); 
 
   // Create a buffer object that provides a convenient interface for accessing the grid data on the device
   arch::buf<fsgrids::technical> dataBuffer(&technicalGrid.getData(), gridDims3 * sizeof(fsgrids::technical));  
@@ -145,13 +145,13 @@ typename std::enable_if<I == 1, std::tuple<bool, double, double>>::type test(){
   std::array<bool,3> periodicity{true, true, true};
 
   // Create the 3D grid with a field of type std::array<Real, fsgrids::bfield::N_BFIELD>
-  FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> perBGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
-  FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> perBGrid2(fsGridDimensions, comm, periodicity,gridCoupling); 
+  BFieldFsGrid perBGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
+  BFieldFsGrid perBGrid2(fsGridDimensions, comm, periodicity,gridCoupling); 
   int32_t *gridDims = perBGrid.getStorageSize();
 
   // Create a buffer object that provides a convenient interface for accessing the grid data on the device
-  arch::buf<FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> perBGridBuf(&perBGrid);
-  arch::buf<FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> perBGridBuf2(&perBGrid2);
+  arch::buf<BFieldFsGrid> perBGridBuf(&perBGrid);
+  arch::buf<BFieldFsGrid> perBGridBuf2(&perBGrid2);
 
   // Execute the loop in parallel on the device using CUDA
   clock_t arch_start = clock();
@@ -198,8 +198,8 @@ typename std::enable_if<I == 2, std::tuple<bool, double, double>>::type test(){
   std::array<bool,3> periodicity{true, true, true};
 
   // Create the 3D grid with a field of type std::array<Real, fsgrids::bfield::N_BFIELD>
-  FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> perBGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
-  FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> technicalGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
+  BFieldFsGrid perBGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
+  TechnicalFsGrid technicalGrid(fsGridDimensions, comm, periodicity,gridCoupling); 
   int32_t *gridDims = perBGrid.getStorageSize();
   technicalGrid.DX = 0.01;
   technicalGrid.DY = 0.01;
@@ -285,8 +285,8 @@ typename std::enable_if<I == 2, std::tuple<bool, double, double>>::type test(){
   
  
   // Create a buffer object that provides a convenient interface for accessing the grid data on the device
-  arch::buf<FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> perBGridBuf(&perBGrid);
-  arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> technicalGridBuf(&technicalGrid);
+  arch::buf<BFieldFsGrid> perBGridBuf(&perBGrid);
+  arch::buf<TechnicalFsGrid> technicalGridBuf(&technicalGrid);
   arch::buf<SysBoundary> sysBoundariesBuf(&sysBoundaries); 
 
 

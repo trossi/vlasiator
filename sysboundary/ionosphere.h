@@ -190,7 +190,7 @@ namespace SBC {
       void offset_FAC();                  // Offset field aligned currents to get overall zero current
       void normalizeRadius(Node& n, Real R); // Scale all coordinates onto sphere with radius R
       void updateConnectivity();          // Re-link elements and nodes
-      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid);// (Re-)create the subcommunicator for ionosphere-internal communication
+      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid);// (Re-)create the subcommunicator for ionosphere-internal communication
       void initializeTetrahedron();       // Initialize grid as a base tetrahedron
       void initializeIcosahedron();       // Initialize grid as a base icosahedron
       void initializeSphericalFibonacci(int n); // Initialize grid as a spherical fibonacci lattice
@@ -230,11 +230,11 @@ namespace SBC {
       // Map field-aligned currents, density and temperature
       // down from the simulation boundary onto this grid
       void mapDownBoundaryData(
-         FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,                                                                                                                                                                                                                                
-         FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
-         FsGrid< Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH> & momentsGrid,
-         FsGrid< Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH> & volGrid,
-         FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid
+         BFieldFsGrid & perBGrid,                                                                                                                                                                                                                                
+         DPerBFsGrid & dPerBGrid,
+         MomentsFsGrid & momentsGrid,
+         VolFsGrid & volGrid,
+         TechnicalFsGrid & technicalGrid
       );
       
       // Returns the surface area of one element on the sphere
@@ -334,16 +334,16 @@ namespace SBC {
       bool initFieldBoundary();
       IonosphereFieldBoundary* getFieldBoundary() {return fieldBoundary;}
       virtual bool assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                     FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid);
+                                     TechnicalFsGrid & technicalGrid);
       virtual bool applyInitialState(
          const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-         FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-         FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
+         TechnicalFsGrid & technicalGrid,
+         BFieldFsGrid & perBGrid,
          Project &project
       );
       ARCH_HOSTDEV Real fieldSolverBoundaryCondMagneticField(
-         const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-         const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+         const arch::buf<BFieldFsGrid> & bGrid,
+         const arch::buf<TechnicalFsGrid> & technicalGrid,
          cint i,
          cint j,
          cint k,
@@ -353,8 +353,8 @@ namespace SBC {
          return fieldBoundary->fieldSolverBoundaryCondMagneticField(bGrid, technicalGrid, i, j, k, dt, component);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondMagneticFieldProjection(
-         const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & bGrid,
-         const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+         const arch::buf<BFieldFsGrid> & bGrid,
+         const arch::buf<TechnicalFsGrid> & technicalGrid,
          cint i,
          cint j,
          cint k
@@ -362,7 +362,7 @@ namespace SBC {
          fieldBoundary->fieldSolverBoundaryCondMagneticFieldProjection(bGrid, technicalGrid, i, j, k);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondElectricField(
-         const arch::buf<FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>> & EGrid,
+         const arch::buf<EFieldFsGrid> & EGrid,
          cint i,
          cint j,
          cint k,
@@ -371,7 +371,7 @@ namespace SBC {
          fieldBoundary->fieldSolverBoundaryCondElectricField(EGrid, i, j, k, component);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondHallElectricField(
-         const arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
+         const arch::buf<EHallFsGrid> & EHallGrid,
          cint i,
          cint j,
          cint k,
@@ -380,7 +380,7 @@ namespace SBC {
          fieldBoundary->fieldSolverBoundaryCondHallElectricField(EHallGrid, i, j, k, component);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondGradPeElectricField(
-         const arch::buf<FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>> & EGradPeGrid,
+         const arch::buf<EGradPeFsGrid> & EGradPeGrid,
          cint i,
          cint j,
          cint k,
@@ -389,8 +389,8 @@ namespace SBC {
          fieldBoundary->fieldSolverBoundaryCondGradPeElectricField(EGradPeGrid, i, j, k, component);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondDerivatives(
-         const arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-         const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
+         const arch::buf<DPerBFsGrid> & dPerBGrid,
+         const arch::buf<DMomentsFsGrid> & dMomentsGrid,
          cint i,
          cint j,
          cint k,
@@ -400,7 +400,7 @@ namespace SBC {
          fieldBoundary->fieldSolverBoundaryCondDerivatives(dPerBGrid, dMomentsGrid, i, j, k, RKCase, component);
       }
       ARCH_HOSTDEV void fieldSolverBoundaryCondBVOLDerivatives(
-         const arch::buf<FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH>> & volGrid,
+         const arch::buf<VolFsGrid> & volGrid,
          cint i,
          cint j,
          cint k,

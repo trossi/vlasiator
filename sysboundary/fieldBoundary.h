@@ -7,7 +7,7 @@ namespace SBC {
     class FieldBoundary {
         public:
         ARCH_HOSTDEV void fieldSolverGetNormalDirection(
-            const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+            const arch::buf<TechnicalFsGrid> & technicalGrid,
             cint i,
             cint j,
             cint k,

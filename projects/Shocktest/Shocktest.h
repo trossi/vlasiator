@@ -63,9 +63,9 @@ namespace projects {
                            const uint popID
                           ) const;
       virtual void setProjectBField(
-         FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-         FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH> & BgBGrid,
-         FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid & BgBGrid,
+         TechnicalFsGrid & technicalGrid
       );
       
       virtual void calcCellParameters(spatial_cell::SpatialCell* cell,creal& t);

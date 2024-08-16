@@ -41,9 +41,9 @@ namespace FieldTracing {
    /* Call the heavier operations for DROs to be called only if needed, before an IO.
     */
    void reduceData(
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
+      DPerBFsGrid & dPerBGrid,
       dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry> & mpiGrid,
       std::vector<SBC::SphericalTriGrid::Node> & nodes
    ) {
@@ -61,9 +61,9 @@ namespace FieldTracing {
    * coupling values are recorded in the grid nodes.
    */
    void calculateIonosphereFsgridCoupling(
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
+      DPerBFsGrid & dPerBGrid,
       std::vector<SBC::SphericalTriGrid::Node> & nodes,
       creal couplingRadius
    ) {
@@ -459,9 +459,9 @@ namespace FieldTracing {
    /*! Trace magnetic field lines out from ionospheric nodes to record whether they are on an open or closed field line.
    */
    void traceOpenClosedConnection(
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
+      DPerBFsGrid & dPerBGrid,
       std::vector<SBC::SphericalTriGrid::Node> & nodes
    ) {
       
@@ -639,7 +639,7 @@ namespace FieldTracing {
     */
    void stepCellAcrossTaskDomain(
       cint n,
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
+      TechnicalFsGrid & technicalGrid,
       TracingFieldFunction<TReal> & tracingFullField,
       const std::vector<std::array<TReal,3>> & cellInitialCoordinates,
       const std::vector<TReal> & cellCurvatureRadius,
@@ -815,9 +815,9 @@ namespace FieldTracing {
     * \sa stepCellAcrossTaskDomain
     */
    void traceFullBoxConnectionAndFluxRopes(
-      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-      FsGrid< Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
-      FsGrid< Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH> & dPerBGrid,
+      TechnicalFsGrid & technicalGrid,
+      BFieldFsGrid & perBGrid,
+      DPerBFsGrid & dPerBGrid,
       dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid
    ) {
       phiprof::start("fieldtracing-fullAndFluxTracing");

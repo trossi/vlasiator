@@ -72,11 +72,11 @@ class SysBoundary {
    bool existSysBoundary(std::string name);
    bool checkRefinement(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid);
    bool classifyCells(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                      FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid);
+                      TechnicalFsGrid & technicalGrid);
    bool applyInitialState(
                           dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                          FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH> & technicalGrid,
-                          FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH> & perBGrid,
+                          TechnicalFsGrid & technicalGrid,
+                          BFieldFsGrid & perBGrid,
                           Project& project
                          );
    void applySysBoundaryVlasovConditions(dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, creal& t, const bool calculate_V_moments);

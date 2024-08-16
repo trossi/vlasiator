@@ -434,13 +434,13 @@ REAL JXBZ_110_111(
  * 
  */
 void calculateEdgeHallTermXComponents(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
-   const arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>> & BgBGrid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<EHallFsGrid> & EHallGrid,
+   const arch::buf<MomentsFsGrid> & momentsGrid,
+   const arch::buf<DPerBFsGrid> & dPerBGrid,
+   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   const arch::buf<BgBFsGrid> & BgBGrid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    const Real* perturbedCoefficients,
    cint i,
    cint j,
@@ -532,13 +532,13 @@ void calculateEdgeHallTermXComponents(
  * 
  */
 void calculateEdgeHallTermYComponents(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
-   const arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>> & BgBGrid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<EHallFsGrid> & EHallGrid,
+   const arch::buf<MomentsFsGrid> & momentsGrid,
+   const arch::buf<DPerBFsGrid> & dPerBGrid,
+   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   const arch::buf<BgBFsGrid> & BgBGrid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    const Real* const perturbedCoefficients,
    cint i,
    cint j,
@@ -630,13 +630,13 @@ void calculateEdgeHallTermYComponents(
  * 
  */
 void calculateEdgeHallTermZComponents(
-   const arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
-   const arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-   const arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   const arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>> & BgBGrid,
-   const arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   const arch::buf<BFieldFsGrid> & perBGrid,
+   const arch::buf<EHallFsGrid> & EHallGrid,
+   const arch::buf<MomentsFsGrid> & momentsGrid,
+   const arch::buf<DPerBFsGrid> & dPerBGrid,
+   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   const arch::buf<BgBFsGrid> & BgBGrid,
+   const arch::buf<TechnicalFsGrid> & technicalGrid,
    const Real* const perturbedCoefficients,
    cint i,
    cint j,
@@ -725,13 +725,13 @@ void calculateEdgeHallTermZComponents(
  * \sa calculateHallTermSimple calculateEdgeHallTermXComponents calculateEdgeHallTermYComponents calculateEdgeHallTermZComponents
  */
 void calculateHallTerm(
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-   arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>> & BgBGrid,
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   arch::buf<BFieldFsGrid> & perBGrid,
+   arch::buf<EHallFsGrid> & EHallGrid,
+   arch::buf<MomentsFsGrid> & momentsGrid,
+   arch::buf<DPerBFsGrid> & dPerBGrid,
+   arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   arch::buf<BgBFsGrid> & BgBGrid,
+   arch::buf<TechnicalFsGrid> & technicalGrid,
    arch::buf<SysBoundary>& sysBoundaries,
    cint i,
    cint j,
@@ -795,15 +795,15 @@ void calculateHallTerm(
  * \sa calculateHallTerm
  */
 void calculateHallTermSimple(
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBGrid,
-   arch::buf<FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>> & perBDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>> & EHallGrid,
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsGrid,
-   arch::buf<FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>> & momentsDt2Grid,
-   arch::buf<FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>> & dPerBGrid,
-   arch::buf<FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>> & dMomentsGrid,
-   arch::buf<FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>> & BgBGrid,
-   arch::buf<FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>> & technicalGrid,
+   arch::buf<BFieldFsGrid> & perBGrid,
+   arch::buf<BFieldFsGrid> & perBDt2Grid,
+   arch::buf<EHallFsGrid> & EHallGrid,
+   arch::buf<MomentsFsGrid> & momentsGrid,
+   arch::buf<MomentsFsGrid> & momentsDt2Grid,
+   arch::buf<DPerBFsGrid> & dPerBGrid,
+   arch::buf<DMomentsFsGrid> & dMomentsGrid,
+   arch::buf<BgBFsGrid> & BgBGrid,
+   arch::buf<TechnicalFsGrid> & technicalGrid,
    arch::buf<SysBoundary>& sysBoundaries,
    cint& RKCase
 ) {
