@@ -415,16 +415,19 @@ namespace fsgrids {
    
 }
 
+template<long unsigned int N>
+using RealFsGrid = FsGrid<Real, N, FS_STENCIL_WIDTH>;
 
-using BFieldFsGrid = FsGrid<Real, fsgrids::bfield::N_BFIELD, FS_STENCIL_WIDTH>;
-using EFieldFsGrid = FsGrid<Real, fsgrids::efield::N_EFIELD, FS_STENCIL_WIDTH>;
-using EHallFsGrid = FsGrid<Real, fsgrids::ehall::N_EHALL, FS_STENCIL_WIDTH>;
-using EGradPeFsGrid = FsGrid<Real, fsgrids::egradpe::N_EGRADPE, FS_STENCIL_WIDTH>;
-using MomentsFsGrid = FsGrid<Real, fsgrids::moments::N_MOMENTS, FS_STENCIL_WIDTH>;
-using DPerBFsGrid = FsGrid<Real, fsgrids::dperb::N_DPERB, FS_STENCIL_WIDTH>;
-using DMomentsFsGrid = FsGrid<Real, fsgrids::dmoments::N_DMOMENTS, FS_STENCIL_WIDTH>;
-using BgBFsGrid = FsGrid<Real, fsgrids::bgbfield::N_BGB, FS_STENCIL_WIDTH>;
-using VolFsGrid = FsGrid<Real, fsgrids::volfields::N_VOL, FS_STENCIL_WIDTH>;
+using BFieldFsGrid    = RealFsGrid<fsgrids::bfield::N_BFIELD>;
+using BFieldFsGrid    = RealFsGrid<fsgrids::bfield::N_BFIELD>;
+using EFieldFsGrid    = RealFsGrid<fsgrids::efield::N_EFIELD>;
+using EHallFsGrid     = RealFsGrid<fsgrids::ehall::N_EHALL>;
+using EGradPeFsGrid   = RealFsGrid<fsgrids::egradpe::N_EGRADPE>;
+using MomentsFsGrid   = RealFsGrid<fsgrids::moments::N_MOMENTS>;
+using DPerBFsGrid     = RealFsGrid<fsgrids::dperb::N_DPERB>;
+using DMomentsFsGrid  = RealFsGrid<fsgrids::dmoments::N_DMOMENTS>;
+using BgBFsGrid       = RealFsGrid<fsgrids::bgbfield::N_BGB>;
+using VolFsGrid       = RealFsGrid<fsgrids::volfields::N_VOL>;
 using TechnicalFsGrid = FsGrid< fsgrids::technical, 1, FS_STENCIL_WIDTH>;
 
 
