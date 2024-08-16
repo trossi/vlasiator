@@ -53,7 +53,6 @@
 #include "fs_limiters.h"
 #include "mpiconversion.h"
 #include "../fieldtracing/fieldtracing.h"
-
 #include "../logger.h"
 extern Logger logFile;
 
@@ -88,20 +87,20 @@ bool finalizeFieldPropagator() {
  * 
  */
 bool propagateFields(
-   BFieldFsGrid & perBGridObj,
-   BFieldFsGrid & perBDt2GridObj,
-   EFieldFsGrid & EGridObj,
-   EFieldFsGrid & EDt2GridObj,
-   EHallFsGrid & EHallGridObj,
-   EGradPeFsGrid & EGradPeGridObj,
-   MomentsFsGrid & momentsGridObj,
-   MomentsFsGrid & momentsDt2GridObj,
-   DPerBFsGrid & dPerBGridObj,
-   DMomentsFsGrid & dMomentsGridObj,
-   BgBFsGrid & BgBGridObj,
-   VolFsGrid & volGridObj,
-   TechnicalFsGrid & technicalGridObj,
-   SysBoundary& sysBoundariesObj,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    creal& dt,
    cuint subcycles
 ) {
@@ -111,33 +110,21 @@ bool propagateFields(
       exit(1);
    }
    
-   // initialize host/device buffers
-   arch::buf<TechnicalFsGrid > technicalGrid(&technicalGridObj);
-   arch::buf<BFieldFsGrid > perBGrid(&perBGridObj);
-   arch::buf<BFieldFsGrid > perBDt2Grid(&perBDt2GridObj);
-   arch::buf<EFieldFsGrid > EGrid(&EGridObj);
-   arch::buf<EFieldFsGrid > EDt2Grid(&EDt2GridObj);
-   arch::buf<EHallFsGrid > EHallGrid(&EHallGridObj);
-   arch::buf<EGradPeFsGrid > EGradPeGrid(&EGradPeGridObj);
-   arch::buf<MomentsFsGrid > momentsGrid(&momentsGridObj);
-   arch::buf<MomentsFsGrid > momentsDt2Grid(&momentsDt2GridObj);
-   arch::buf<DPerBFsGrid > dPerBGrid(&dPerBGridObj);
-   arch::buf<DMomentsFsGrid > dMomentsGrid(&dMomentsGridObj);
-   arch::buf<BgBFsGrid > BgBGrid(&BgBGridObj);
-   arch::buf<VolFsGrid > volGrid(&volGridObj);
-   arch::buf<SysBoundary> sysBoundaries(&sysBoundariesObj);
+   const auto gridDims = &technicalGrid.getLocalSize()[0];
    
-   const auto gridDims = &technicalGridObj.getLocalSize()[0];
-   
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) {
-      technicalGrid.get(i, j, k)->maxFsDt = std::numeric_limits<Real>::max();
-   });  
-   //technicalGrid.syncHostData();
+   #pragma omp parallel for collapse(2)
+   for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
+      for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
+         for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
+            technicalGrid.get(i,j,k)->maxFsDt=std::numeric_limits<Real>::max();
+         }
+      }
+   }
    
    
    if (subcycles == 1) {
       #ifdef FS_1ST_ORDER_TIME
-      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER1);
+      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, BgBGrid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER1);
       calculateDerivativesSimple(perBGrid, perBDt2Grid, momentsGrid, momentsDt2Grid, dPerBGrid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER1, true);
       if(FSParams.ohmGradPeTerm > 0){
          calculateGradPeTermSimple(EGradPeGrid, momentsGrid, momentsDt2Grid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER1);
@@ -174,7 +161,7 @@ bool propagateFields(
          RK_ORDER1
       );
       #else
-      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER2_STEP1);
+      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, BgBGrid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER2_STEP1);
       calculateDerivativesSimple(perBGrid, perBDt2Grid, momentsGrid, momentsDt2Grid, dPerBGrid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER2_STEP1, true);
       if(FSParams.ohmGradPeTerm > 0) {
          calculateGradPeTermSimple(EGradPeGrid, momentsGrid, momentsDt2Grid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER2_STEP1);
@@ -211,7 +198,7 @@ bool propagateFields(
          RK_ORDER2_STEP1
       );
       
-      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER2_STEP2);
+      propagateMagneticFieldSimple(perBGrid, perBDt2Grid, BgBGrid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, dt, RK_ORDER2_STEP2);
       calculateDerivativesSimple(perBGrid, perBDt2Grid, momentsGrid, momentsDt2Grid, dPerBGrid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER2_STEP2, true);
       if(FSParams.ohmGradPeTerm > 0) {
          calculateGradPeTermSimple(EGradPeGrid, momentsGrid, momentsDt2Grid, dMomentsGrid, technicalGrid, sysBoundaries, RK_ORDER2_STEP2);
@@ -259,7 +246,7 @@ bool propagateFields(
       while (subcycleCount < maxSubcycleCount ) {
          // In case of subcycling, we decided to go for a blunt Runge-Kutta subcycling even though e.g. moments are not going along.
          // Result of the Summer of Debugging 2016, the behaviour in wave dispersion was much improved with this.
-         propagateMagneticFieldSimple(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, subcycleDt, RK_ORDER2_STEP1);
+         propagateMagneticFieldSimple(perBGrid, perBDt2Grid, BgBGrid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, subcycleDt, RK_ORDER2_STEP1);
 
          // We need to calculate derivatives of the moments at every substep, but the moments only
          // need to be communicated in the first one.
@@ -299,7 +286,7 @@ bool propagateFields(
             RK_ORDER2_STEP1
          );
          
-         propagateMagneticFieldSimple(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, subcycleDt, RK_ORDER2_STEP2);
+         propagateMagneticFieldSimple(perBGrid, perBDt2Grid, BgBGrid, EGrid, EDt2Grid, technicalGrid, sysBoundaries, subcycleDt, RK_ORDER2_STEP2);
          
          // We need to calculate derivatives of the moments at every substep, but the moments only
          // need to be communicated in the first one.
@@ -339,7 +326,7 @@ bool propagateFields(
             RK_ORDER2_STEP2
          );
          
-         phiprof::start("FS subcycle stuff");
+         phiprof::Timer subcyclingTimer {"FS subcycle stuff"};
          subcycleT += subcycleDt; 
          subcycleCount++;
 
@@ -349,10 +336,6 @@ bool propagateFields(
                //due to roundoff we might hit this, should add delta
                std::cerr << "subcycleT > targetT, should not happen! (values: subcycleT " << subcycleT << ", subcycleDt " << subcycleDt << ", targetT " << targetT << ")" << std::endl;
             }
-
-            // Make sure the phiprof group is closed when leaving the loop
-            phiprof::stop("FS subcycle stuff");
-
             break;
          }
 
@@ -363,14 +346,11 @@ bool propagateFields(
          Real dtMaxGlobal;
          dtMaxLocal=std::numeric_limits<Real>::max();
 
-         //ARCH_TODO
-         technicalGrid.syncHostData();
-         auto localSize = technicalGrid.grid()->getLocalSize();
-
-         for(int z=0; z<localSize[2]; z++) {
-            for(int y=0; y<localSize[1]; y++) {
-               for(int x=0; x<localSize[0]; x++) {
-                  auto cell = technicalGrid.get(x,y,z);
+         auto& localSize = technicalGrid.getLocalSize();
+         for(FsGridTools::FsIndex_t z=0; z<localSize[2]; z++) {
+            for(FsGridTools::FsIndex_t y=0; y<localSize[1]; y++) {
+               for(FsGridTools::FsIndex_t x=0; x<localSize[0]; x++) {
+                  fsgrids::technical* cell = technicalGrid.get(x,y,z);
                   if ( cell->sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY ||
                         (cell->sysBoundaryLayer == 1 && cell->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY )) {
                      dtMaxLocal=min(dtMaxLocal, cell->maxFsDt);
@@ -379,9 +359,9 @@ bool propagateFields(
             }
          }
 
-         phiprof::start("MPI_Allreduce");
-         technicalGrid.grid()->Allreduce(&(dtMaxLocal), &(dtMaxGlobal), 1, MPI_Type<Real>(), MPI_MIN);
-         phiprof::stop("MPI_Allreduce");
+         phiprof::Timer allreduceTimer {"MPI_Allreduce"};
+         technicalGrid.Allreduce(&(dtMaxLocal), &(dtMaxGlobal), 1, MPI_Type<Real>(), MPI_MIN);
+         allreduceTimer.stop();
          
          //reduce dt if it is too high
          if( subcycleDt > dtMaxGlobal * P::fieldSolverMaxCFL ) {
@@ -404,7 +384,7 @@ bool propagateFields(
             }
          }
          
-         phiprof::stop("FS subcycle stuff");
+         subcyclingTimer.stop();
       }
       
       

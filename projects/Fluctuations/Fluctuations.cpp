@@ -62,8 +62,6 @@ namespace projects {
          RP::add(pop + "_Fluctuations.Temperature", "Temperature (K)", 2.0e6);
          RP::add(pop + "_Fluctuations.densityPertRelAmp", "Amplitude factor of the density perturbation", 0.1);
          RP::add(pop + "_Fluctuations.velocityPertAbsAmp", "Amplitude of the velocity perturbation", 1.0e6);
-         RP::add(pop + "_Fluctuations.nSpaceSamples", "Number of sampling points per spatial dimension", 2);
-         RP::add(pop + "_Fluctuations.nVelocitySamples", "Number of sampling points per velocity dimension", 5);
          RP::add(pop + "_Fluctuations.maxwCutoff", "Cutoff for the maxwellian distribution", 1e-12);
       }
    }
@@ -87,15 +85,13 @@ namespace projects {
          RP::get(pop + "_Fluctuations.Temperature", sP.TEMPERATURE);
          RP::get(pop + "_Fluctuations.densityPertRelAmp", sP.densityPertRelAmp);
          RP::get(pop + "_Fluctuations.velocityPertAbsAmp", sP.velocityPertAbsAmp);
-         RP::get(pop + "_Fluctuations.nSpaceSamples", sP.nSpaceSamples);
-         RP::get(pop + "_Fluctuations.nVelocitySamples", sP.nVelocitySamples);
          RP::get(pop + "_Fluctuations.maxwCutoff", sP.maxwCutoff);
 
          speciesParams.push_back(sP);
       }
    }
    
-   Real Fluctuations::getDistribValue(creal& vx,creal& vy, creal& vz, const uint popID) const {
+   inline Real Fluctuations::getDistribValue(creal& vx,creal& vy, creal& vz, const uint popID) const {
       const FluctuationsSpeciesParameters& sP = speciesParams[popID];
 
       creal mass = getObjectWrapper().particleSpecies[popID].mass;
@@ -124,25 +120,12 @@ namespace projects {
       creal mass = getObjectWrapper().particleSpecies[popID].mass;
       creal kb = physicalconstants::K_B;
       
-      creal d_vx = dvx / (sP.nVelocitySamples-1);
-      creal d_vy = dvy / (sP.nVelocitySamples-1);
-      creal d_vz = dvz / (sP.nVelocitySamples-1);
-      Real avg = 0.0;
-      
-      for (uint vi=0; vi<sP.nVelocitySamples; ++vi)
-         for (uint vj=0; vj<sP.nVelocitySamples; ++vj)
-            for (uint vk=0; vk<sP.nVelocitySamples; ++vk)
-            {
-               avg += getDistribValue(
-                  vx+vi*d_vx - sP.velocityPertAbsAmp * (0.5 - rndVel[0] ),
-                  vy+vj*d_vy - sP.velocityPertAbsAmp * (0.5 - rndVel[1] ),
-                  vz+vk*d_vz - sP.velocityPertAbsAmp * (0.5 - rndVel[2] ), popID);
-            }
-      
-      creal result = avg *
+      creal result = getDistribValue(
+         vx+0.5*dvx - sP.velocityPertAbsAmp * (0.5 - rndVel[0] ),
+         vy+0.5*dvy - sP.velocityPertAbsAmp * (0.5 - rndVel[1] ),
+         vz+0.5*dvz - sP.velocityPertAbsAmp * (0.5 - rndVel[2] ), popID) *
          sP.DENSITY * (1.0 + sP.densityPertRelAmp * (0.5 - rndRho)) *
-         pow(mass / (2.0 * M_PI * kb * sP.TEMPERATURE), 1.5) /
-         (sP.nVelocitySamples*sP.nVelocitySamples*sP.nVelocitySamples);
+         pow(mass / (2.0 * M_PI * kb * sP.TEMPERATURE), 1.5);
       
       if(result < sP.maxwCutoff) {
          return 0.0;
@@ -152,6 +135,7 @@ namespace projects {
    }
    
    void Fluctuations::calcCellParameters(spatial_cell::SpatialCell* cell,creal& t) {
+      
       std::default_random_engine rndState;
       setRandomCellSeed(cell,rndState);
       
@@ -177,9 +161,9 @@ namespace projects {
          const auto localSize = BgBGrid.getLocalSize();
          
          #pragma omp parallel for collapse(3)
-         for (int x = 0; x < localSize[0]; ++x) {
-            for (int y = 0; y < localSize[1]; ++y) {
-               for (int z = 0; z < localSize[2]; ++z) {
+         for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
+            for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
+               for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
                   auto cell = perBGrid.get(x, y, z);
                   const int64_t cellid = perBGrid.GlobalIDForCoords(x, y, z);
                   

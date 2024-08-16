@@ -27,13 +27,13 @@
 #include "ldz_magnetic_field.hpp"
 
 /*! \brief Low-level magnetic field propagation function.
- * 
+ *
  * Propagates the cell's face-averaged magnetic field components by
  * using Faraday's law on the face edges. Depending on the time order
  * of accuracy it is done in one stage or in two stages using the
  * intermediate E1 components for the first stage of the second-order
  * Runge-Kutta method and E for the other cases.
- * 
+ *
  *
  * \param perBGrid fsGrid holding the perturbed B quantities at runge-kutta t=0
  * \param perBDt2Grid fsGrid holding the perturbed B quantities at runge-kutta t=0.5
@@ -47,10 +47,10 @@
  * \param doZ If true, compute the z component (default true).
  */
 void propagateMagneticField(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<BFieldFsGrid> & perBDt2Grid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EFieldFsGrid> & EDt2Grid,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
    cint i,
    cint j,
    cint k,
@@ -60,16 +60,16 @@ void propagateMagneticField(
    const bool doY, //=true (default)
    const bool doZ  //=true (default)
 ) {
-   creal dx = perBGrid.grid()->DX;
-   creal dy = perBGrid.grid()->DY;
-   creal dz = perBGrid.grid()->DZ;
-   
+   creal dx = perBGrid.DX;
+   creal dy = perBGrid.DY;
+   creal dz = perBGrid.DZ;
+
    auto perBGrid0 = perBGrid.get(i,j,k);
-   Real* EGrid0;
-   Real* EGrid1;
-   Real* EGrid2;
-   Real* perBDt2Grid0;
-   
+   std::array<Real, fsgrids::efield::N_EFIELD> * EGrid0;
+   std::array<Real, fsgrids::efield::N_EFIELD> * EGrid1;
+   std::array<Real, fsgrids::efield::N_EFIELD> * EGrid2;
+   std::array<Real, fsgrids::bfield::N_BFIELD> * perBDt2Grid0;
+
    if (doX == true) {
       switch (RKCase) {
          case RK_ORDER1:
@@ -78,7 +78,7 @@ void propagateMagneticField(
             EGrid2 = EGrid.get(i,j,k+1);
             perBGrid0[fsgrids::bfield::PERBX] += dt/dz*(EGrid2[fsgrids::efield::EY] - EGrid0[fsgrids::efield::EY]) + dt/dy*(EGrid0[fsgrids::efield::EZ] - EGrid1[fsgrids::efield::EZ]);
             break;
-            
+
          case RK_ORDER2_STEP1:
             perBDt2Grid0 = perBDt2Grid.get(i,j,k);
             EGrid0 = EGrid.get(i,j,k);
@@ -86,20 +86,20 @@ void propagateMagneticField(
             EGrid2 = EGrid.get(i,j,k+1);
             perBDt2Grid0[fsgrids::bfield::PERBX] = perBGrid0[fsgrids::bfield::PERBX] + 0.5*dt*(1.0/dz*(EGrid2[fsgrids::efield::EY] - EGrid0[fsgrids::efield::EY]) + 1.0/dy*(EGrid0[fsgrids::efield::EZ] - EGrid1[fsgrids::efield::EZ]));
             break;
-            
+
          case RK_ORDER2_STEP2:
             EGrid0 = EDt2Grid.get(i,j,k);
             EGrid1 = EDt2Grid.get(i,j+1,k);
             EGrid2 = EDt2Grid.get(i,j,k+1);
             perBGrid0[fsgrids::bfield::PERBX] += dt * (1.0/dz*(EGrid2[fsgrids::efield::EY] - EGrid0[fsgrids::efield::EY]) + 1.0/dy*(EGrid0[fsgrids::efield::EZ] - EGrid1[fsgrids::efield::EZ]));
             break;
-            
+
          default:
             std::cerr << __FILE__ << ":" << __LINE__ << ":" << "Invalid RK case." << std::endl;
             abort();
       }
    }
-   
+
    if (doY == true) {
       switch (RKCase) {
          case RK_ORDER1:
@@ -126,7 +126,7 @@ void propagateMagneticField(
             abort();
       }
    }
-   
+
    if (doZ == true) {
       switch (RKCase) {
          case RK_ORDER1:
@@ -156,11 +156,12 @@ void propagateMagneticField(
 }
 
 /*! \brief Low-level magnetic field propagation function.
- * 
+ *
  * Propagates the magnetic field according to the system boundary conditions.
- * 
+ *
  * \param perBGrid fsGrid holding the perturbed B quantities at runge-kutta t=0
  * \param perBDt2Grid fsGrid holding the perturbed B quantities at runge-kutta t=0.5
+ * \param bgbGrid fsGrid holding the background field B quantities
  * \param EGrid fsGrid holding the Electric field quantities at runge-kutta t=0
  * \param EDt2Grid fsGrid holding the Electric field quantities at runge-kutta t=0.5
  * \param technicalGrid fsGrid holding technical information (such as boundary types)
@@ -168,15 +169,16 @@ void propagateMagneticField(
  * \param sysBoundaries System boundary conditions existing
  * \param dt Length of the time step
  * \param RKCase Element in the enum defining the Runge-Kutta method steps
- * 
+ *
  * \sa propagateMagneticFieldSimple propagateMagneticField
  */
 void propagateSysBoundaryMagneticField(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<BFieldFsGrid> & perBDt2Grid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EFieldFsGrid> & EDt2Grid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   BgBFsGrid & bgbGrid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
+   TechnicalFsGrid & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -186,46 +188,16 @@ void propagateSysBoundaryMagneticField(
    cuint component
 ) {
    if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
-      perBGrid.get(i,j,k)[fsgrids::bfield::PERBX + component] = sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag).fieldSolverBoundaryCondMagneticField(perBGrid, technicalGrid, i, j, k, dt, component);
+      perBGrid.get(i,j,k)->at(fsgrids::bfield::PERBX + component) = sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag)->fieldSolverBoundaryCondMagneticField(perBGrid, bgbGrid, technicalGrid, i, j, k, dt, component);
    } else {
-      perBDt2Grid.get(i,j,k)[fsgrids::bfield::PERBX + component] = sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag).fieldSolverBoundaryCondMagneticField(perBDt2Grid, technicalGrid, i, j, k, dt, component);
-   }
-}
-
-/*! \brief Low-level magnetic field projection function.
- *
- * Projects the magnetic field according to the system boundary conditions.
- *
- * \param perBGrid fsGrid holding the perturbed B quantities at runge-kutta t=0
- * \param perBDt2Grid fsGrid holding the perturbed B quantities at runge-kutta t=0.5
- * \param technicalGrid fsGrid holding technical information (such as boundary types)
- * \param i,j,k fsGrid cell coordinates for the current cell
- * \param sysBoundaries System boundary conditions existing
- * \param RKCase Element in the enum defining the Runge-Kutta method steps
- *
- * \sa propagateMagneticFieldSimple propagateMagneticField
- */
-void SysBoundaryMagneticFieldProjection(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<BFieldFsGrid> & perBDt2Grid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
-   cint i,
-   cint j,
-   cint k,
-   const arch::buf<SysBoundary>& sysBoundaries,
-   cint& RKCase
-) {
-   if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
-      sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag).fieldSolverBoundaryCondMagneticFieldProjection(perBGrid, technicalGrid, i, j, k);
-   } else {
-      sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag).fieldSolverBoundaryCondMagneticFieldProjection(perBDt2Grid, technicalGrid, i, j, k);
+      perBDt2Grid.get(i,j,k)->at(fsgrids::bfield::PERBX + component) = sysBoundaries.getSysBoundary(technicalGrid.get(i,j,k)->sysBoundaryFlag)->fieldSolverBoundaryCondMagneticField(perBDt2Grid, bgbGrid, technicalGrid, i, j, k, dt, component);
    }
 }
 
 /*! \brief High-level magnetic field propagation function.
- * 
+ *
  * Propagates the magnetic field and applies the field boundary conditions defined in project.h where needed.
- * 
+ *
  * \param perBGrid fsGrid holding the perturbed B quantities at runge-kutta t=0
  * \param perBDt2Grid fsGrid holding the perturbed B quantities at runge-kutta t=0.5
  * \param EGrid fsGrid holding the Electric field quantities at runge-kutta t=0
@@ -234,41 +206,45 @@ void SysBoundaryMagneticFieldProjection(
  * \param sysBoundaries System boundary conditions existing
  * \param dt Length of the time step
  * \param RKCase Element in the enum defining the Runge-Kutta method steps
- * 
+ *
  * \sa propagateMagneticField propagateSysBoundaryMagneticField
  */
 void propagateMagneticFieldSimple(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<EFieldFsGrid> & EGrid,
-   arch::buf<EFieldFsGrid> & EDt2Grid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary> & sysBoundaries, 
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   BgBFsGrid & bgbGrid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    creal& dt,
    cint& RKCase
 ) {
-   int timer;
-   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   //const auto gridDims = technicalGrid.getLocalSize();
+   const auto gridDims = &technicalGrid.getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
-   
-   phiprof::start("Propagate magnetic field");
-   
-   timer=phiprof::initializeTimer("Compute cells");
-   phiprof::start(timer);
-   
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) { 
-      cuint bitfield = technicalGrid.get(i,j,k)->SOLVE;
-      propagateMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, i, j, k, dt, RKCase, ((bitfield & compute::BX) == compute::BX), ((bitfield & compute::BY) == compute::BY), ((bitfield & compute::BZ) == compute::BZ));
-   });
-   
-   //phiprof::stop("propagate not sysbound",localCells.size(),"Spatial Cells");
-   phiprof::stop(timer,N_cells,"Spatial Cells");
-   
+   phiprof::Timer propagateBTimer {"Propagate magnetic field"};
+
+   int computeTimerId {phiprof::initializeTimer("Magnetic Field compute cells")};
+   int sysBoundaryTimerId {phiprof::initializeTimer("Magnetic Field compute sysboundary cells")};
+   #pragma omp parallel
+   {
+      phiprof::Timer computeTimer {computeTimerId};
+      #pragma omp for collapse(2)
+      for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
+         for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
+            for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
+               cuint bitfield = technicalGrid.get(i,j,k)->SOLVE;
+               propagateMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, i, j, k, dt, RKCase, ((bitfield & compute::BX) == compute::BX), ((bitfield & compute::BY) == compute::BY), ((bitfield & compute::BZ) == compute::BZ));
+            }
+         }
+      }
+   }
+
    //This communication is needed for boundary conditions, in practice almost all
    //of the communication is going to be redone in calculateDerivativesSimple
    //TODO: do not transfer if there are no field boundaryconditions
-   timer=phiprof::initializeTimer("MPI","MPI");
-   phiprof::start(timer);
+   phiprof::Timer mpiTimer {"MPI", {"MPI"}};
    if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
       // Exchange PERBX,PERBY,PERBZ with neighbours
       perBGrid.syncHostData();
@@ -280,32 +256,36 @@ void propagateMagneticFieldSimple(
       perBDt2Grid.grid()->updateGhostCells();
       perBDt2Grid.syncDeviceData();
    }
-   
-   phiprof::stop(timer);
-   
+   mpiTimer.stop();
+
    // Propagate B on system boundary/process inner cells
-   timer=phiprof::initializeTimer("Compute system boundary cells");
-   phiprof::start(timer);
-   // L1 pass
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) { 
-      cuint bitfield = technicalGrid.get(i,j,k)->SOLVE;
-      // // L1 pass
-      if (technicalGrid.get(i,j,k)->sysBoundaryLayer == 1) {
-         if ((bitfield & compute::BX) != compute::BX) {
-            propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 0);
-         }
-         if ((bitfield & compute::BY) != compute::BY) {
-            propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 1);
-         }
-         if ((bitfield & compute::BZ) != compute::BZ) {
-            propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 2);
+   #pragma omp parallel
+   {
+      phiprof::Timer sysBoundaryTimer {sysBoundaryTimerId};
+      // L1 pass
+      #pragma omp for collapse(2)
+      for (int k=0; k<gridDims[2]; k++) {
+         for (int j=0; j<gridDims[1]; j++) {
+            for (int i=0; i<gridDims[0]; i++) {
+               cuint bitfield = technicalGrid.get(i,j,k)->SOLVE;
+               // L1 pass
+               if (technicalGrid.get(i,j,k)->sysBoundaryLayer == 1) {
+                  if ((bitfield & compute::BX) != compute::BX) {
+                     propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, bgbGrid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 0);
+                  }
+                  if ((bitfield & compute::BY) != compute::BY) {
+                     propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, bgbGrid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 1);
+                  }
+                  if ((bitfield & compute::BZ) != compute::BZ) {
+                     propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, bgbGrid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, 2);
+                  }
+               }
+            }
          }
       }
-   });
-   phiprof::stop(timer);
-   
-   timer=phiprof::initializeTimer("MPI","MPI");
-   phiprof::start(timer);
+   }
+
+   mpiTimer.start();
    if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
       // Exchange PERBX,PERBY,PERBZ with neighbours
       perBGrid.syncHostData();
@@ -317,35 +297,26 @@ void propagateMagneticFieldSimple(
       perBDt2Grid.grid()->updateGhostCells();
       perBDt2Grid.syncDeviceData();
    }
-   phiprof::stop(timer);
+   mpiTimer.stop();
 
-   timer=phiprof::initializeTimer("Compute system boundary cells");
-   phiprof::start(timer);
-   // L2 pass
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) { 
-      if(technicalGrid.get(i,j,k)->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY &&
-         technicalGrid.get(i,j,k)->sysBoundaryLayer == 2
-      ) {
-         for (uint component = 0; component < 3; component++) {
-            propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, component);
+   #pragma omp parallel
+   {
+      phiprof::Timer sysBoundaryTimer {sysBoundaryTimerId};
+      // L2 pass
+      #pragma omp for collapse(2)
+      for (int k=0; k<gridDims[2]; k++) {
+         for (int j=0; j<gridDims[1]; j++) {
+            for (int i=0; i<gridDims[0]; i++) {
+               if(technicalGrid.get(i,j,k)->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY &&
+                  technicalGrid.get(i,j,k)->sysBoundaryLayer == 2
+                  ) {
+                  for (uint component = 0; component < 3; component++) {
+                     propagateSysBoundaryMagneticField(perBGrid, perBDt2Grid, bgbGrid, EGrid, EDt2Grid, technicalGrid, i, j, k, sysBoundaries, dt, RKCase, component);
+                  }
+               }
+            }
          }
       }
-   });
-   phiprof::stop(timer,N_cells,"Spatial Cells");
-
-   // Projection of magnetic field to normal of boundary, if necessary
-   timer=phiprof::initializeTimer("Compute system boundary cells");
-   phiprof::start(timer);
-
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) { 
-      if (technicalGrid.get(i,j,k)->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY &&
-            ((technicalGrid.get(i,j,k)->sysBoundaryLayer == 2) ||
-            (technicalGrid.get(i,j,k)->sysBoundaryLayer == 1))
-         ) {
-         SysBoundaryMagneticFieldProjection(perBGrid, perBDt2Grid, technicalGrid, i, j, k, sysBoundaries, RKCase);
-      }
-   });
-   phiprof::stop(timer,N_cells,"Spatial Cells");
-   
-   phiprof::stop("Propagate magnetic field",N_cells,"Spatial Cells");
+   }
+   propagateBTimer.stop(N_cells,"Spatial Cells");
 }

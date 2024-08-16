@@ -94,12 +94,12 @@ ARCH_HOSTDEV Real calculateCflSpeed(
  * \param ret_vS Sound speed returned
  * \param ret_vW Whistler speed returned
  */
-ARCH_HOSTDEV void calculateWaveSpeedYZ(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
+void calculateWaveSpeedYZ(
+   BFieldFsGrid & perBGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
    cint i,
    cint j,
    cint k,
@@ -217,12 +217,12 @@ ARCH_HOSTDEV void calculateWaveSpeedYZ(
  * \param ret_vS Sound speed returned
  * \param ret_vW Whistler speed returned
  */
-ARCH_HOSTDEV void calculateWaveSpeedXZ(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
+void calculateWaveSpeedXZ(
+   BFieldFsGrid & perBGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
    cint i,
    cint j,
    cint k,
@@ -340,12 +340,12 @@ ARCH_HOSTDEV void calculateWaveSpeedXZ(
  * \param ret_vS Sound speed returned
  * \param ret_vW Whistler speed returned
  */
-ARCH_HOSTDEV void calculateWaveSpeedXY(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
+void calculateWaveSpeedXY(
+   BFieldFsGrid & perBGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
    cint i,
    cint j,
    cint k,
@@ -453,16 +453,16 @@ ARCH_HOSTDEV void calculateWaveSpeedXY(
  * \param i,j,k fsGrid cell coordinates for the current cell
  * \param RKCase Element in the enum defining the Runge-Kutta method steps
  */
-ARCH_HOSTDEV void calculateEdgeElectricFieldX(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EHallFsGrid> & EHallGrid,
-   const arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
+void calculateEdgeElectricFieldX(
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -815,16 +815,16 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldX(
  * 
  * \param RKCase Element in the enum defining the Runge-Kutta method steps
  */
-ARCH_HOSTDEV void calculateEdgeElectricFieldY(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EHallFsGrid> & EHallGrid,
-   const arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
+void calculateEdgeElectricFieldY(
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -1176,16 +1176,16 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldY(
  * 
  * \param RKCase Element in the enum defining the Runge-Kutta method steps
  */
-ARCH_HOSTDEV void calculateEdgeElectricFieldZ(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EHallFsGrid> & EHallGrid,
-   const arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
+void calculateEdgeElectricFieldZ(
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -1552,16 +1552,16 @@ ARCH_HOSTDEV void calculateEdgeElectricFieldZ(
  * \sa calculateUpwindedElectricFieldSimple calculateEdgeElectricFieldX calculateEdgeElectricFieldY calculateEdgeElectricFieldZ
  * 
  */
-ARCH_HOSTDEV void calculateElectricField(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<EFieldFsGrid> & EGrid,
-   const arch::buf<EHallFsGrid> & EHallGrid,
-   const arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   const arch::buf<MomentsFsGrid> & momentsGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   const arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   const arch::buf<BgBFsGrid> & BgBGrid,
-   const arch::buf<TechnicalFsGrid> & technicalGrid,
+void calculateElectricField(
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
    cint i,
    cint j,
    cint k,
@@ -1570,7 +1570,7 @@ ARCH_HOSTDEV void calculateElectricField(
 ) {
    cuint cellSysBoundaryFlag = technicalGrid.get(i,j,k)->sysBoundaryFlag;
    
-   if (cellSysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) return;
+   if (cellSysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE || cellSysBoundaryFlag == sysboundarytype::OUTER_BOUNDARY_PADDING) return;
    
    cuint bitfield = technicalGrid.get(i,j,k)->SOLVE;
    
@@ -1657,32 +1657,31 @@ ARCH_HOSTDEV void calculateElectricField(
  * \sa calculateElectricField calculateEdgeElectricFieldX calculateEdgeElectricFieldY calculateEdgeElectricFieldZ
  */
 void calculateUpwindedElectricFieldSimple(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<EFieldFsGrid> & EGrid,
-   arch::buf<EFieldFsGrid> & EDt2Grid,
-   arch::buf<EHallFsGrid> & EHallGrid,
-   arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   arch::buf<MomentsFsGrid> & momentsGrid,
-   arch::buf<MomentsFsGrid> & momentsDt2Grid,
-   arch::buf<DPerBFsGrid> & dPerBGrid,
-   arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   arch::buf<BgBFsGrid> & BgBGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    cint& RKCase
 ) {
-   int timer;
-   const auto gridDims = &technicalGrid.grid()->getLocalSize()[0];
+   //const auto gridDims = technicalGrid.getLocalSize();
+   const auto gridDims = &technicalGrid.getLocalSize()[0];
    const size_t N_cells = gridDims[0]*gridDims[1]*gridDims[2];
-   phiprof::start("Calculate upwinded electric field");
+   phiprof::Timer upwindedETimer {"Calculate upwinded electric field"};
+   int computeTimerID {phiprof::initializeTimer("Electric field compute cells")};
    
-   timer=phiprof::initializeTimer("MPI","MPI");
-   phiprof::start(timer);
-   if(FSParams.ohmHallTerm > 0) {
-      EHallGrid.syncHostData();
-      EHallGrid.grid()->updateGhostCells();
-      EHallGrid.syncDeviceData();
+   phiprof::Timer mpiTimer {"Electric field ghost updates MPI", {"MPI"}};
+   // Update ghosts if necessary, unless previous terms have already updated them
+   if(P::ohmHallTerm > 0) {
+      EHallGrid.updateGhostCells();
    }
    if(FSParams.ohmGradPeTerm > 0) {
       EGradPeGrid.syncHostData();
@@ -1700,52 +1699,58 @@ void calculateUpwindedElectricFieldSimple(
       dMomentsGrid.syncDeviceData();
    }
    
-   phiprof::stop(timer);
+   mpiTimer.stop();
    
    // Calculate upwinded electric field on inner cells
-   timer=phiprof::initializeTimer("Compute cells");
-   phiprof::start(timer);
-   arch::parallel_for({(uint)gridDims[0], (uint)gridDims[1], (uint)gridDims[2]}, ARCH_LOOP_LAMBDA(int i, int j, int k) { 
-      if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
-         calculateElectricField(
-            perBGrid,
-            EGrid,
-            EHallGrid,
-            EGradPeGrid,
-            momentsGrid,
-            dPerBGrid,
-            dMomentsGrid,
-            BgBGrid,
-            technicalGrid,
-            i,
-            j,
-            k,
-            sysBoundaries,
-            RKCase
-         );
-      } else { // RKCase == RK_ORDER2_STEP1
-         calculateElectricField(
-            perBDt2Grid,
-            EDt2Grid,
-            EHallGrid,
-            EGradPeGrid,
-            momentsDt2Grid,
-            dPerBGrid,
-            dMomentsGrid,
-            BgBGrid,
-            technicalGrid,
-            i,
-            j,
-            k,
-            sysBoundaries,
-            RKCase
-         );
+   #pragma omp parallel
+   {
+      phiprof::Timer computeTimer {computeTimerID};
+      #pragma omp for collapse(2)
+      for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
+         for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
+            for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
+               if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
+                  calculateElectricField(
+                     perBGrid,
+                     EGrid,
+                     EHallGrid,
+                     EGradPeGrid,
+                     momentsGrid,
+                     dPerBGrid,
+                     dMomentsGrid,
+                     BgBGrid,
+                     technicalGrid,
+                     i,
+                     j,
+                     k,
+                     sysBoundaries,
+                     RKCase
+                     );
+               } else { // RKCase == RK_ORDER2_STEP1
+                  calculateElectricField(
+                     perBDt2Grid,
+                     EDt2Grid,
+                     EHallGrid,
+                     EGradPeGrid,
+                     momentsDt2Grid,
+                     dPerBGrid,
+                     dMomentsGrid,
+                     BgBGrid,
+                     technicalGrid,
+                     i,
+                     j,
+                     k,
+                     sysBoundaries,
+                     RKCase
+                     );
+               }
+            }
+         }
       }
-   });
-   phiprof::stop(timer,N_cells,"Spatial Cells");
+      computeTimer.stop(N_cells,"Spatial Cells");
+   }
    
-   timer=phiprof::initializeTimer("MPI","MPI");
-   phiprof::start(timer);
+   mpiTimer.start();
    // Exchange electric field with neighbouring processes
    if (RKCase == RK_ORDER1 || RKCase == RK_ORDER2_STEP2) {
       EGrid.syncHostData();
@@ -1756,7 +1761,7 @@ void calculateUpwindedElectricFieldSimple(
       EDt2Grid.grid()->updateGhostCells();
       EDt2Grid.syncDeviceData();
    }
-   phiprof::stop(timer);
+   mpiTimer.stop();
    
-   phiprof::stop("Calculate upwinded electric field",N_cells,"Spatial Cells");
+   upwindedETimer.stop(N_cells,"Spatial Cells");
 }

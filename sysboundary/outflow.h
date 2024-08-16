@@ -26,7 +26,7 @@
 #include <vector>
 #include "../definitions.h"
 #include "../readparameters.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include "sysboundarycondition.h"
 #include "outflowFieldBoundary.h"
 
@@ -60,93 +60,81 @@ namespace SBC {
       static void addParameters();
       virtual void getParameters();
       
-      virtual bool initSysBoundary(
+      virtual void initSysBoundary(
          creal& t,
          Project &project
       );
-      bool initFieldBoundary();
-      OutflowFieldBoundary* getFieldBoundary() {return fieldBoundary;} 
-      virtual bool applyInitialState(
-         const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+      virtual void assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+                                     TechnicalFsGrid & technicalGrid);
+      virtual void applyInitialState(
+         dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
          TechnicalFsGrid & technicalGrid,
          BFieldFsGrid & perBGrid,
+         BgBFsGrid& BgBGrid,
          Project &project
       );
-      ARCH_HOSTDEV Real fieldSolverBoundaryCondMagneticField(
-         const arch::buf<BFieldFsGrid> & bGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
+      virtual void updateState(
+         dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
+         BFieldFsGrid& perBGrid,
+         BgBFsGrid& BgBGrid,
+         creal t
+      );
+      virtual Real fieldSolverBoundaryCondMagneticField(
+         BFieldFsGrid & bGrid,
+         BgBFsGrid & bgbGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k,
-         creal& dt,
-         cuint& component
-      ) {
-         return fieldBoundary->fieldSolverBoundaryCondMagneticField(bGrid, technicalGrid, i, j, k, dt, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondMagneticFieldProjection(
-         const arch::buf<BFieldFsGrid> & bGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
-         cint i,
-         cint j,
-         cint k
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondMagneticFieldProjection(bGrid, technicalGrid, i, j, k);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondElectricField(
-         const arch::buf<EFieldFsGrid> & EGrid,
+         creal dt,
+         cuint component
+      );
+      virtual void fieldSolverBoundaryCondElectricField(
+         EFieldFsGrid & EGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondElectricField(EGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondHallElectricField(
-         const arch::buf<EHallFsGrid> & EHallGrid,
+      );
+      virtual void fieldSolverBoundaryCondHallElectricField(
+         EHallFsGrid & EHallGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondHallElectricField(EHallGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondGradPeElectricField(
-         const arch::buf<EGradPeFsGrid> & EGradPeGrid,
+      );
+      virtual void fieldSolverBoundaryCondGradPeElectricField(
+         EGradPeFsGrid & EGradPeGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondGradPeElectricField(EGradPeGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondDerivatives(
-         const arch::buf<DPerBFsGrid> & dPerBGrid,
-         const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+      );
+      virtual void fieldSolverBoundaryCondDerivatives(
+         DPerBFsGrid & dPerBGrid,
+         DMomentsFsGrid & dMomentsGrid,
          cint i,
          cint j,
          cint k,
-         cuint& RKCase,
-         cuint& component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondDerivatives(dPerBGrid, dMomentsGrid, i, j, k, RKCase, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondBVOLDerivatives(
-         const arch::buf<VolFsGrid> & volGrid,
+         cuint RKCase,
+         cuint component
+      );
+      virtual void fieldSolverBoundaryCondBVOLDerivatives(
+         VolFsGrid & volGrid,
          cint i,
          cint j,
          cint k,
-         cuint& component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondBVOLDerivatives(volGrid, i, j, k, component);
-      }
+         cuint component
+      );
       virtual void vlasovBoundaryCondition(
-         const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+         dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
          const CellID& cellID,
          const uint popID,
          const bool calculate_V_moments
       );
       
       virtual void getFaces(bool* faces);
+      virtual void gpuClear() {};
       virtual std::string getName() const;
       virtual uint getIndex() const;
       
@@ -167,7 +155,6 @@ namespace SBC {
       enum vlasovscheme {
          NONE,
          COPY,
-         LIMIT,
          N_SCHEMES
       };
 

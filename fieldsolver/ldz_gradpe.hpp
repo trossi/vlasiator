@@ -34,12 +34,12 @@ void calculateGradPeTerm(
 );
 
 void calculateGradPeTermSimple(
-   arch::buf<EGradPeFsGrid> & EGradPeGrid,
-   arch::buf<MomentsFsGrid> & momentsGrid,
-   arch::buf<MomentsFsGrid> & momentsDt2Grid,
-   arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DMomentsFsGrid & dMomentsGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    cint& RKCase
 );
 

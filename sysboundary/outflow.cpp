@@ -32,7 +32,7 @@
 #include "../projects/projects_common.h"
 #include "../fieldsolver/fs_common.h"
 #include "../fieldsolver/ldz_magnetic_field.hpp"
-#include "../vlasovmover.h"
+#include "../vlasovsolver/vlasovmover.h"
 
 #ifdef DEBUG_VLASIATOR
    #define DEBUG_OUTFLOW
@@ -46,7 +46,7 @@ using namespace std;
 namespace SBC {
    Outflow::Outflow(): OuterBoundaryCondition() { }
    Outflow::~Outflow() { }
-   
+
    void Outflow::addParameters() {
       const string defStr = "Copy";
       Readparameters::addComposing("outflow.faceNoFields", "List of faces on which no field outflow boundary conditions are to be applied ([xyz][+-]).");
@@ -59,22 +59,17 @@ namespace SBC {
 
         Readparameters::addComposing(pop + "_outflow.reapplyFaceUponRestart", "List of faces on which outflow boundary conditions are to be reapplied upon restart ([xyz][+-]).");
         Readparameters::addComposing(pop + "_outflow.face", "List of faces on which outflow boundary conditions are to be applied ([xyz][+-]).");
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_x+", "Scheme to use on the face x+ (Copy, Limit, None)", defStr);
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_x-", "Scheme to use on the face x- (Copy, Limit, None)", defStr);
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_y+", "Scheme to use on the face y+ (Copy, Limit, None)", defStr);
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_y-", "Scheme to use on the face y- (Copy, Limit, None)", defStr);
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_z+", "Scheme to use on the face z+ (Copy, Limit, None)", defStr);
-        Readparameters::add(pop + "_outflow.vlasovScheme_face_z-", "Scheme to use on the face z- (Copy, Limit, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_x+", "Scheme to use on the face x+ (Copy, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_x-", "Scheme to use on the face x- (Copy, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_y+", "Scheme to use on the face y+ (Copy, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_y-", "Scheme to use on the face y- (Copy, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_z+", "Scheme to use on the face z+ (Copy, None)", defStr);
+        Readparameters::add(pop + "_outflow.vlasovScheme_face_z-", "Scheme to use on the face z- (Copy, None)", defStr);
 
         Readparameters::add(pop + "_outflow.quench", "Factor by which to quench the inflowing parts of the velocity distribution function.", 1.0);
       }
    }
 
-   bool Outflow::initFieldBoundary() {
-      fieldBoundary = new OutflowFieldBoundary();
-      return true;
-   } 
-   
    void Outflow::getParameters() {
       int myRank;
       MPI_Comm_rank(MPI_COMM_WORLD,&myRank);
@@ -123,11 +118,8 @@ namespace SBC {
               sP.faceVlasovScheme[j] = vlasovscheme::NONE;
            } else if (vlasovSysBoundarySchemeName[j] == "Copy") {
               sP.faceVlasovScheme[j] = vlasovscheme::COPY;
-           } else if(vlasovSysBoundarySchemeName[j] == "Limit") {
-              sP.faceVlasovScheme[j] = vlasovscheme::LIMIT;
            } else {
-              if(myRank == MASTER_RANK) cerr << __FILE__ << ":" << __LINE__ << " ERROR: " << vlasovSysBoundarySchemeName[j] << " is an invalid Outflow Vlasov scheme!" << endl;
-              exit(1);
+              abort_mpi("ERROR: " + vlasovSysBoundarySchemeName[j] + " is an invalid Outflow Vlasov scheme!");
            }
         }
 
@@ -136,8 +128,8 @@ namespace SBC {
         speciesParams.push_back(sP);
       }
    }
-   
-   bool Outflow::initSysBoundary(
+
+   void Outflow::initSysBoundary(
       creal& t,
       Project &project
    ) {
@@ -150,11 +142,11 @@ namespace SBC {
          facesToSkipFields[i] = false;
          facesToReapply[i] = false;
       }
-      
+
       this->getParameters();
-      
-      isThisDynamic = false;
-      
+
+      dynamic = false;
+
       vector<string>::const_iterator it;
       for (it = faceNoFieldsList.begin();
            it != faceNoFieldsList.end();
@@ -180,30 +172,95 @@ namespace SBC {
             if(*it == "z-") facesToReapply[5] = true;
          }
       }
-      return true;
    }
 
-   bool Outflow::applyInitialState(
-      const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+
+   void Outflow::assignSysBoundary(dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
+                                   TechnicalFsGrid & technicalGrid) {
+
+      bool doAssign;
+      array<bool,6> isThisCellOnAFace;
+
+      // Assign boundary flags to local DCCRG cells
+      const vector<CellID>& cells = getLocalCells();
+      for(const auto& dccrgId : cells) {
+         if(mpiGrid[dccrgId]->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) continue;
+         creal* const cellParams = &(mpiGrid[dccrgId]->parameters[0]);
+         creal dx = cellParams[CellParams::DX];
+         creal dy = cellParams[CellParams::DY];
+         creal dz = cellParams[CellParams::DZ];
+         creal x = cellParams[CellParams::XCRD] + 0.5*dx;
+         creal y = cellParams[CellParams::YCRD] + 0.5*dy;
+         creal z = cellParams[CellParams::ZCRD] + 0.5*dz;
+
+         isThisCellOnAFace.fill(false);
+         determineFace(isThisCellOnAFace.data(), x, y, z, dx, dy, dz);
+
+         // Comparison of the array defining which faces to use and the array telling on which faces this cell is
+         doAssign = false;
+         for(int j=0; j<6; j++) doAssign = doAssign || (facesToProcess[j] && isThisCellOnAFace[j]);
+         if(doAssign) {
+            mpiGrid[dccrgId]->sysBoundaryFlag = this->getIndex();
+         }
+      }
+
+      // Assign boundary flags to local fsgrid cells
+      const auto gridDims = technicalGrid.getLocalSize();
+      for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
+         for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
+            for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
+               const auto& coords = technicalGrid.getPhysicalCoords(i,j,k);
+
+               // Shift to the center of the fsgrid cell
+               auto cellCenterCoords = coords;
+               cellCenterCoords[0] += 0.5 * technicalGrid.DX;
+               cellCenterCoords[1] += 0.5 * technicalGrid.DY;
+               cellCenterCoords[2] += 0.5 * technicalGrid.DZ;
+               const auto refLvl = mpiGrid.get_refinement_level(mpiGrid.get_existing_cell(cellCenterCoords));
+
+               if (refLvl == -1) {
+                  abort_mpi("ERROR: Could not get refinement level of remote DCCRG cell!", 1);
+               }
+
+               creal dx = P::dx_ini / pow(2, refLvl);
+               creal dy = P::dy_ini / pow(2, refLvl);
+               creal dz = P::dz_ini / pow(2, refLvl);
+
+               isThisCellOnAFace.fill(false);
+               doAssign = false;
+
+               determineFace(isThisCellOnAFace.data(), cellCenterCoords[0], cellCenterCoords[1], cellCenterCoords[2], dx, dy, dz);
+               for(int iface=0; iface<6; iface++) doAssign = doAssign || (facesToProcess[iface] && isThisCellOnAFace[iface]);
+               if(doAssign) {
+                  technicalGrid.get(i,j,k)->sysBoundaryFlag = this->getIndex();
+               }
+            }
+         }
+      }
+   }
+
+   void Outflow::applyInitialState(
+      dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
       TechnicalFsGrid & technicalGrid,
       BFieldFsGrid & perBGrid,
+      BgBFsGrid& BgBGrid,
       Project &project
    ) {
       const vector<CellID>& cells = getLocalCells();
-      #pragma omp parallel for
+      #pragma omp parallel for schedule(static)
       for (uint i=0; i<cells.size(); ++i) {
          CellID id = cells[i];
          SpatialCell* cell = mpiGrid[id];
          if (cell->sysBoundaryFlag != this->getIndex()) {
             continue;
          }
-         
+
          bool doApply = true;
-         
+
          if(Parameters::isRestart) {
             std::array<bool, 6> isThisCellOnAFace;
             determineFace(isThisCellOnAFace, mpiGrid, id);
-            
+
             doApply=false;
             // Comparison of the array defining which faces to use and the array telling on which faces this cell is
             for (uint j=0; j<6; j++) {
@@ -223,8 +280,107 @@ namespace SBC {
             cell->parameters[CellParams::P_33_DT2] = cell->parameters[CellParams::P_33];
          }
       }
+   }
 
-      return true; 
+   void Outflow::updateState(dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
+                             BFieldFsGrid& perBGrid,
+                             BgBFsGrid& BgBGrid,
+                             creal t) {}
+
+   Real Outflow::fieldSolverBoundaryCondMagneticField(
+      BFieldFsGrid & bGrid,
+      BgBFsGrid & bgbGrid,
+      TechnicalFsGrid & technicalGrid,
+      cint i,
+      cint j,
+      cint k,
+      creal dt,
+      cuint component
+   ) {
+      switch(component) {
+      case 0:
+         return fieldBoundaryCopyFromSolvingNbrMagneticField(bGrid, technicalGrid, i, j, k, component, compute::BX);
+      case 1:
+         return fieldBoundaryCopyFromSolvingNbrMagneticField(bGrid, technicalGrid, i, j, k, component, compute::BY);
+      case 2:
+         return fieldBoundaryCopyFromSolvingNbrMagneticField(bGrid, technicalGrid, i, j, k, component, compute::BZ);
+      default:
+         return 0.0;
+      }
+   }
+
+   void Outflow::fieldSolverBoundaryCondElectricField(
+      EFieldFsGrid & EGrid,
+      cint i,
+      cint j,
+      cint k,
+      cuint component
+   ) {
+      EGrid.get(i,j,k)->at(fsgrids::efield::EX+component) = 0.0;
+   }
+
+   void Outflow::fieldSolverBoundaryCondHallElectricField(
+      EHallFsGrid & EHallGrid,
+      cint i,
+      cint j,
+      cint k,
+      cuint component
+   ) {
+      auto cp = EHallGrid.get(i,j,k);
+      switch (component) {
+         case 0:
+            cp->at(fsgrids::ehall::EXHALL_000_100) = 0.0;
+            cp->at(fsgrids::ehall::EXHALL_010_110) = 0.0;
+            cp->at(fsgrids::ehall::EXHALL_001_101) = 0.0;
+            cp->at(fsgrids::ehall::EXHALL_011_111) = 0.0;
+            break;
+         case 1:
+            cp->at(fsgrids::ehall::EYHALL_000_010) = 0.0;
+            cp->at(fsgrids::ehall::EYHALL_100_110) = 0.0;
+            cp->at(fsgrids::ehall::EYHALL_001_011) = 0.0;
+            cp->at(fsgrids::ehall::EYHALL_101_111) = 0.0;
+            break;
+         case 2:
+            cp->at(fsgrids::ehall::EZHALL_000_001) = 0.0;
+            cp->at(fsgrids::ehall::EZHALL_100_101) = 0.0;
+            cp->at(fsgrids::ehall::EZHALL_010_011) = 0.0;
+            cp->at(fsgrids::ehall::EZHALL_110_111) = 0.0;
+            break;
+         default:
+            cerr << __FILE__ << ":" << __LINE__ << ":" << " Invalid component" << endl;
+      }
+   }
+
+   void Outflow::fieldSolverBoundaryCondGradPeElectricField(
+      EGradPeFsGrid & EGradPeGrid,
+      cint i,
+      cint j,
+      cint k,
+      cuint component
+   ) {
+      EGradPeGrid.get(i,j,k)->at(fsgrids::egradpe::EXGRADPE+component) = 0.0;
+   }
+
+   void Outflow::fieldSolverBoundaryCondDerivatives(
+      DPerBFsGrid & dPerBGrid,
+      DMomentsFsGrid & dMomentsGrid,
+      cint i,
+      cint j,
+      cint k,
+      cuint RKCase,
+      cuint component
+   ) {
+      this->setCellDerivativesToZero(dPerBGrid, dMomentsGrid, i, j, k, component);
+   }
+
+   void Outflow::fieldSolverBoundaryCondBVOLDerivatives(
+      VolFsGrid & volGrid,
+      cint i,
+      cint j,
+      cint k,
+      cuint component
+   ) {
+      this->setCellBVOLDerivativesToZero(volGrid, i, j, k, component);
    }
 
    /**
@@ -233,13 +389,12 @@ namespace SBC {
     * @param cellID
     */
    void Outflow::vlasovBoundaryCondition(
-      const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+      dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
       const CellID& cellID,
       const uint popID,
       const bool calculate_V_moments
    ) {
-      //      phiprof::start("vlasovBoundaryCondition (Outflow)");
-      
+
       const OutflowSpeciesParameters& sP = this->speciesParams[popID];
       if (mpiGrid[cellID]->sysBoundaryFlag != this->getIndex()) {
          return;
@@ -247,7 +402,7 @@ namespace SBC {
 
       std::array<bool, 6> isThisCellOnAFace;
       determineFace(isThisCellOnAFace, mpiGrid, cellID, true);
-      
+
       for(uint i=0; i<6; i++) {
          if(isThisCellOnAFace[i] && facesToProcess[i] && !sP.facesToSkipVlasov[i]) {
             switch(sP.faceVlasovScheme[i]) {
@@ -256,25 +411,18 @@ namespace SBC {
                case vlasovscheme::COPY:
                   vlasovBoundaryCopyFromTheClosestNbr(mpiGrid,cellID,false,popID,calculate_V_moments);
                   break;
-               case vlasovscheme::LIMIT:
-                  vlasovBoundaryCopyFromTheClosestNbrAndLimit(mpiGrid,cellID,popID);
-                  break;
                default:
-                  cerr << __FILE__ << ":" << __LINE__ << "ERROR: invalid Outflow Vlasov scheme!" << endl;
-                  exit(1);
-                  break;
+                  abort_mpi("ERROR: invalid Outflow Vlasov scheme", 1);
             }
          }
       }
-      
-//      phiprof::stop("vlasovBoundaryCondition (Outflow)");
    }
-   
+
    void Outflow::getFaces(bool* faces) {
       for(uint i=0; i<6; i++) faces[i] = facesToProcess[i];
    }
-   
+
    string Outflow::getName() const {return "Outflow";}
    uint Outflow::getIndex() const {return sysboundarytype::OUTFLOW;}
-      
+
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Vlasiator.
- * Copyright 2010-2016 Finnish Meteorological Institute
+ * Copyright 2010-2024 Finnish Meteorological Institute and University of Helsinki
  *
  * For details of usage, see the COPYING file and read the "Rules of the Road"
  * at http://www.physics.helsinki.fi/vlasiator/
@@ -25,7 +25,15 @@
 #include <vector>
 #include "vec.h"
 #include "../common.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
+
+// Vectors and set for use in translation. Cannot be declared in arch/gpu_base.hpp, because of
+// compilation errors.
+extern split::SplitVector<vmesh::VelocityMesh*> *allVmeshPointer;
+extern split::SplitVector<vmesh::VelocityMesh*> *allPencilsMeshes;
+extern split::SplitVector<vmesh::VelocityBlockContainer*> *allPencilsContainers;
+extern split::SplitVector<vmesh::GlobalID> *unionOfBlocks;
+extern Hashinator::Hashmap<vmesh::GlobalID,vmesh::LocalID> *unionOfBlocksSet;
 
 bool gpu_trans_map_1d_amr(const dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
                   const std::vector<CellID>& localPropagatedCells,

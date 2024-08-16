@@ -126,16 +126,6 @@ namespace Rec {
 }
 
 void reconstructionCoefficients(
-   const arch::buf<BFieldFsGrid> & perBGrid,
-   const arch::buf<DPerBFsGrid> & dPerBGrid,
-   Real* perturbedResult,
-   cint i,
-   cint j,
-   cint k,
-   creal& reconstructionOrder
-);
-
-void reconstructionCoefficients(
    BFieldFsGrid & perBGrid,
    DPerBFsGrid & dPerBGrid,
    std::array<Real, Rec::N_REC_COEFFICIENTS> & perturbedResult,

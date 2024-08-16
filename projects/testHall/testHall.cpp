@@ -142,10 +142,10 @@ namespace projects {
          auto localSize = perBGrid.getLocalSize();
          
 #pragma omp parallel for collapse(3)
-         for (int x = 0; x < localSize[0]; ++x) {
-            for (int y = 0; y < localSize[1]; ++y) {
-               for (int z = 0; z < localSize[2]; ++z) {
-                  auto xyz = perBGrid.getPhysicalCoords(x, y, z);
+         for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
+            for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
+               for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
+                  const auto xyz = perBGrid.getPhysicalCoords(x, y, z);
                   auto cell = perBGrid.get(x, y, z);
                   
                   cell[fsgrids::bfield::PERBX] = this->BX0 * cos(2.0*M_PI * 1.0 * xyz[0] / (FSParams.xmax - FSParams.xmin)) * cos(2.0*M_PI * 1.0 * xyz[1] / (FSParams.ymax - FSParams.ymin)) * cos(2.0*M_PI * 1.0 * xyz[2] / (FSParams.zmax - FSParams.zmin));

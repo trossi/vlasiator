@@ -24,6 +24,7 @@
 #define gpuGetDeviceProperties           cudaGetDeviceProperties
 #define gpuDeviceSynchronize             cudaDeviceSynchronize
 #define gpuDeviceReset                   cudaDeviceReset
+#define gpuCpuDeviceId                   cudaCpuDeviceId
 
 #define gpuFree                          cudaFree
 #define gpuFreeHost                      cudaFreeHost
@@ -39,6 +40,9 @@
 #define gpuMemcpyAsync                   cudaMemcpyAsync
 #define gpuMemset                        cudaMemset
 #define gpuMemsetAsync                   cudaMemsetAsync
+
+#define gpuHostRegister                  cudaHostRegister
+#define gpuHostRegisterPortable          cudaHostRegisterPortable
 
 #define gpuMemAdviseSetAccessedBy        cudaMemAdviseSetAccessedBy
 #define gpuMemAdviseSetPreferredLocation cudaMemAdviseSetPreferredLocation
@@ -68,7 +72,7 @@
 #define gpuSuccess                       cudaSuccess
 
 #define gpuStream_t                      cudaStream_t
-#define gpuDeviceProp                    cudaDeviceProp_t
+#define gpuDeviceProp                    cudaDeviceProp
 
 #define gpuEvent_t                       cudaEvent_t
 #define gpuEventDefault                  cudaEventDefault
@@ -81,7 +85,8 @@
 #define gpuMemcpyDeviceToDevice          cudaMemcpyDeviceToDevice
 #define gpuMemcpyToSymbol                cudaMemcpyToSymbol
 
-#define gpuKernelBallot(mask, input) __ballot_sync(mask, input)
+#define gpuKernelBallot(mask, input)     __ballot_sync(mask, input)
+#define gpuKernelAny(mask, input)        __any_sync(mask, input)
 
 /* Define architecture-specific macros */
 #define ARCH_LOOP_LAMBDA [=] __host__ __device__
@@ -94,15 +99,14 @@
 
 /* Set CUDA blocksize used for reductions */
 #define ARCH_BLOCKSIZE_R 512
-
-/* GPU blocksize used by Vlasov solvers */
-#ifndef GPUBLOCKS
-#  define GPUBLOCKS (108)
-#endif
+#define ARCH_BLOCKSIZE_R_SMALL 32
 
 /* values used by kernels */
 #ifndef GPUTHREADS
 #define GPUTHREADS (32)
+#endif
+#ifndef WARPSPERBLOCK
+#define WARPSPERBLOCK (32)
 #endif
 #define FULL_MASK 0xffffffff
 
@@ -403,12 +407,12 @@ namespace arch{
    }
 
 /* A general device kernel for reductions */
-   template <reduce_op Op, uint NDim, uint NReduStatic, typename Lambda, typename T>
+   template <uint Blocksize, reduce_op Op, uint NDim, uint NReduStatic, typename Lambda, typename T>
    __global__ static void __launch_bounds__(ARCH_BLOCKSIZE_R)
       reduction_kernel(Lambda loop_body, const T * __restrict__ init_val, T * __restrict__ rslt, const uint * __restrict__ lims, const uint n_total, const uint n_redu_dynamic, T *thread_data_dynamic)
    {
-      /* Specialize BlockReduce for a 1D block of ARCH_BLOCKSIZE_R threads of type `T` */
-      typedef cub::BlockReduce<T, ARCH_BLOCKSIZE_R, cub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1> BlockReduce;
+      /* Specialize BlockReduce for a 1D block of Blocksize threads of type `T` */
+      typedef cub::BlockReduce<T, Blocksize, cub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1> BlockReduce;
 
       /* Dynamic shared memory declaration */
       extern __shared__ char temp_storage_dynamic[];
@@ -537,10 +541,6 @@ namespace arch{
          return;
       }
 
-      /* Set the kernel dimensions */
-      const uint blocksize = ARCH_BLOCKSIZE_R;
-      const uint gridsize = (n_total - 1 + blocksize) / blocksize;
-
       /* Check the CUDA default mempool settings and correct if wrong */
       device_mempool_check(UINT64_MAX);
 
@@ -569,21 +569,63 @@ namespace arch{
       /* Call the reduction kernel with different arguments depending
        * on if the number of reductions is known at the compile time
        */
-      T* d_thread_data_dynamic;
+      T* d_thread_data_dynamic = 0; // declared zero to suppress unitialized use warning
       if(NReduStatic == 0) {
-         /* Get the cub temp storage size for the dynamic shared memory kernel argument */
+         /* Get the cub temp storage sizes for the dynamic shared memory kernel argument */
          constexpr auto cub_temp_storage_type_size = sizeof(typename cub::BlockReduce<T, ARCH_BLOCKSIZE_R, cub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1>::TempStorage);
+         constexpr auto cub_temp_storage_type_size_small = sizeof(typename cub::BlockReduce<T, ARCH_BLOCKSIZE_R_SMALL, cub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1>::TempStorage);
+         /* Query device properties */
+         int device_id;
+         CHK_ERR(cudaGetDevice(&device_id));
+         cudaDeviceProp deviceProp;
+         CHK_ERR(cudaGetDeviceProperties(&deviceProp, device_id));
+         /* Make sure there is enough shared memory for the used block size */
+         uint blocksize;
+         size_t shared_mem_bytes_per_block_request;
+         if(n_reductions * cub_temp_storage_type_size <= deviceProp.sharedMemPerBlock){
+           blocksize = ARCH_BLOCKSIZE_R;
+           shared_mem_bytes_per_block_request = n_reductions * cub_temp_storage_type_size;
+         }
+         else if(n_reductions * cub_temp_storage_type_size_small <= deviceProp.sharedMemPerBlock){
+           blocksize = ARCH_BLOCKSIZE_R_SMALL;
+           shared_mem_bytes_per_block_request = n_reductions * cub_temp_storage_type_size_small;
+         }
+         else{
+           printf("The device %d (%s) does not have enough shared memory even for the small blocksize (%d)! The error occurred in %s at line %d\n", device_id, deviceProp.name, ARCH_BLOCKSIZE_R_SMALL, __FILE__, __LINE__);
+           exit(1);
+         }
+         /* Set the kernel grid dimensions */
+         const uint gridsize = (n_total - 1 + blocksize) / blocksize;
          /* Allocate memory for the thread data values */
          CHK_ERR(cudaMallocAsync(&d_thread_data_dynamic, n_reductions * blocksize * gridsize * sizeof(T), gpuStreamList[thread_id]));
          /* Call the kernel (the number of reductions not known at compile time) */
-         reduction_kernel<Op, NDim, 0><<<gridsize, blocksize, n_reductions * cub_temp_storage_type_size, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+         if(gridsize > 0){
+            if(blocksize == ARCH_BLOCKSIZE_R){
+               reduction_kernel<ARCH_BLOCKSIZE_R, Op, NDim, 0><<<gridsize, blocksize, shared_mem_bytes_per_block_request, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+            }
+            else if(blocksize == ARCH_BLOCKSIZE_R_SMALL){
+               reduction_kernel<ARCH_BLOCKSIZE_R_SMALL, Op, NDim, 0><<<gridsize, blocksize, shared_mem_bytes_per_block_request, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+            }
+            else{
+               printf("The blocksize (%u) does not match with any of the predetermined block sizes! The error occurred in %s at line %d\n", blocksize, __FILE__, __LINE__);
+               exit(1);
+            }
+         }      
+         /* Check for kernel launch errors */
+         CHK_ERR(cudaPeekAtLastError());
          /* Synchronize and free the thread data allocation */
          CHK_ERR(cudaStreamSynchronize(gpuStreamList[thread_id]));
          CHK_ERR(cudaFreeAsync(d_thread_data_dynamic, gpuStreamList[thread_id]));
       }
       else{
+         /* Set the kernel dimensions */
+         const uint blocksize = ARCH_BLOCKSIZE_R;
+         const uint gridsize = (n_total - 1 + blocksize) / blocksize;
          /* Call the kernel (the number of reductions known at compile time) */
-         reduction_kernel<Op, NDim, NReduStatic><<<gridsize, blocksize, 0, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+         if(gridsize > 0)
+            reduction_kernel<ARCH_BLOCKSIZE_R, Op, NDim, NReduStatic><<<gridsize, blocksize, 0, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+         /* Check for kernel launch errors */
+         CHK_ERR(cudaPeekAtLastError());
          /* Synchronize after kernel call */
          CHK_ERR(cudaStreamSynchronize(gpuStreamList[thread_id]));
       }

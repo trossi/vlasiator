@@ -24,16 +24,15 @@
 
 #include "../definitions.h"
 #include "../common.h"
-#include "../spatial_cell.hpp"
-#include "../arch/arch_sysboundary_api.h"
+#include "../spatial_cell_wrapper.hpp"
 
 #include "fs_common.h"
 
 void propagateMagneticField(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<EFieldFsGrid> & EGrid,
-   arch::buf<EFieldFsGrid> & EDt2Grid,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
    cint i,
    cint j,
    cint k,
@@ -45,12 +44,13 @@ void propagateMagneticField(
 );
 
 void propagateMagneticFieldSimple(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<EFieldFsGrid> & EGrid,
-   arch::buf<EFieldFsGrid> & EDt2Grid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary> & sysBoundaries, 
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   BgBFsGrid & bgbGrid,
+   EFieldFsGrid & EGrid,
+   EFieldFsGrid & EDt2Grid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    creal& dt,
    cint& RKCase
 );

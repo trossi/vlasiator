@@ -21,6 +21,7 @@
 #define gpuGetDeviceProperties           hipGetDeviceProperties
 #define gpuDeviceSynchronize             hipDeviceSynchronize
 #define gpuDeviceReset                   hipDeviceReset
+#define gpuCpuDeviceId                   hipCpuDeviceId
 
 #define gpuFree                          hipFree
 #define gpuFreeHost                      hipHostFree
@@ -43,6 +44,9 @@
 #define gpuMemPrefetchAsync              hipMemPrefetchAsync
 
 #define gpuStreamCreate                  hipStreamCreate
+#define gpuHostRegister                  hipHostRegister
+#define gpuHostRegisterPortable          hipHostRegisterPortable
+
 #define gpuStreamDestroy                 hipStreamDestroy
 #define gpuStreamWaitEvent               hipStreamWaitEvent
 #define gpuStreamSynchronize             hipStreamSynchronize
@@ -78,6 +82,7 @@
 #define gpuMemcpyToSymbol                hipMemcpyToSymbol
 
 #define gpuKernelBallot(mask, input)     __ballot(input)
+#define gpuKernelAny(mask, input)        __any(input)
 
 /* Define architecture-specific macros */
 #define ARCH_LOOP_LAMBDA [=] __host__ __device__
@@ -90,23 +95,18 @@
 
 /* Set HIP blocksize used for reductions */
 #define ARCH_BLOCKSIZE_R 512
-
-/* GPU blocksize used by Vlasov solvers */
-#ifndef GPUBLOCKS
-#  define GPUBLOCKS (108)
-#endif
+#define ARCH_BLOCKSIZE_R_SMALL 64
 
 /* values used by kernels */
 #ifndef GPUTHREADS
 #define GPUTHREADS (64)
 #endif
+#ifndef WARPSPERBLOCK
+#define WARPSPERBLOCK (16)
+#endif
 #define FULL_MASK 0xffffffffffffffff
 
-#ifdef ARCH_MAIN
-  hipStream_t stream[64];
-#else
-  extern hipStream_t stream[];
-#endif
+extern hipStream_t gpuStreamList[];
 
 /* Define the HIP error checking macro */
 #define CHK_ERR(err) (hip_error(err, __FILE__, __LINE__))
@@ -153,16 +153,16 @@ class buf {
   public:
 
   void syncDeviceData(void){
-    CHK_ERR(hipMemcpyAsync(d_ptr, ptr, bytes, hipMemcpyHostToDevice, stream[thread_id]));
+    CHK_ERR(hipMemcpyAsync(d_ptr, ptr, bytes, hipMemcpyHostToDevice, gpuStreamList[thread_id]));
   }
 
   void syncHostData(void){
-    CHK_ERR(hipMemcpyAsync(ptr, d_ptr, bytes, hipMemcpyDeviceToHost, stream[thread_id]));
+    CHK_ERR(hipMemcpyAsync(ptr, d_ptr, bytes, hipMemcpyDeviceToHost, gpuStreamList[thread_id]));
   }
 
   buf(T * const _ptr, uint _bytes) : ptr(_ptr), bytes(_bytes) {
     thread_id = omp_get_thread_num();
-    CHK_ERR(hipMallocAsync(&d_ptr, bytes, stream[thread_id]));
+    CHK_ERR(hipMallocAsync(&d_ptr, bytes, gpuStreamList[thread_id]));
     syncDeviceData();
   }
 
@@ -173,7 +173,7 @@ class buf {
     if(!is_copy){
       // syncHostData();
       #ifdef __HIP_DEVICE_COMPILE__
-        hipFreeAsync(d_ptr, stream[thread_id]);
+        hipFreeAsync(d_ptr, gpuStreamList[thread_id]);
       #endif
     }
   }
@@ -204,7 +204,7 @@ __host__ __forceinline__ static void* allocate(size_t bytes) {
   void* ptr;
   const uint thread_id = omp_get_thread_num();
   device_mempool_check(UINT64_MAX);
-  CHK_ERR(hipMallocAsync(&ptr, bytes, stream[thread_id]));
+  CHK_ERR(hipMallocAsync(&ptr, bytes, gpuStreamList[thread_id]));
   return ptr;
 }
 
@@ -219,7 +219,7 @@ __host__ __forceinline__ static void* allocate(size_t bytes, hipStream_t stream)
 template <typename T>
 __host__ __forceinline__ static void free(T* ptr) {
   const uint thread_id = omp_get_thread_num();
-  CHK_ERR(hipFreeAsync(ptr, stream[thread_id]));
+  CHK_ERR(hipFreeAsync(ptr, gpuStreamList[thread_id]));
 }
 
 template <typename T>
@@ -230,7 +230,7 @@ __host__ __forceinline__ static void free(T* ptr, hipStream_t stream) {
 template <typename T>
 __forceinline__ static void memcpy_h2d(T* dst, T* src, size_t bytes){
   const uint thread_id = omp_get_thread_num();
-  CHK_ERR(hipMemcpyAsync(dst, src, bytes, hipMemcpyHostToDevice, stream[thread_id]));
+  CHK_ERR(hipMemcpyAsync(dst, src, bytes, hipMemcpyHostToDevice, gpuStreamList[thread_id]));
 }
 
 template <typename T>
@@ -242,7 +242,7 @@ __forceinline__ static void memcpy_h2d(T* dst, T* src, size_t bytes, hipStream_t
 template <typename T>
 __forceinline__ static void memcpy_d2h(T* dst, T* src, size_t bytes){
   const uint thread_id = omp_get_thread_num();
-  CHK_ERR(hipMemcpyAsync(dst, src, bytes, hipMemcpyDeviceToHost, stream[thread_id]));
+  CHK_ERR(hipMemcpyAsync(dst, src, bytes, hipMemcpyDeviceToHost, gpuStreamList[thread_id]));
 }
 
 template <typename T>
@@ -294,12 +294,12 @@ __device__ __forceinline__ static void loop_eval(const uint idx_glob, const uint
 }
 
 /* A general device kernel for reductions */
-template <reduce_op Op, uint NDim, uint NReduStatic, typename Lambda, typename T>
+   template <uint Blocksize, reduce_op Op, uint NDim, uint NReduStatic, typename Lambda, typename T>
 __global__ static void __launch_bounds__(ARCH_BLOCKSIZE_R)
 reduction_kernel(Lambda loop_body, const T * __restrict__ init_val, T * __restrict__ rslt, const uint * __restrict__ lims, const uint n_total, const uint n_redu_dynamic, T *thread_data_dynamic)
 {
-  /* Specialize BlockReduce for a 1D block of ARCH_BLOCKSIZE_R threads of type `T` */
-  typedef hipcub::BlockReduce<T, ARCH_BLOCKSIZE_R, hipcub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1> BlockReduce;
+  /* Specialize BlockReduce for a 1D block of Blocksize threads of type `T` */
+  typedef hipcub::BlockReduce<T, Blocksize, hipcub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1> BlockReduce;
 
   /* Dynamic shared memory declaration */
   extern __shared__ char temp_storage_dynamic[];
@@ -375,10 +375,6 @@ __forceinline__ static void parallel_reduce_driver(const uint (&limits)[NDim], L
   for(uint i = 0; i < NDim; i++)
     n_total *= limits[i];
 
-  /* Set the kernel dimensions */
-  const uint blocksize = ARCH_BLOCKSIZE_R;
-  const uint gridsize = (n_total - 1 + blocksize) / blocksize;
-
   /* Check the HIP default mempool settings and correct if wrong */
   device_mempool_check(UINT64_MAX);
 
@@ -387,45 +383,87 @@ __forceinline__ static void parallel_reduce_driver(const uint (&limits)[NDim], L
 
   /* Create a device buffer for the reduction results */
   T* d_buf;
-  CHK_ERR(hipMallocAsync(&d_buf, n_reductions*sizeof(T), stream[thread_id]));
-  CHK_ERR(hipMemcpyAsync(d_buf, sum, n_reductions*sizeof(T), hipMemcpyHostToDevice, stream[thread_id]));
+  CHK_ERR(hipMallocAsync(&d_buf, n_reductions*sizeof(T), gpuStreamList[thread_id]));
+  CHK_ERR(hipMemcpyAsync(d_buf, sum, n_reductions*sizeof(T), hipMemcpyHostToDevice, gpuStreamList[thread_id]));
 
   /* Create a device buffer to transfer the initial values to device */
   T* d_const_buf;
-  CHK_ERR(hipMallocAsync(&d_const_buf, n_reductions*sizeof(T), stream[thread_id]));
-  CHK_ERR(hipMemcpyAsync(d_const_buf, d_buf, n_reductions*sizeof(T), hipMemcpyDeviceToDevice, stream[thread_id]));
+  CHK_ERR(hipMallocAsync(&d_const_buf, n_reductions*sizeof(T), gpuStreamList[thread_id]));
+  CHK_ERR(hipMemcpyAsync(d_const_buf, d_buf, n_reductions*sizeof(T), hipMemcpyDeviceToDevice, gpuStreamList[thread_id]));
 
   /* Create a device buffer to transfer the loop limits of each dimension to device */
   uint* d_limits;
-  CHK_ERR(hipMallocAsync(&d_limits, NDim*sizeof(uint), stream[thread_id]));
-  CHK_ERR(hipMemcpyAsync(d_limits, limits, NDim*sizeof(uint), hipMemcpyHostToDevice,stream[thread_id]));
+  CHK_ERR(hipMallocAsync(&d_limits, NDim*sizeof(uint), gpuStreamList[thread_id]));
+  CHK_ERR(hipMemcpyAsync(d_limits, limits, NDim*sizeof(uint), hipMemcpyHostToDevice,gpuStreamList[thread_id]));
 
   /* Call the reduction kernel with different arguments depending
    * on if the number of reductions is known at the compile time
    */
-  T* d_thread_data_dynamic;
+  T* d_thread_data_dynamic = 0; // declared zero to suppress unitialized use warning
   if(NReduStatic == 0) {
-    /* Get the cub temp storage size for the dynamic shared memory kernel argument */
+    /* Get the cub temp storage sizes for the dynamic shared memory kernel argument */
     constexpr auto cub_temp_storage_type_size = sizeof(typename hipcub::BlockReduce<T, ARCH_BLOCKSIZE_R, hipcub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1>::TempStorage);
+    constexpr auto cub_temp_storage_type_size_small = sizeof(typename hipcub::BlockReduce<T, ARCH_BLOCKSIZE_R_SMALL, hipcub::BLOCK_REDUCE_RAKING_COMMUTATIVE_ONLY, 1, 1>::TempStorage);
+    /* Query device properties */
+    int device_id;
+    CHK_ERR(hipGetDevice(&device_id));
+    hipDeviceProp_t deviceProp;
+    CHK_ERR(hipGetDeviceProperties(&deviceProp, device_id));
+    /* Make sure there is enough shared memory for the used block size */
+    uint blocksize;
+    size_t shared_mem_bytes_per_block_request;
+    if(n_reductions * cub_temp_storage_type_size <= deviceProp.sharedMemPerBlock){
+      blocksize = ARCH_BLOCKSIZE_R;
+      shared_mem_bytes_per_block_request = n_reductions * cub_temp_storage_type_size;
+    }
+    else if(n_reductions * cub_temp_storage_type_size_small <= deviceProp.sharedMemPerBlock){
+      blocksize = ARCH_BLOCKSIZE_R_SMALL;
+      shared_mem_bytes_per_block_request = n_reductions * cub_temp_storage_type_size_small;
+    }
+    else{
+      printf("The device %d (%s) does not have enough shared memory even for the small blocksize (%d)! The error occurred in %s at line %d\n", device_id, deviceProp.gcnArchName, ARCH_BLOCKSIZE_R_SMALL, __FILE__, __LINE__);
+      exit(1);
+    }
+    /* Set the kernel grid dimensions */
+    const uint gridsize = (n_total - 1 + blocksize) / blocksize;
     /* Allocate memory for the thread data values */
-    CHK_ERR(hipMallocAsync(&d_thread_data_dynamic, n_reductions * blocksize * gridsize * sizeof(T), stream[thread_id]));
+    CHK_ERR(hipMallocAsync(&d_thread_data_dynamic, n_reductions * blocksize * gridsize * sizeof(T), gpuStreamList[thread_id]));
     /* Call the kernel (the number of reductions not known at compile time) */
-    reduction_kernel<Op, NDim, 0><<<gridsize, blocksize, n_reductions * cub_temp_storage_type_size, stream[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+    if(gridsize > 0){
+       if(blocksize == ARCH_BLOCKSIZE_R){
+          reduction_kernel<ARCH_BLOCKSIZE_R, Op, NDim, 0><<<gridsize, blocksize, shared_mem_bytes_per_block_request, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+       }
+       else if(blocksize == ARCH_BLOCKSIZE_R_SMALL){
+          reduction_kernel<ARCH_BLOCKSIZE_R_SMALL, Op, NDim, 0><<<gridsize, blocksize, shared_mem_bytes_per_block_request, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+       }
+       else{
+          printf("The blocksize (%u) does not match with any of the predetermined block sizes! The error occurred in %s at line %d\n", blocksize, __FILE__, __LINE__);
+          exit(1);
+       }
+    }   
+    /* Check for kernel launch errors */
+    CHK_ERR(hipPeekAtLastError());
     /* Synchronize and free the thread data allocation */
-    CHK_ERR(hipStreamSynchronize(stream[thread_id]));
-    CHK_ERR(hipFreeAsync(d_thread_data_dynamic, stream[thread_id]));
+    CHK_ERR(hipStreamSynchronize(gpuStreamList[thread_id]));
+    CHK_ERR(hipFreeAsync(d_thread_data_dynamic, gpuStreamList[thread_id]));
   }
   else{
+    /* Set the kernel dimensions */
+    const uint blocksize = ARCH_BLOCKSIZE_R;
+    const uint gridsize = (n_total - 1 + blocksize) / blocksize;
     /* Call the kernel (the number of reductions known at compile time) */
-    reduction_kernel<Op, NDim, NReduStatic><<<gridsize, blocksize, 0, stream[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+    if(gridsize > 0)
+      reduction_kernel<ARCH_BLOCKSIZE_R, Op, NDim, NReduStatic><<<gridsize, blocksize, 0, gpuStreamList[thread_id]>>>(loop_body, d_const_buf, d_buf, d_limits, n_total, n_reductions, d_thread_data_dynamic);
+    /* Check for kernel launch errors */
+    CHK_ERR(hipPeekAtLastError());
     /* Synchronize after kernel call */
-    CHK_ERR(hipStreamSynchronize(stream[thread_id]));
+    CHK_ERR(hipStreamSynchronize(gpuStreamList[thread_id]));
   }
   /* Copy the results back to host and free the allocated memory back to pool*/
-  CHK_ERR(hipMemcpyAsync(sum, d_buf, n_reductions*sizeof(T), hipMemcpyDeviceToHost, stream[thread_id]));
-  CHK_ERR(hipFreeAsync(d_buf, stream[thread_id]));
-  CHK_ERR(hipFreeAsync(d_const_buf, stream[thread_id]));
-  CHK_ERR(hipFreeAsync(d_limits, stream[thread_id]));
+  CHK_ERR(hipMemcpyAsync(sum, d_buf, n_reductions*sizeof(T), hipMemcpyDeviceToHost, gpuStreamList[thread_id]));
+  CHK_ERR(hipFreeAsync(d_buf, gpuStreamList[thread_id]));
+  CHK_ERR(hipFreeAsync(d_const_buf, gpuStreamList[thread_id]));
+  CHK_ERR(hipFreeAsync(d_limits, gpuStreamList[thread_id]));
 }
 }
 

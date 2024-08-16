@@ -53,7 +53,7 @@ vmesh::LocalID addVelocityBlock(const vmesh::GlobalID& blockGID,
         return vmesh::VelocityMesh::invalidLocalID();
 
     // Insert velocity block data, this will set values to 0.
-    const vmesh::LocalID newBlockLID = blockContainer->push_back();
+    const vmesh::LocalID newBlockLID = blockContainer->push_back_and_zero();
 
     #ifdef DEBUG_ACC
         bool ok = true;
@@ -70,8 +70,7 @@ vmesh::LocalID addVelocityBlock(const vmesh::GlobalID& blockGID,
 
     // Set block parameters:
     Real* parameters = blockContainer->getParameters(newBlockLID);
-    vmesh->getBlockCoordinates(blockGID,parameters+BlockParams::VXCRD);
-    vmesh->getCellSize(blockGID,parameters+BlockParams::DVX);
+    vmesh->getBlockInfo(blockGID, parameters+BlockParams::VXCRD);
     return newBlockLID;
 }
 
@@ -133,14 +132,9 @@ bool map_1d(SpatialCell* spatial_cell,
    if(vmesh->size() == 0)
       return true;
 
-
-   // Velocity grid refinement level, has no effect but is
-   // needed in some vmesh::VelocityMesh function calls.
-   const uint8_t REFLEVEL = 0;
-
-   dv            = vmesh->getCellSize(REFLEVEL)[dimension];
+   dv            = vmesh->getCellSize()[dimension];
    v_min         = vmesh->getMeshMinLimits()[dimension];
-   max_v_length  = vmesh->getGridLength(REFLEVEL)[dimension];
+   max_v_length  = vmesh->getGridLength()[dimension];
 
    switch (dimension) {
     case 0:
@@ -152,8 +146,8 @@ bool map_1d(SpatialCell* spatial_cell,
       intersection_dk=is_temp;
 
       /*set values in array that is used to convert block indices to id using a dot product*/
-      block_indices_to_id[0] = vmesh->getGridLength(REFLEVEL)[0]*vmesh->getGridLength(REFLEVEL)[1];
-      block_indices_to_id[1] = vmesh->getGridLength(REFLEVEL)[0];
+      block_indices_to_id[0] = vmesh->getGridLength()[0]*vmesh->getGridLength()[1];
+      block_indices_to_id[1] = vmesh->getGridLength()[0];
       block_indices_to_id[2] = 1;
 
       /*set values in array that is used to convert block indices to id using a dot product*/
@@ -171,8 +165,8 @@ bool map_1d(SpatialCell* spatial_cell,
 
       /*set values in array that is used to convert block indices to id using a dot product*/
       block_indices_to_id[0]=1;
-      block_indices_to_id[1] = vmesh->getGridLength(REFLEVEL)[0]*vmesh->getGridLength(REFLEVEL)[1];
-      block_indices_to_id[2] = vmesh->getGridLength(REFLEVEL)[0];
+      block_indices_to_id[1] = vmesh->getGridLength()[0]*vmesh->getGridLength()[1];
+      block_indices_to_id[2] = vmesh->getGridLength()[0];
 
       /*set values in array that is used to convert block indices to id using a dot product*/
       cell_indices_to_id[0]=1;
@@ -182,8 +176,8 @@ bool map_1d(SpatialCell* spatial_cell,
     case 2:
       /*set values in array that is used to convert block indices to id using a dot product*/
       block_indices_to_id[0]=1;
-      block_indices_to_id[1] = vmesh->getGridLength(REFLEVEL)[0];
-      block_indices_to_id[2] = vmesh->getGridLength(REFLEVEL)[0]*vmesh->getGridLength(REFLEVEL)[1];
+      block_indices_to_id[1] = vmesh->getGridLength()[0];
+      block_indices_to_id[2] = vmesh->getGridLength()[0]*vmesh->getGridLength()[1];
 
       // set values in array that is used to convert block indices to id using a dot product.
       cell_indices_to_id[0]=1;
@@ -222,7 +216,6 @@ bool map_1d(SpatialCell* spatial_cell,
    bool isSourceBlock[MAX_BLOCKS_PER_DIM];
 
    for(uint setIndex=0; setIndex< setColumnOffsets.size(); ++setIndex) {
-      uint8_t refLevel = 0;
       //init
       for (uint blockK = 0; blockK < MAX_BLOCKS_PER_DIM; blockK++){
          blockIndexToBlockData[blockK] =  NULL;
@@ -244,7 +237,6 @@ bool map_1d(SpatialCell* spatial_cell,
         block in first column*/
       velocity_block_indices_t setFirstBlockIndices;
       vmesh->getIndices(blocks[columnBlockOffsets[setColumnOffsets[setIndex]]],
-                       refLevel,
                        setFirstBlockIndices[0], setFirstBlockIndices[1], setFirstBlockIndices[2]);
       swapBlockIndices(setFirstBlockIndices, dimension);
       /*compute the maximum starting point of the lagrangian (target) grid
@@ -290,10 +282,8 @@ bool map_1d(SpatialCell* spatial_cell,
          velocity_block_indices_t firstBlockIndices;
          velocity_block_indices_t lastBlockIndices;
          vmesh->getIndices(cblocks[0],
-                          refLevel,
                           firstBlockIndices[0], firstBlockIndices[1], firstBlockIndices[2]);
          vmesh->getIndices(cblocks[n_cblocks -1],
-                          refLevel,
                           lastBlockIndices[0], lastBlockIndices[1], lastBlockIndices[2]);
          swapBlockIndices(firstBlockIndices, dimension);
          swapBlockIndices(lastBlockIndices, dimension);
@@ -397,8 +387,7 @@ bool map_1d(SpatialCell* spatial_cell,
          // compute the common indices for this block column set
          //First block in column
          velocity_block_indices_t block_indices_begin;
-         uint8_t refLevel=0;
-         vmesh->getIndices(cblocks[0],refLevel,block_indices_begin[0],block_indices_begin[1],block_indices_begin[2]);
+         vmesh->getIndices(cblocks[0],block_indices_begin[0],block_indices_begin[1],block_indices_begin[2]);
 
          // Switch block indices according to dimensions, the algorithm has
          // been written for integrating along z.
@@ -482,12 +471,8 @@ bool map_1d(SpatialCell* spatial_cell,
             const Veci  target_cell_index_common =
                i_indices * cell_indices_to_id[0] +
                j_indices * cell_indices_to_id[1];
-
-            const int target_block_index_common =
-               block_indices_begin[0] * block_indices_to_id[0] +
-               block_indices_begin[1] * block_indices_to_id[1];
-
-            /*
+       
+            /* 
                intersection_min is the intersection z coordinate (z after
                swaps that is) of the lowest possible z plane for each i,j
                index (i in vector)
@@ -575,9 +560,7 @@ bool map_1d(SpatialCell* spatial_cell,
                   const int blockK = gk/WID;
                   const int gk_mod_WID = (gk - blockK * WID);
 
-                  //the block of the Lagrangian cell to which we map
-                  //const int target_block(target_block_index_common + blockK * block_indices_to_id[2]);
-
+                  
                   //cell indices in the target block  (TODO: to be replaced by
                   //compile time generated scatter write operation)
                   const Veci target_cell(target_cell_index_common + gk_mod_WID * cell_indices_to_id[2]);

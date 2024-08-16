@@ -24,32 +24,33 @@
 
 #include <vector>
 #include "vec.h"
+#include <unordered_set>
+#include <dccrg.hpp>
+#include <dccrg_cartesian_geometry.hpp>
 #include "../common.h"
-#include "../spatial_cell.hpp"
-
-// GPUTODO: make these four vectors inside the setofpencils struct pointers to vectors,
-// new construct them in the pencil building function. Do we need a flag for if they are allocated
-// or not? Or init with null pointer.
-// #ifdef USE_GPU
-// typedef split::SplitVector<uint> pencilVecUint;
-// typedef split::SplitVector<Realf> pencilVecRealf;
-// #else
-typedef std::vector<uint> pencilVecUint;
-typedef std::vector<Realf> pencilVecRealf;
-// #endif
+#include "../spatial_cell_wrapper.hpp"
 
 struct setOfPencils {
 
    uint N; // Number of pencils in the set
    uint sumOfLengths;
-   pencilVecUint lengthOfPencils; // Lengths of pencils (including stencil cells)
-   std::vector<CellID> ids; // List of pencil cells (incuding stencil cells)
-   pencilVecUint idsStart; // List of where a pencil's CellIDs start in the ids array
-   pencilVecRealf sourceDZ; // Widths of source cells
-   pencilVecRealf targetRatios; // Pencil to target cell area ratios of target cells
+   std::vector< uint > lengthOfPencils; // Lengths of pencils (including stencil cells)
+   std::vector< CellID > ids; // List of pencil cells (including stencil cells)
+   std::vector< uint > idsStart; // List of where a pencil's CellIDs start in the ids array
+   std::vector< Realf > sourceDZ; // Widths of source cells
+   std::vector< Realf > targetRatios; // Pencil to target cell area ratios of target cells
    std::vector< Real > x,y; // x,y - position
    std::vector< bool > periodic;
    std::vector< std::vector<uint> > path; // Path taken through refinement levels
+
+#ifdef USE_GPU
+   bool gpu_allocated = false;
+   // Pointers to GPU copies of vectors
+   split::SplitVector<uint> *gpu_lengthOfPencils;
+   split::SplitVector<uint> *gpu_idsStart;
+   split::SplitVector<Realf> *gpu_sourceDZ;
+   split::SplitVector<Realf> *gpu_targetRatios;
+#endif
 
    setOfPencils() {
       N = 0;
@@ -74,12 +75,13 @@ struct setOfPencils {
       N++;
       // If necessary, add the zero cells to the beginning and end
       if (idsIn.front() != 0) {
-         idsIn.insert(idsIn.begin(),0);
-         idsIn.insert(idsIn.begin(),0);
+         idsIn.insert(idsIn.begin(),VLASOV_STENCIL_WIDTH,0);
       }
       if (idsIn.back() != 0) {
-         idsIn.push_back(0);
-         idsIn.push_back(0);
+         for (int i = 0; i < VLASOV_STENCIL_WIDTH; i++)
+         {
+            idsIn.push_back(0);
+         }
       }
       sumOfLengths += idsIn.size();
       lengthOfPencils.push_back(idsIn.size());
@@ -209,7 +211,9 @@ struct setOfPencils {
 
 bool do_translate_cell(spatial_cell::SpatialCell* SC);
 
-// grid.cpp calls this function to both find seed cells and build pencils
+// grid.cpp calls this function to both find seed cells and build pencils for all dimensions
+void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid);
+// find seed cells and build pencils for one dimension
 void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
                               const uint dimension);
 

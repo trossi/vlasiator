@@ -23,16 +23,16 @@
 #include "../definitions.h"
 
 void calculateHallTermSimple(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<EHallFsGrid> & EHallGrid,
-   arch::buf<MomentsFsGrid> & momentsGrid,
-   arch::buf<MomentsFsGrid> & momentsDt2Grid,
-   arch::buf<DPerBFsGrid> & dPerBGrid,
-   arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   arch::buf<BgBFsGrid> & BgBGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   EHallFsGrid & EHallGrid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    cint& RKCase
 );
 

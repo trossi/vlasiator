@@ -1,6 +1,6 @@
 /*
  * This file is part of Vlasiator.
- * Copyright 2010-2023 Finnish Meteorological Institute & University of Helsinki
+ * Copyright 2010-2024 Finnish Meteorological Institute and University of Helsinki
  *
  * For details of usage, see the COPYING file and read the "Rules of the Road"
  * at http://www.physics.helsinki.fi/vlasiator/
@@ -39,7 +39,7 @@
    #include "arch/gpu_base.hpp"
 #endif
 
-// One per particle population (no vAMR)
+// One per particle population
 #define MAX_VMESH_PARAMETERS_COUNT 32
 
 namespace vmesh {
@@ -56,7 +56,6 @@ namespace vmesh {
       Real meshLimits[6];                       /**< Velocity mesh bounding box limits vx_min,vx_max,...,vz_max.*/
       vmesh::LocalID gridLength[3];             /**< Number of blocks in mesh per coordinate at base grid level.*/
       vmesh::LocalID blockLength[3];            /**< Number of phase-space cells per coordinate in block.*/
-      uint8_t refLevelMaxAllowed;               /**< Maximum refinement level allowed, 0=no refinement.*/
 
       // ***** DERIVED PARAMETERS, CALCULATED BY INITVELOCITYMESHES ***** //
       bool initialized;                         /**< If true, variables in this struct contain sensible values.*/
@@ -65,20 +64,6 @@ namespace vmesh {
       Real blockSize[3];                        /**< Size of a block at base grid level.*/
       Real cellSize[3];                         /**< Size of a cell in a block at base grid level.*/
       Real gridSize[3];                         /**< Physical size of the grid bounding box.*/
-
-#ifdef VAMR
-      // ***** DERIVED PARAMETERS SPECIFIC TO VAMR ***** //
-      std::vector<vmesh::GlobalID> offsets;     /**< Block global ID offsets for each refinement level.*/
-      std::vector<Real> blockSizes;             /**< Velocity block sizes (dvx,dvy,dvz) for each refinement level.
-                                                 * This vector is initialized to size 3*(refLevelMaxAllowed+1)
-                                                 * in VelocityMesh::initialize (VAMR mesh).*/
-      std::vector<Real> cellSizes;              /**< Velocity block phase-space cell sizes (dvx,dvy,dvz) for each
-                                                 * refinement level. This vector is initialized to size
-                                                 * 3*(refLevelMaxAllowed+1) in VelocityMesh::initialize (VAMR mesh).*/
-      std::vector<vmesh::LocalID> gridLengths;  /**< Velocity grid lengths for each refinement level.
-                                                 * This vector is initialized to size 3*(refLevelMaxAllowed+1)
-                                                 * in VelocityMesh::initialize (VAMR mesh).*/
-#endif
 
       MeshParameters() {
          initialized = false;
@@ -112,17 +97,36 @@ namespace vmesh {
       void uploadMeshWrapper();   /**< Send a copy of the MeshWrapper into GPU memory */
    };
 
-   void allocMeshWrapper();
+   void allocateMeshWrapper();
    MeshWrapper* host_getMeshWrapper();
-   ARCH_HOSTDEV MeshWrapper* gpu_getMeshWrapper();
+   #ifdef USE_GPU
+   // To avoid using relocatable code builds, we use static instances of the GPU constant memory for the mesh wrapper.
+   // This means that each compilation unit will use its own. To make sure all instances are initialized with the same
+   // address, we use the Ctor of a static object to register all intances so that the allocated memory pointer
+   // could be copied to all of them.
+   __device__ __constant__ MeshWrapper* meshWrapperDevInstance;
+   ARCH_DEV static MeshWrapper* gpu_getMeshWrapper() { return meshWrapperDevInstance; };
+   // Static object and corresponding instance whose Ctor is used register all the instances of device meshWrapperDev
+   // symbols.
+   struct meshWrapperDevRegistor {
+      meshWrapperDevRegistor(MeshWrapper*&);
+   };
+   static meshWrapperDevRegistor meshWrapperDevRegistorInstance(meshWrapperDevInstance);
+
+   void deallocateMeshWrapper(); /**< Deallocate GPU memory */
+   #endif
 
    // Caller, inlined into other compilation units, will call either host or device getter
    ARCH_HOSTDEV inline MeshWrapper* getMeshWrapper() {
-      #if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
+   #if defined(USE_GPU)
+      #if (defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__))
       return gpu_getMeshWrapper();
       #else
       return host_getMeshWrapper();
       #endif
+   #else
+      return host_getMeshWrapper();
+   #endif
    }
 
    ARCH_HOSTDEV inline void printVelocityMesh(const uint meshIndex) {
@@ -133,7 +137,7 @@ namespace vmesh {
       // printf("Mesh address 0x%lx\n",vMesh);
       printf("Mesh size\n");
       printf(" %d %d %d \n",vMesh->gridLength[0],vMesh->gridLength[1],vMesh->gridLength[2]);
-      printf("Block size (max reflevel %d)\n",vMesh->refLevelMaxAllowed);
+      printf("Block size\n");
       printf(" %d %d %d \n",vMesh->blockLength[0],vMesh->blockLength[1],vMesh->blockLength[2]);
       printf("Mesh limits \n");
       printf(" %f %f %f %f \n",vMesh->meshMinLimits[0],vMesh->meshLimits[0],vMesh->meshMaxLimits[0],vMesh->meshLimits[1]);

@@ -5,6 +5,11 @@ using namespace spatial_cell;
 
 #include "cpu_trans_pencils.hpp"
 
+#ifdef USE_GPU
+// just for uploading pencil information to GPU
+#include "../arch/gpu_base.hpp"
+#endif
+
 std::array<setOfPencils,3> DimensionPencils;
 std::array<std::unordered_set<CellID>,3> DimensionTargetCells;
 
@@ -67,7 +72,6 @@ void flagSpatialCellsForAmrCommunication(const dccrg::Dccrg<SpatialCell,dccrg::C
 
    // return if there's no cells to flag
    if(localPropagatedCells.size() == 0) {
-      std::cerr<<"No cells!"<<std::endl;
       return;
    }
 
@@ -194,7 +198,7 @@ void flagSpatialCellsForAmrCommunication(const dccrg::Dccrg<SpatialCell,dccrg::C
  */
 void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
                                         CellID *ids,
-                                        const int L,
+                                        const uint L,
                                         const uint dimension,
                                         std::vector<uint> path,
                                         Realf* sourceDZ,
@@ -204,7 +208,7 @@ void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Ca
    // These neighborhoods now include the AMR addition beyond the regular vlasov stencil
    int neighborhood = getNeighborhood(dimension,VLASOV_STENCIL_WIDTH);
    stringstream ss;
-   for (auto j = 0; j < L; ++j) {
+   for (uint j = 0; j < L; ++j) {
       ss<< ids[j] << " ";
    }
 
@@ -263,7 +267,7 @@ void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Ca
    // Distances are positive here so smallest distance has smallest value.
    iSrc = L - VLASOV_STENCIL_WIDTH;
    for (auto it = distances.begin(); it != distances.end(); ++it) {
-      if (iSrc >= L) break; // Found enough cells
+      if (iSrc >= (int)L) break; // Found enough cells
 
       // Collect all neighbors at distance *it to a vector
       std::vector< CellID > neighbors;
@@ -310,7 +314,7 @@ void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Ca
 
    /*loop to positive side and replace all invalid cells with the closest good cell*/
    lastGoodCell = ids[L - VLASOV_STENCIL_WIDTH - 1];
-   for(int i = L - VLASOV_STENCIL_WIDTH; i < L; ++i){
+   for(int i = (int)L - VLASOV_STENCIL_WIDTH; i < (int)L; ++i){
       bool isGood = false;
       if (ids[i]!=0) {
          if (mpiGrid[ids[i]] != NULL) {
@@ -327,13 +331,13 @@ void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Ca
    }
 
    // Loop over all cells and store widths in translation direction
-   for (int i = 0; i < L; ++i) {
+   for (int i = 0; i < (int)L; ++i) {
       sourceDZ[i] = mpiGrid[ids[i]]->parameters[CellParams::DX+dimension];
    }
 
    // Loop over all cells and store pencil-to-cell cross-sectional area for target cells
-   for (int i = 0; i < L; ++i) {
-      if ((i < VLASOV_STENCIL_WIDTH-1) || (i > L-VLASOV_STENCIL_WIDTH)) {
+   for (int i = 0; i < (int)L; ++i) {
+      if ((i < VLASOV_STENCIL_WIDTH-1) || (i > (int)L-VLASOV_STENCIL_WIDTH)) {
          // Source cell, not a target cell
          targetRatios[i]=0.0;
          continue;
@@ -349,7 +353,8 @@ void computeSpatialSourceCellsForPencil(const dccrg::Dccrg<SpatialCell,dccrg::Ca
                targetRatios[i] = 0.0;
             } else {
                const int ratio = 1 << -diff;
-               targetRatios[i] = 1.0 / (ratio*ratio);
+               const Realf Rratio = (Realf)ratio;
+               targetRatios[i] = 1.0 / (Rratio*Rratio);
             }
          } else { // Don't write to this cell
             targetRatios[i] = 0.0;
@@ -384,9 +389,9 @@ CellID selectNeighbor(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry> 
 
    // Iterate through neighbor ids in the positive direction of the chosen dimension,
    // select the neighbor indicated by path, if it is local to this process.
-   for (const auto& nbr : grid.get_face_neighbors_of(id)) {
-     if (nbr.second == ((int)dimension + 1)) {
-	 myNeighbors.push_back(nbr.first);
+   for (const auto& [neighbor, dir] : grid.get_face_neighbors_of(id)) {
+     if (dir == ((int)dimension + 1)) {
+	 myNeighbors.push_back(neighbor);
       }
    }
    // TODO Verify: are neighbours always in the same order? Let's sort based
@@ -660,18 +665,18 @@ void getSeedIds(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGr
 
       // First check negative face neighbors (A)
       // Returns all neighbors as (id, direction-dimension) pair pointers.
-      for (const auto& faceNbrPair : mpiGrid.get_face_neighbors_of(celli) ) {
-         if ( faceNbrPair.second == -((int)dimension + 1) ) {
+      for (const auto& [neighbor, dir] : mpiGrid.get_face_neighbors_of(celli) ) {
+         if ( dir == -((int)dimension + 1) ) {
             // Check that the neighbor is not across a periodic boundary by calculating
             // the distance in indices between this cell and its neighbor.
-            auto nbrIndices = mpiGrid.mapping.get_indices(faceNbrPair.first);
+            auto nbrIndices = mpiGrid.mapping.get_indices(neighbor);
 
             // If a neighbor is across a periodic boundary, non-local, or
             // in non-periodic boundary layer 2
             // then we use the current cell as a seed for pencils
-            if (abs ( (int64_t)(myIndices[dimension] - nbrIndices[dimension]) ) > pow(2,mpiGrid.get_maximum_refinement_level()) ||
-               !mpiGrid.is_local(faceNbrPair.first) ||
-               !do_translate_cell(mpiGrid[faceNbrPair.first]) )
+            if ( (myIndices[dimension] < nbrIndices[dimension]) ||
+               !mpiGrid.is_local(neighbor) ||
+               !do_translate_cell(mpiGrid[neighbor]) )
             {
                addToSeedIds = true;
                break;
@@ -726,7 +731,7 @@ void getSeedIds(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGr
       } // Finish B check
 
       if ( addToSeedIds ) {
-         #pragma omp critical
+#pragma omp critical
          seedIds.push_back(celli);
          continue;
       }
@@ -790,7 +795,6 @@ void check_ghost_cells(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>
 
    std::vector<CellID> pencilIdsToSplit;
 
-// Thread this loop here
 #pragma omp parallel for
    for (uint pencili = 0; pencili < pencils.N; ++pencili) {
 
@@ -992,15 +996,15 @@ void printPencilsFunc(const setOfPencils& pencils, const uint dimension, const i
       }
       ss << "}";
 
-      // ss << "source DZs: ";
-      // for (auto j = pencils.sourceDZ.begin() + ibeg; j != pencils.sourceDZ.begin() + iend; ++j) {
-      //    ss << *j << " ";
-      // }
+      ss << "source DZs: ";
+      for (auto j = pencils.sourceDZ.begin() + ibeg; j != pencils.sourceDZ.begin() + iend; ++j) {
+         ss << *j << " ";
+      }
 
-      // ss << "target Ratios: ";
-      // for (auto j = pencils.targetRatios.begin() + ibeg; j != pencils.targetRatios.begin() + iend; ++j) {
-      //    ss << *j << " ";
-      // }
+      ss << "target Ratios: ";
+      for (auto j = pencils.targetRatios.begin() + ibeg; j != pencils.targetRatios.begin() + iend; ++j) {
+         ss << *j << " ";
+      }
 
       ibeg  = iend;
       ss << std::endl;
@@ -1010,6 +1014,22 @@ void printPencilsFunc(const setOfPencils& pencils, const uint dimension, const i
       ss << "-----------------------------------------------------------------" << std::endl;
    }
    std::cout<<ss.str();
+}
+
+/* Wrapper function for calling seed ID selection and pencil generation, for all dimensions.
+ * Includes threading and gathering of pencils into thread-containers.
+ *
+ * @param [in] mpiGrid DCCRG grid object
+ */
+void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid) {
+      phiprof::Timer timer {"GetSeedIdsAndBuildPencils"};
+      // Remove all old pencils now
+      for (int dimension=0; dimension<3; dimension++) {
+         DimensionPencils[dimension].removeAllPencils();
+      }
+      for (int dimension=0; dimension<3; dimension++) {
+         prepareSeedIdsAndPencils(mpiGrid, dimension);
+      }
 }
 
 /* Wrapper function for calling seed ID selection and pencil generation, per dimension.
@@ -1053,11 +1073,11 @@ void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Ge
       }
    }
 
-   phiprof::start("getSeedIds");
+   phiprof::Timer getSeedIdsTimer {"getSeedIds"};
    vector<CellID> seedIds;
    getSeedIds(mpiGrid, localPropagatedCells, dimension, seedIds);
-   phiprof::stop("getSeedIds");
-
+   getSeedIdsTimer.stop();
+   
    if (printSeeds) {
       for (int rank=0; rank<mpi_size; ++rank) {
          MPI_Barrier(MPI_COMM_WORLD);
@@ -1081,9 +1101,7 @@ void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Ge
       }
    }
 
-   phiprof::start("buildPencils");
-   // Clear previous set
-   DimensionPencils[dimension].removeAllPencils();
+   phiprof::Timer buildPencilsTimer {"buildPencils"};
 
 #pragma omp parallel
    {
@@ -1117,25 +1135,25 @@ void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Ge
       }
    }
 
-   phiprof::start("check_ghost_cells");
+   phiprof::Timer checkGhostCellsTimer {"check_ghost_cells"};
    // Check refinement of two ghost cells on each end of each pencil
    // in case pencil needs to be split.
    // This function contains threading.
    check_ghost_cells(mpiGrid,DimensionPencils[dimension],dimension);
-   phiprof::stop("check_ghost_cells");
+   checkGhostCellsTimer.stop();
 
-   phiprof::start("Find_source_cells_ratios_dz");
+   phiprof::Timer findSourceRatiosTimer {"Find_source_cells_ratios_dz"};
    // Compute also the stencil around the pencil (source cells), and
    // Store source cell widths and target cell contribution ratios.
 #pragma omp parallel for schedule(guided)
    for (uint i=0; i<DimensionPencils[dimension].N; ++i) {
-      const int L = DimensionPencils[dimension].lengthOfPencils[i];
+      const uint L = DimensionPencils[dimension].lengthOfPencils[i];
       CellID *pencilIds = DimensionPencils[dimension].ids.data() + DimensionPencils[dimension].idsStart[i];
       Realf* pencilDZ = DimensionPencils[dimension].sourceDZ.data() + DimensionPencils[dimension].idsStart[i];
       Realf* pencilAreaRatio = DimensionPencils[dimension].targetRatios.data() + DimensionPencils[dimension].idsStart[i];
       computeSpatialSourceCellsForPencil(mpiGrid,pencilIds,L,dimension,DimensionPencils[dimension].path[i],pencilDZ,pencilAreaRatio);
    }
-   phiprof::stop("Find_source_cells_ratios_dz");
+   findSourceRatiosTimer.stop();
 
    // ****************************************************************************
 
@@ -1166,6 +1184,33 @@ void prepareSeedIdsAndPencils(const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Ge
          printPencilsFunc(DimensionPencils[dimension],dimension,myRank,mpiGrid);
       }
    }
-   phiprof::stop("buildPencils");
+   buildPencilsTimer.stop();
+
+   #ifdef USE_GPU
+   // Clear old allocation if needed
+   if (DimensionPencils[dimension].gpu_allocated) {
+      phiprof::Timer clearOldPencilsTimer {"clearOldPencils"};
+      delete DimensionPencils[dimension].gpu_lengthOfPencils;
+      delete DimensionPencils[dimension].gpu_idsStart;
+      delete DimensionPencils[dimension].gpu_sourceDZ;
+      delete DimensionPencils[dimension].gpu_targetRatios;
+   }
+   // Create GPU copies of these vectors
+   phiprof::Timer SplitVectorPencilsTimer {"new splitVectors pencils"};
+   DimensionPencils[dimension].gpu_lengthOfPencils = new split::SplitVector<uint>(DimensionPencils[dimension].lengthOfPencils);
+   DimensionPencils[dimension].gpu_idsStart = new split::SplitVector<uint>(DimensionPencils[dimension].idsStart);
+   DimensionPencils[dimension].gpu_sourceDZ = new split::SplitVector<Realf>(DimensionPencils[dimension].sourceDZ);
+   DimensionPencils[dimension].gpu_targetRatios = new split::SplitVector<Realf>(DimensionPencils[dimension].targetRatios);
+   // Send data to GPU
+   gpuStream_t stream = gpu_getStream();
+   int device = gpu_getDevice();
+   DimensionPencils[dimension].gpu_lengthOfPencils->optimizeGPU(stream);
+   DimensionPencils[dimension].gpu_idsStart->optimizeGPU(stream);
+   DimensionPencils[dimension].gpu_sourceDZ->optimizeGPU(stream);
+   DimensionPencils[dimension].gpu_targetRatios->optimizeGPU(stream);
+   SplitVectorPencilsTimer.stop();
+   // and raise flag to be used for deallocation
+   DimensionPencils[dimension].gpu_allocated = true;
+   #endif
 
 }

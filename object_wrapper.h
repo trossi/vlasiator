@@ -34,32 +34,24 @@ namespace projects {
 #include <vector>
 
 #include "definitions.h"
-//#include "item_storage.h"
 #ifndef USE_GPU
-#include "vamr_refinement_criteria.h"
 #include "object_factory.h"
 #endif
 
 #include "particle_species.h"
 #include "projects/project.h"
 #include "sysboundary/sysboundary.h"
-//#include "velocity_mesh_parameters.h"
 
 struct ObjectWrapper {
    ObjectWrapper() { }
 
-#ifndef USE_GPU
-   ObjectFactory<vamr_ref_criteria::Base> vamrVelRefCriteria; /**< Factory for all known VAMR refinement criteria.*/
-#endif
    std::vector<species::Species> particleSpecies;           /**< Parameters for all particle species.*/
    projects::Project*                    project;           /**< Simulated project.*/
-//   std::vector<vmesh::MeshParameters> velocityMeshes;       /**< Parameters for velocity mesh(es).*/
    SysBoundary sysBoundaryContainer;                        /**< Container for sysboundaries.*/
 
    bool addParameters();                                    /**< Add config file parameters for objects held in this wrapper */
    bool addPopulationParameters();                          /**< After parsing the names of populations, create parameters for each of them */
    bool getPopulationParameters();                          /**< Use parsed config file parameters for objects held in this wrapper */
-//   void initVelocityMeshes();                               /**< Pre-calculate more helper parameters for velocity meshes. */
 
  private:
    ObjectWrapper(const ObjectWrapper& ow);

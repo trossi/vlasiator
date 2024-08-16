@@ -6,6 +6,8 @@
 #include "../../datareduction/datareductionoperator.h"
 #include "../../iowrite.h"
 #include "../../ioread.h"
+#include "../../velocity_mesh_parameters.h"
+#include "../../logger.h"
 
 using namespace std;
 using namespace SBC;
@@ -15,6 +17,7 @@ Logger logFile,diagnostic;
 int globalflags::bailingOut=0;
 bool globalflags::writeRestart=0;
 bool globalflags::balanceLoad=0;
+bool globalflags::doRefine=0;
 bool globalflags::ionosphereJustSolved = false;
 ObjectWrapper objectWrapper;
 ObjectWrapper& getObjectWrapper() {

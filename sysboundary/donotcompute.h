@@ -26,7 +26,7 @@
 #include <vector>
 #include "../definitions.h"
 #include "../readparameters.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include "sysboundarycondition.h"
 
 using namespace projects;
@@ -42,114 +42,88 @@ namespace SBC {
       virtual ~DoNotCompute();
       
       static void addParameters();
-      virtual void getParameters();
+      virtual void getParameters() override;
+      virtual void gpuClear() override {};
       
-      virtual bool initSysBoundary(
+      void initSysBoundary(
          creal& t,
          Project &project
-      );
-      virtual bool assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                     TechnicalFsGrid & technicalGrid);
-      virtual bool applyInitialState(
-         const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+      ) override ;
+      void assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+                                     TechnicalFsGrid & technicalGrid) override;
+      void applyInitialState(
+         dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
          TechnicalFsGrid & technicalGrid,
          BFieldFsGrid & perBGrid,
+         BgBFsGrid& BgBGrid,
          Project &project
-      );
-      virtual std::string getName() const;
-      virtual uint getIndex() const;
+      ) override;
+      void updateState(
+         dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry> &mpiGrid,
+         BFieldFsGrid &perBGrid,
+         BgBFsGrid& BgBGrid,
+         creal t
+      ) override;
+      void getFaces(bool *faces) override;
+      std::string getName() const override;
+      uint getIndex() const override;
 
       bool initFieldBoundary() {return false;}
 
       // Explicit warning functions to inform the user if a doNotCompute cell gets computed
-      ARCH_HOSTDEV virtual Real fieldSolverBoundaryCondMagneticField(
-         const arch::buf<BFieldFsGrid> & perBGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
+      Real fieldSolverBoundaryCondMagneticField(
+         BFieldFsGrid & perBGrid,
+         BgBFsGrid & bgbGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k,
-         creal& dt,
-         cuint& component
-      ) { 
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondMagneticField called!" << std::endl;
-         #endif 
-         return 0.;
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondMagneticFieldProjection(
-         const arch::buf<BFieldFsGrid> & perBGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
-         cint i,
-         cint j,
-         cint k
-      ) {
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondMagneticFieldProjection called!" << std::endl;
-         #endif
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondElectricField(
-         const arch::buf<EFieldFsGrid> & EGrid,
+         creal dt,
+         cuint component
+      ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondMagneticField called!" << std::endl; return 0.;}
+      void fieldSolverBoundaryCondElectricField(
+         EFieldFsGrid & EGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondElectricField called!" << std::endl;
-         #endif
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondHallElectricField(
-         const arch::buf<EHallFsGrid> & EHallGrid,
+      ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondElectricField called!" << std::endl;}
+      void fieldSolverBoundaryCondHallElectricField(
+         EHallFsGrid & EHallGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondHallElectricField called!" << std::endl;
-         #endif
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondGradPeElectricField(
-         const arch::buf<EGradPeFsGrid> & EGradPeGrid,
+      ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondHallElectricField called!" << std::endl;}
+      void fieldSolverBoundaryCondGradPeElectricField(
+         EGradPeFsGrid & EGradPeGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         #ifndef __CUDA_ARCH__ 
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondGradPeElectricField called!" << std::endl;
-         #endif
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondDerivatives(
-         const arch::buf<DPerBFsGrid> & dPerBGrid,
-         const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+      ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondGradPeElectricField called!" << std::endl;}
+      void fieldSolverBoundaryCondDerivatives(
+         DPerBFsGrid & dPerBGrid,
+         DMomentsFsGrid & dMomentsGrid,
          cint i,
          cint j,
          cint k,
-         cuint& RKCase,
-         cuint& component
-      ) {
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondDerivatives called!" << std::endl;
-         #endif
-      }
-      ARCH_HOSTDEV virtual void fieldSolverBoundaryCondBVOLDerivatives(
-         const arch::buf<VolFsGrid> & volGrid,
+         cuint RKCase,
+         cuint component
+      ) override{ std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondDerivatives called!" << std::endl;}
+      void fieldSolverBoundaryCondBVOLDerivatives(
+         VolFsGrid & volGrid,
          cint i,
          cint j,
          cint k,
-         cuint& component
-      ) {
-         #ifndef __CUDA_ARCH__
-         std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondBVOLDerivatives called!" << std::endl;
-         #endif
-      }
-      virtual void vlasovBoundaryCondition(
-          const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+         cuint component
+      ) override { std::cerr << "ERROR: DoNotCompute::fieldSolverBoundaryCondBVOLDerivatives called!" << std::endl;}
+      void vlasovBoundaryCondition(
+          dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
           const CellID& cellID,
           const uint popID,
           const bool calculate_V_moments
-      ) { std::cerr << "ERROR: DoNotCompute::vlasovBoundaryCondition called!" << std::endl;}
+      ) override { std::cerr << "ERROR: DoNotCompute::vlasovBoundaryCondition called!" << std::endl;}
    };
 }
 

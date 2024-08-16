@@ -24,8 +24,7 @@
 #define PROJECT_H
 
 #include <random>
-#include "../definitions.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include <dccrg.hpp>
 #include <dccrg_cartesian_geometry.hpp>
 
@@ -84,19 +83,24 @@ namespace projects {
        */
       void setCell(spatial_cell::SpatialCell* cell);
          
-      Real setVelocityBlock(spatial_cell::SpatialCell* cell,const vmesh::LocalID& blockLID,const uint popID) const;
+      Real setVelocityBlock(spatial_cell::SpatialCell* cell,const vmesh::LocalID& blockLID,const uint popID, Realf* buffer) const;
+
+      virtual bool canRefine(spatial_cell::SpatialCell* cell) const;
 
       virtual bool refineSpatialCells( dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid ) const;
 
       /*!\brief Adapts refinement by one level according to the project. Returns true if any cells were refined, false if not.
        * \param mpiGrid grid to refine
+       * @return The amount of cells set to refine
        */
-      virtual bool adaptRefinement( dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid ) const;
+      virtual int adaptRefinement( dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid ) const;
 
-      /*!\brief Refine/unrefine spatial cells one level closer to the static criteria in the config
-       * \param mpiGrid grid to refine
-       */
-      virtual bool forceRefinement( dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid ) const;
+
+      /*!\brief Refine/unrefine spatial cells one level to the static criteria in the config
+      * \param mpiGrid Spatial grid
+      * \param n Static refinement pass. 0th pass refines level 0 cells and unrefines max level cells, 1st pass refines level 1 and unrefines max level -1 etc.
+      */
+      virtual bool forceRefinement( dccrg::Dccrg<spatial_cell::SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, int n ) const;
 
       /*!\brief Boxcar filters spatial cells that were recently refined
        * \param mpiGrid grid to filter
@@ -188,7 +192,8 @@ namespace projects {
       void setRandomCellSeed(spatial_cell::SpatialCell* cell, std::default_random_engine& randGen) const;
       
     private:
-       uint seed;
+      uint seed;
+      static char rngStateBuffer[256];
 
       bool baseClassInitialized;                      /**< If true, base class has been initialized.*/
    };

@@ -1,7 +1,7 @@
 #include <dccrg.hpp>
 #include <dccrg_cartesian_geometry.hpp>
 #include "../grid.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include "../definitions.h"
 #include "../common.h"
 #include "gridGlue.hpp"
@@ -57,22 +57,21 @@ void computeCoupling(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGri
   
   
   //size of fsgrid local part
-  auto gridDims = momentsGrid.getLocalSize();
+  const auto gridDims = momentsGrid.getLocalSize();
   
  
   //Compute what we will receive, and where it should be stored
-  for (int k=0; k<gridDims[2]; k++) {
-    for (int j=0; j<gridDims[1]; j++) {
-      for (int i=0; i<gridDims[0]; i++) {
-        int globalIndices[3]; 
-        momentsGrid.getGlobalIndices(i,j,k, globalIndices);
+  for (FsGridTools::FsIndex_t k=0; k<gridDims[2]; k++) {
+    for (FsGridTools::FsIndex_t j=0; j<gridDims[1]; j++) {
+      for (FsGridTools::FsIndex_t i=0; i<gridDims[0]; i++) {
+        const auto globalIndices = momentsGrid.getGlobalIndices(i,j,k);
         const dccrg::Types<3>::indices_t  indices = {{(uint64_t)globalIndices[0],
                         (uint64_t)globalIndices[1],
                         (uint64_t)globalIndices[2]}}; //cast to avoid warnings
         CellID dccrgCell = mpiGrid.get_existing_cell(indices, 0, mpiGrid.mapping.get_maximum_refinement_level());
         
         int process = mpiGrid.get_process(dccrgCell);
-        int64_t  fsgridLid = momentsGrid.LocalIDForCoords(i,j,k);
+        FsGridTools::LocalID fsgridLid = momentsGrid.LocalIDForCoords(i,j,k);
         //int64_t  fsgridGid = momentsGrid.GlobalIDForCoords(i,j,k);
         onFsgridMapRemoteProcess[process].insert(dccrgCell); //cells are ordered (sorted) in set
         onFsgridMapCells[dccrgCell].push_back(fsgridLid);
@@ -105,7 +104,6 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
 
    // Kernel Characteristics
-   //const int stencilWidth = 5;   // Stencil width of a 3D 5-tap triangle kernel
    const int kernelOffset = 2;   // offset of 5 pointstencil 3D kernel => (floor(stencilWidth/2);)
    const Real kernelSum=729.0;   // the total kernel's sum 
    const static Real kernel[5][5][5] ={
@@ -145,8 +143,7 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
 
    // Get size of local domain and create swapGrid for filtering
-   const auto mntDims= &momentsGrid.getLocalSize()[0];  
-   const int maxRefLevel = mpiGrid.mapping.get_maximum_refinement_level();
+   const auto mntDims = &momentsGrid.getLocalSize()[0];  
    MomentsFsGrid swapGrid = momentsGrid;  //swap array 
 
    // Filtering Loop
@@ -154,9 +151,9 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
 
       // Blurring Pass
       #pragma omp parallel for collapse(2)
-      for (int k = 0; k < mntDims[2]; k++){
-         for (int j = 0; j < mntDims[1]; j++){
-            for (int i = 0; i < mntDims[0]; i++){
+      for (FsGridTools::FsIndex_t k = 0; k < mntDims[2]; k++){
+         for (FsGridTools::FsIndex_t j = 0; j < mntDims[1]; j++){
+            for (FsGridTools::FsIndex_t i = 0; i < mntDims[0]; i++){
 
                //  Get refLevel level
                int refLevel = technicalGrid.get(i, j, k)->refLevel;
@@ -167,8 +164,8 @@ void filterMoments(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
                }
 
                // Get pointers to our cells
-               Real *cell;  
-               Real *swap;
+               std::array<Real, fsgrids::moments::N_MOMENTS> *cell;  
+               std::array<Real, fsgrids::moments::N_MOMENTS> *swap;
             
                // Set Cell to zero before passing filter
                swap = swapGrid.get(i,j,k);
@@ -273,7 +270,6 @@ void feedMomentsIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& 
         sendBuffer.push_back(cellParams[CellParams::P_33_DT2]);
       }
     }
-    int count = sendBuffer.size(); //note, compared to receive this includes all elements to be sent
     MPI_Isend(sendBuffer.data(), sendBuffer.size() * sizeof(Real),
 	      MPI_BYTE, targetProc, 1, MPI_COMM_WORLD,&(sendRequests[ii]));
     ii++;
@@ -302,9 +298,8 @@ void feedMomentsIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& 
 
    //Filter Moments if this is a 3D AMR run.
   if (P::amrMaxSpatialRefLevel>0) { 
-      phiprof::start("AMR Filtering-Triangle-3D");
+      phiprof::Timer filteringTimer {"AMR Filtering-Triangle-3D"};
       filterMoments(mpiGrid,momentsGrid,technicalGrid);
-      phiprof::stop("AMR Filtering-Triangle-3D");
    }   
 }
 
@@ -388,10 +383,17 @@ void getFieldsFromFsGrid(
          //loop over dccrg cells to which we shall send data for this remoteRank
          auto const &fsgridCells = onFsgridMapCells[dccrgCell];
          for (auto const fsgridCell: fsgridCells){
-         //loop over fsgrid cells for which we compute the average that is sent to dccrgCell on rank remoteRank
-//        if(technicalGrid.get(fsgridCell)->sysBoundaryFlag == sysboundarytype::DO_NOT_COMPUTE) {
-//           continue;
-//        }
+            //loop over fsgrid cells for which we compute the average that is sent to dccrgCell on rank remoteRank
+            if(technicalGrid.get(fsgridCell)->sysBoundaryFlag == sysboundarytype::OUTER_BOUNDARY_PADDING) {
+               // We skip boundary padding cells on the outer boundaries here,
+               // because their fields anyway don't contribute anything
+               // meaningful (as there are never properly updated).
+               //
+               // Note we do *NOT* skip DO_NOT_COMPUTE cells, because we need
+               // the bg vol fields to contribute to the innermost simulation
+               // cell's DCCRG volume averages.
+               continue;
+            }
             auto volcell = volumeFieldsGrid.get(fsgridCell);
             auto bgcell = BgBGrid.get(fsgridCell);
             auto egradpecell = EGradPeGrid.get(fsgridCell);	
@@ -588,7 +590,6 @@ void feedBoundaryIntoFsGrid(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>&
       //Collect data to send for this dccrg cell
       sendBuffer.push_back(mpiGrid[sendCell]->sysBoundaryFlag);
     }
-    int count = sendBuffer.size(); //note, compared to receive this includes all elements to be sent
     MPI_Isend(sendBuffer.data(), sendBuffer.size() * sizeof(int),
 	      MPI_BYTE, targetProc, 1, MPI_COMM_WORLD,&(sendRequests[ii]));
     ii++;

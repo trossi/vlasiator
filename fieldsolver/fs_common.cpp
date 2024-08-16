@@ -52,11 +52,10 @@ ARCH_HOSTDEV Real divideIfNonZero(
  * \param i,j,k fsGrid cell coordinates for the current cell
  * \param reconstructionOrder Reconstruction order of the fields after Balsara 2009, 2 used for BVOL, 3 used for 2nd-order Hall term calculations.
  */
-template <typename T1, typename T2, typename T3>
-void reconstructionCoefficientsCommon(
-   T1& perBGrid,
-   T2& dPerBGrid,
-   T3 perturbedResult,
+void reconstructionCoefficients(
+   BFieldFsGrid & perBGrid,
+   DPerBFsGrid & dPerBGrid,
+   std::array<Real, Rec::N_REC_COEFFICIENTS> & perturbedResult,
    cint i,
    cint j,
    cint k,
@@ -64,14 +63,16 @@ void reconstructionCoefficientsCommon(
 ) {
    auto der_i1j1k1 = dPerBGrid.get(i,j,k);
    
-   auto cep_i1j1k1 = perBGrid.get(i,j,k);
+   auto params = & perBGrid;
+   
+   auto cep_i1j1k1 = params->get(i,j,k);
    auto dummyCellParams = cep_i1j1k1;
    auto cep_i2j1k1 = dummyCellParams;
    auto cep_i1j2k1 = dummyCellParams;
    auto cep_i1j1k2 = dummyCellParams;
-   if (perBGrid.get(i+1,j,k) != NULL) cep_i2j1k1 = perBGrid.get(i+1,j,k);
-   if (perBGrid.get(i,j+1,k) != NULL) cep_i1j2k1 = perBGrid.get(i,j+1,k);
-   if (perBGrid.get(i,j,k+1) != NULL) cep_i1j1k2 = perBGrid.get(i,j,k+1);
+   if (params->get(i+1,j,k) != NULL) cep_i2j1k1 = params->get(i+1,j,k);
+   if (params->get(i,j+1,k) != NULL) cep_i1j2k1 = params->get(i,j+1,k);
+   if (params->get(i,j,k+1) != NULL) cep_i1j1k2 = params->get(i,j,k+1);
    
    #ifndef FS_1ST_ORDER_SPACE
 
@@ -83,9 +84,9 @@ void reconstructionCoefficientsCommon(
    
    // Fetch neighbour cell derivatives, or in case the neighbour does not 
    // exist, use dummyDerivatives array:
-   Real* der_i2j1k1 = dummyDerivatives;
-   Real* der_i1j2k1 = dummyDerivatives;
-   Real* der_i1j1k2 = dummyDerivatives;
+   auto der_i2j1k1 = &dummyDerivatives;
+   auto der_i1j2k1 = &dummyDerivatives;
+   auto der_i1j1k2 = &dummyDerivatives;
    if (dPerBGrid.get(i+1,j,k) != NULL) der_i2j1k1 = dPerBGrid.get(i+1,j,k);
    if (dPerBGrid.get(i,j+1,k) != NULL) der_i1j2k1 = dPerBGrid.get(i,j+1,k);
    if (dPerBGrid.get(i,j,k+1) != NULL) der_i1j1k2 = dPerBGrid.get(i,j,k+1);

@@ -1,3 +1,25 @@
+/*
+ * This file is part of Vlasiator.
+ * Copyright 2010-2024 Finnish Meteorological Institute and University of Helsinki
+ *
+ * For details of usage, see the COPYING file and read the "Rules of the Road"
+ * at http://www.physics.helsinki.fi/vlasiator/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 #include "velocity_mesh_parameters.h"
 #include <iostream>
 #include <cstdlib>
@@ -9,17 +31,17 @@
 
 // Pointers to MeshWrapper objects
 static vmesh::MeshWrapper *meshWrapper;
-#ifdef USE_GPU
-__device__ __constant__ vmesh::MeshWrapper *meshWrapperDev;
 
-__global__ void debug_kernel(
-   const uint popID
-   ) {
+#ifdef USE_GPU
+vmesh::MeshWrapper* MWdev;
+std::array<vmesh::MeshParameters,MAX_VMESH_PARAMETERS_COUNT> *velocityMeshes_upload;
+
+__global__ void debug_kernel(const uint popID) {
    vmesh::printVelocityMesh(0);
 }
 #endif
 
-void vmesh::allocMeshWrapper() {
+void vmesh::allocateMeshWrapper() {
    // This is now allocated in unified memory
    meshWrapper = new vmesh::MeshWrapper();
 }
@@ -32,26 +54,56 @@ vmesh::MeshWrapper* vmesh::host_getMeshWrapper() {
 #ifdef USE_GPU
 //#pragma hd_warning_disable // only applies to next function
 #pragma nv_diag_suppress=20091
-ARCH_HOSTDEV vmesh::MeshWrapper* vmesh::gpu_getMeshWrapper() {
-   return meshWrapperDev;
+// We record the set of constant memory symbols to static arrays. We are avoiding using objects with non-trivial Ctors
+// to not risk they to be constructed after the static object that uses them. There will be an instance of the static
+// objects per compilation unit, so the ordering is hard to control.
+static vmesh::MeshWrapper** meshWrapperDevRegister[128] = {0};
+vmesh::meshWrapperDevRegistor::meshWrapperDevRegistor(vmesh::MeshWrapper*& v) {
+   for (size_t InstanceIdx = 0; InstanceIdx < sizeof(meshWrapperDevRegister) / sizeof(vmesh::MeshWrapper**);
+        ++InstanceIdx) {
+      if (auto*& slot = meshWrapperDevRegister[InstanceIdx]; !slot) {
+         slot = &v;
+         //printf("Got instance of device mesh wrapper handler %p (index %ld)\n", &v, InstanceIdx);
+         return;
+      }
+   }
+   assert(false && "Not enough slots to register mesh wrapper slots.");
 }
+
 void vmesh::MeshWrapper::uploadMeshWrapper() {
    // Store address to velocityMeshes array
    std::array<vmesh::MeshParameters,MAX_VMESH_PARAMETERS_COUNT> * temp = meshWrapper->velocityMeshes;
    // gpu-Malloc space on device, copy array contents
-   std::array<vmesh::MeshParameters,MAX_VMESH_PARAMETERS_COUNT> *velocityMeshes_upload;
    CHK_ERR( gpuMalloc((void **)&velocityMeshes_upload, sizeof(std::array<vmesh::MeshParameters,MAX_VMESH_PARAMETERS_COUNT>)) );
    CHK_ERR( gpuMemcpy(velocityMeshes_upload, meshWrapper->velocityMeshes, sizeof(std::array<vmesh::MeshParameters,MAX_VMESH_PARAMETERS_COUNT>),gpuMemcpyHostToDevice) );
    // Make wrapper point to device-side array
    meshWrapper->velocityMeshes = velocityMeshes_upload;
    // Allocate and copy meshwrapper on device
-   vmesh::MeshWrapper* MWdev;
    CHK_ERR( gpuMalloc((void **)&MWdev, sizeof(vmesh::MeshWrapper)) );
    CHK_ERR( gpuMemcpy(MWdev, meshWrapper, sizeof(vmesh::MeshWrapper),gpuMemcpyHostToDevice) );
    // Set the global symbol of meshWrapper
-   CHK_ERR( gpuMemcpyToSymbol(meshWrapperDev, &MWdev, sizeof(vmesh::MeshWrapper*)) );
+   int count=0;
+   for (size_t InstanceIdx = 0; InstanceIdx < sizeof(meshWrapperDevRegister) / sizeof(vmesh::MeshWrapper**);
+        ++InstanceIdx) {
+      if (auto* slot = meshWrapperDevRegister[InstanceIdx]; slot) {
+         //printf("Setting device mesh wrapper handler %p (index %ld)\n", slot, InstanceIdx);
+         CHK_ERR( gpuMemcpyToSymbol(*slot, &MWdev, sizeof(vmesh::MeshWrapper*)) );
+         count++;
+      } else {
+         break;
+      }
+   }
+   printf("Done setting all %d instances of device mesh wrapper handler!\n",count);
+
    // Copy host-side address back
    meshWrapper->velocityMeshes = temp;
+   // And sync
+   CHK_ERR( gpuDeviceSynchronize() );
+}
+void vmesh::deallocateMeshWrapper() {
+   CHK_ERR( gpuFree(velocityMeshes_upload) );
+   CHK_ERR( gpuFree(MWdev) );
+   CHK_ERR( gpuFree(meshWrapperDevInstance) );
    // And sync
    CHK_ERR( gpuDeviceSynchronize() );
 }
@@ -71,7 +123,6 @@ void vmesh::MeshWrapper::initVelocityMeshes(const uint nMeshes) {
       vmesh::MeshParameters* vMesh = &(meshWrapper->velocityMeshes->at(i));
       vmesh::MeshParameters* vMeshIn = &(meshWrapper->velocityMeshesCreation->at(i));
 
-      vMesh->refLevelMaxAllowed = vMeshIn->refLevelMaxAllowed;
       // Limits
       vMesh->meshLimits[0] = vMeshIn->meshLimits[0];
       vMesh->meshLimits[1] = vMeshIn->meshLimits[1];

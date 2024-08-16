@@ -29,6 +29,7 @@
 #include <vector>
 #include "arch/arch_device_api.h"
 #include <map>
+#include "fsgrid.hpp"
 
 #include "definitions.h"
 
@@ -106,6 +107,8 @@ struct Parameters {
    static bool meshRepartitioned;         /*!< If true, mesh was repartitioned on this time step.*/
    static std::vector<CellID> localCells; /*!< Cached copy of spatial cell IDs on this process.*/
 
+   static bool adaptGPUWID;         /*!< If true, GPU runs with WID=8 use halved velocity block counts.*/
+
    static uint diagnosticInterval;
    static std::vector<std::string> systemWriteName;  /*!< Names for the different classes of grid output*/
    static std::vector<std::string> systemWritePath;  /*!< Save this series in this location. Default is ./ */
@@ -128,6 +131,8 @@ struct Parameters {
        systemWriteDistributionWriteShellStride; /*!< Every this many cells for those on selected shells write out their
                                                    velocity space in each class. */
    static std::vector<bool> systemWriteFsGrid; /*!< Write fg_ variables in this file class or not.*/
+   static bool systemWriteAllDROs; /*!< Write all output DROs or not.*/
+   static bool diagnosticWriteAllDROs; /*!< Write all diagnostic DROs or not.*/
    static std::vector<int> systemWrites;        /*!< How many files have been written of each class*/
    static std::vector<std::pair<std::string, std::string>>
        systemWriteHints; /*!< Collection of MPI-IO hints passed for non-restart IO. Pairs of key-value strings. */
@@ -138,6 +143,7 @@ struct Parameters {
 
    static bool writeInitialState; /*!< If true, initial state is written. This is useful for debugging as the restarts
                                      are always written out after propagation of 0.5dt in real space.*/
+   static bool writeFullBGB; /*!< If true, write full BGB components and derivatives in a dedicated file, then exit.*/
    static Real saveRestartWalltimeInterval; /*!< Interval in walltime seconds for restart data*/
    static uint exitAfterRestarts;           /*!< Exit after this many restarts*/
    static uint64_t vlsvBufferSize;          /*!< Buffer size in bytes passed to VLSV writer. */
@@ -200,36 +206,41 @@ struct Parameters {
    static Real bailout_max_memory;    /*!< Maximum amount of memory used per node (in GiB) over which bailout occurs. */
    static uint bailout_velocity_space_wall_margin; /*!< Safety margin in number of blocks off the v-space wall beyond which bailout occurs. */
 
-   static uint vamrMaxVelocityRefLevel; /**< Maximum velocity mesh refinement level, defaults to 0.*/
-   static Realf vamrCoarsenLimit; /**< If the value of refinement criterion is below this value, block can be coarsened.
-                                  * The value must be smaller than vamrRefineLimit.*/
-   static Realf vamrRefineLimit;  /**< If the value of refinement criterion is larger than this value, block should be
-                                  * refined.  The value must be larger than vamrCoarsenLimit.*/
-   static std::string vamrVelRefCriterion; /**< Name of the velocity block refinement criterion function.*/
-
-   static uint amrMaxSpatialRefLevel;
+   static int amrMaxSpatialRefLevel; /*!< Absolute maximum refinement level (conditions the fsgrid resolution), cannot be exceeded after initial setup of the grids. */
+   static int amrMaxAllowedSpatialRefLevel; /*!< Maximum currently allowed refinement level for restart or dynamic refinement. */
    static bool adaptRefinement;
    static bool refineOnRestart;
    static bool forceRefinement;
    static bool shouldFilter;
-   static Real refineThreshold;
-   static Real unrefineThreshold;
-   static uint refineMultiplier;
+   static bool useAlpha1;
+   static Real alpha1RefineThreshold;
+   static Real alpha1CoarsenThreshold;
+   static bool useAlpha2;
+   static Real alpha2RefineThreshold;
+   static Real alpha2CoarsenThreshold;
+   static uint refineCadence;
    static Real refineAfter;
    static Real refineRadius;
-   static bool useJPerB;
-   static Real JPerBModifier;
+   static Real alphaDRhoWeight;
+   static Real alphaDUWeight;
+   static Real alphaDPSqWeight;
+   static Real alphaDBSqWeight;
+   static Real alphaDBWeight;
    static int maxFilteringPasses;
-   static uint amrBoxHalfWidthX;
-   static uint amrBoxHalfWidthY;
-   static uint amrBoxHalfWidthZ;
-   static Realf amrBoxCenterX;
-   static Realf amrBoxCenterY;
-   static Realf amrBoxCenterZ;
-
+   static int amrBoxNumber;
+   static std::vector<uint> amrBoxHalfWidthX;
+   static std::vector<uint> amrBoxHalfWidthY;
+   static std::vector<uint> amrBoxHalfWidthZ;
+   static std::vector<Realf> amrBoxCenterX;
+   static std::vector<Realf> amrBoxCenterY;
+   static std::vector<Realf> amrBoxCenterZ;
+   static std::vector<int> amrBoxMaxLevel;
    static bool amrTransShortPencils;        /*!< Use short or longpencils in AMR translation.*/
    static std::vector<std::string> blurPassString;
    static std::vector<int> numPasses;
+
+   static std::array<FsGridTools::Task_t,3> manualFsGridDecomposition;
+   static std::array<FsGridTools::Task_t,3> overrideReadFsGridDecomposition;
    
    static bool computeCurvature; /*<! Boolean flag, if true the curvature of magnetic field is computed. */
 

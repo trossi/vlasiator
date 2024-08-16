@@ -24,34 +24,34 @@
 #include <array>
 
 #include "../definitions.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include "../sysboundary/sysboundary.h"
 
 #include "fs_limiters.h"
 
 void calculateDerivativesSimple(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<BFieldFsGrid> & perBDt2Grid,
-   arch::buf<MomentsFsGrid> & momentsGrid,
-   arch::buf<MomentsFsGrid> & momentsDt2Grid,
-   arch::buf<DPerBFsGrid> & dPerBGrid,
-   arch::buf<DMomentsFsGrid> & dMomentsGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries,
+   BFieldFsGrid & perBGrid,
+   BFieldFsGrid & perBDt2Grid,
+   MomentsFsGrid & momentsGrid,
+   MomentsFsGrid & momentsDt2Grid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries,
    cint& RKCase,
    const bool communicateMoments);
 
 void calculateBVOLDerivativesSimple(
-   arch::buf<VolFsGrid> & volGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries
 );
 
 void calculateCurvatureSimple(
-   arch::buf<VolFsGrid> & volGrid,
-   arch::buf<BgBFsGrid> & bgbGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid,
-   arch::buf<SysBoundary>& sysBoundaries
+   VolFsGrid & volGrid,
+   BgBFsGrid & bgbGrid,
+   TechnicalFsGrid & technicalGrid,
+   SysBoundary& sysBoundaries
 );
 
 

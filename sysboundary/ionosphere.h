@@ -28,7 +28,7 @@
 #include <functional>
 #include "../definitions.h"
 #include "../readparameters.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 #include "sysboundarycondition.h"
 #include "ionosphereFieldBoundary.h"
 #include "../backgroundfield/fieldfunction.hpp"
@@ -56,13 +56,11 @@ namespace SBC {
       Real V0[3];
       Real T;
       Real fluffiness;
-      uint nSpaceSamples;
-      uint nVelocitySamples;
    };
 
    enum IonosphereBoundaryVDFmode { // How are inner boundary VDFs constructed from the ionosphere
       FixedMoments,      // Predefine temperature, density and V = 0 on the inner boundary.
-      AverageMoments,    // Copy averaged density and temperature from nearest cells, V = 0 
+      AverageMoments,    // Copy averaged density and temperature from nearest cells, V = 0
       AverageAllMoments, // Same as above, but also copy V
       CopyAndLosscone,
       ForceL2EXB
@@ -127,7 +125,7 @@ namespace SBC {
             //   * sqrt(2. * M_PI * physicalconstants::MASS_ELECTRON / (physicalconstants::K_B * electronTemperature())) - 1.);
             //// A positive value means an upward current (i.e. electron precipitation).
             //// A negative value quickly gets neutralized from the atmosphere.
-            //if(retval < 0 || isnan(retval)) {
+            //if(retval < 0 || !isfinite(retval)) {
             //   retval = 0;
             //}
             //return retval;
@@ -168,16 +166,16 @@ namespace SBC {
       std::array< std::array< std::array< Real, productionNumTemperatures >, productionNumAccEnergies >, numAtmosphereLevels > productionTable;
       Real lookupProductionValue(int heightindex, Real energy_keV, Real temperature_keV);
 
-      MPI_Comm communicator = MPI_COMM_NULL; // The communicator internally used to solve the ionosphere potenital
-      int rank = -1;                      // Own rank in the ionosphere communicator
-      int writingRank;                    // Rank in the MPI_COMM_WORLD communicator that does ionosphere I/O
-      bool isCouplingInwards = true;     // True for any rank that actually couples fsgrid information into the ionosphere
-      bool isCouplingOutwards = true;     // True for any rank that actually couples ionosphere potential information out to the vlasov grid
-      FieldFunction dipoleField;          // Simulation background field model to trace connections with
-      std::array<Real, 3> BGB; /*!< Uniform background field */
+      MPI_Comm communicator = MPI_COMM_NULL; /*!< The communicator internally used to solve the ionosphere potential */
+      int rank = -1;                         /*!< Own rank in the ionosphere communicator */
+      int writingRank;                       /*!< Rank in the MPI_COMM_WORLD communicator that does ionosphere I/O */
+      bool isCouplingInwards = true;         /*!< True for any rank that actually couples fsgrid information into the ionosphere */
+      bool isCouplingOutwards = true;        /*!< True for any rank that actually couples ionosphere potential information out to the vlasov grid */
+      FieldFunction dipoleField;             /*!< Simulation background field model to trace connections with */
+      std::array<Real, 3> BGB;               /*!< Uniform background field */
 
       std::map< std::array<Real, 3>, std::array<
-         std::pair<int, Real>, 3> > vlasovGridCoupling; // Grid coupling information, caching how vlasovGrid coordinate couple to ionosphere data
+         std::pair<int, Real>, 3> > vlasovGridCoupling; /*!< Grid coupling information, caching how vlasovGrid coordinate couple to ionosphere data */
 
       void setDipoleField(const FieldFunction& dipole) {
          dipoleField = dipole;
@@ -187,27 +185,27 @@ namespace SBC {
       }
       void readAtmosphericModelFile(const char* filename);
       void storeNodeB();
-      void offset_FAC();                  // Offset field aligned currents to get overall zero current
-      void normalizeRadius(Node& n, Real R); // Scale all coordinates onto sphere with radius R
-      void updateConnectivity();          // Re-link elements and nodes
-      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid);// (Re-)create the subcommunicator for ionosphere-internal communication
-      void initializeTetrahedron();       // Initialize grid as a base tetrahedron
-      void initializeIcosahedron();       // Initialize grid as a base icosahedron
-      void initializeSphericalFibonacci(int n); // Initialize grid as a spherical fibonacci lattice
+      void offset_FAC();                  /*!< Offset field aligned currents to get overall zero current */
+      void normalizeRadius(Node& n, Real R); /*!< Scale all coordinates onto sphere with radius R */
+      void updateConnectivity();          /*!< Re-link elements and nodes */
+      void updateIonosphereCommunicator(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid, TechnicalFsGrid & technicalGrid); /*!< (Re-)create the subcommunicator for ionosphere-internal communication */
+      void initializeTetrahedron();       /*!< Initialize grid as a base tetrahedron */
+      void initializeIcosahedron();       /*!< Initialize grid as a base icosahedron */
+      void initializeSphericalFibonacci(int n); /*!< Initialize grid as a spherical fibonacci lattice */
       int32_t findElementNeighbour(uint32_t e, int n1, int n2);
-      uint32_t findNodeAtCoordinates(std::array<Real,3> x); // Find the mesh node closest to the given coordinate
-      void subdivideElement(uint32_t e);  // Subdivide mesh within element e
-      void stitchRefinementInterfaces(); // Make sure there are no t-junctions in the mesh by splitting neighbours
-      void calculatePrecipitation(); // Estimate precipitation flux
-      void calculateConductivityTensor(const Real F10_7, const Real recombAlpha, const Real backgroundIonisation); // Update sigma tensor
-      Real interpolateUpmappedPotential(const std::array<Real, 3>& x); // Calculate upmapped potential at the given point
+      uint32_t findNodeAtCoordinates(std::array<Real,3> x); /*!< Find the mesh node closest to the given coordinate */
+      void subdivideElement(uint32_t e);  /*!< Subdivide mesh within element e */
+      void stitchRefinementInterfaces(); /*!< Make sure there are no t-junctions in the mesh by splitting neighbours */
+      void calculatePrecipitation(); /*!< Estimate precipitation flux */
+      void calculateConductivityTensor(const Real F10_7, const Real recombAlpha, const Real backgroundIonisation, const bool refillTensorAtRestart=false); /*!< Update sigma tensor, if last argument is true, just refill the tensor from SIGMAH, SIGMAP and SIGMAPARALLEL from restart data */
+      Real interpolateUpmappedPotential(const std::array<Real, 3>& x); /*!< Calculate upmapped potential at the given point */
       
       // Conjugate Gradient solver functions
-      void addMatrixDependency(uint node1, uint node2, Real coeff, bool transposed=false); // Add matrix value for the solver
+      void addMatrixDependency(uint node1, uint node2, Real coeff, bool transposed=false); /*!< Add matrix value for the solver */
       void addAllMatrixDependencies(uint nodeIndex);
-      void initSolver(bool zeroOut=true);  // Initialize the CG solver
-      iSolverReal Atimes(uint nodeIndex, int parameter, bool transpose=false); // Evaluate neighbour nodes' coupled parameter
-      Real Asolve(uint nodeIndex, int parameter, bool transpose=false); // Evaluate own parameter value
+      void initSolver(bool zeroOut=true);  /*!< Initialize the CG solver */
+      iSolverReal Atimes(uint nodeIndex, int parameter, bool transpose=false); /*!< Evaluate neighbour nodes' coupled parameter */
+      Real Asolve(uint nodeIndex, int parameter, bool transpose=false); /*!< Evaluate own parameter value */
       void solve(
          int & iteration,
          int & nRestarts,
@@ -274,15 +272,17 @@ namespace SBC {
          std::array<Real, 3> e1{b[0]-c[0], b[1]-c[1],b[2]-c[2]};
          std::array<Real, 3> e2{c[0]-a[0], c[1]-a[1],c[2]-a[2]};
          // Area vector A = cross(e1 e2)
-         std::array<Real, 3> area{ 0.5 * (e1[1]*e2[2] - e1[2]*e2[1]),
-                                   0.5 * (e1[2]*e2[0] - e1[0]*e2[2]),
-                                   0.5 * (e1[0]*e2[1] - e1[1]*e2[0])};
+         const Real HALF = 0.5;
+         const Real THIRD = 1./3.;
+         std::array<Real, 3> area{ HALF * (e1[1]*e2[2] - e1[2]*e2[1]),
+                                   HALF * (e1[2]*e2[0] - e1[0]*e2[2]),
+                                   HALF * (e1[0]*e2[1] - e1[1]*e2[0])};
         
          // By definition, the area is oriented outwards, so if dot(r,A) < 0, flip it.
          std::array<Real, 3> r{
-            (a[0]+b[0]+c[0])/3.,
-            (a[1]+b[1]+c[1])/3.,
-            (a[2]+b[2]+c[2])/3.};
+            (a[0]+b[0]+c[0]) * THIRD,
+            (a[1]+b[1]+c[1]) * THIRD,
+            (a[2]+b[2]+c[2]) * THIRD};
          if(area[0]*r[0] + area[1]*r[1] + area[2] *r[2] < 0) {
             area[0]*=-1.;
             area[1]*=-1.;
@@ -316,7 +316,7 @@ namespace SBC {
     * 
     * These consist in:
     * - Do nothing for the distribution (keep the initial state constant in time);
-    * - Keep only the normal perturbed B component and null out the other perturbed components (perfect conductor behavior);
+    * - Copy the closest neighbors' perturbed B and average it;
     * - Null out the electric fields.
     */
    class Ionosphere: public SysBoundaryCondition {
@@ -325,102 +325,89 @@ namespace SBC {
       virtual ~Ionosphere();
       
       static void addParameters();
-      virtual void getParameters();
+      virtual void getParameters() override;
       
-      virtual bool initSysBoundary(
+      virtual void initSysBoundary(
          creal& t,
          Project &project
-      );
-      bool initFieldBoundary();
-      IonosphereFieldBoundary* getFieldBoundary() {return fieldBoundary;}
-      virtual bool assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-                                     TechnicalFsGrid & technicalGrid);
-      virtual bool applyInitialState(
-         const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+      ) override;
+      virtual void assignSysBoundary(dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+                                     TechnicalFsGrid & technicalGrid) override;
+      virtual void applyInitialState(
+         dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
          TechnicalFsGrid & technicalGrid,
          BFieldFsGrid & perBGrid,
+         BgBFsGrid& BgBGrid,
          Project &project
-      );
-      ARCH_HOSTDEV Real fieldSolverBoundaryCondMagneticField(
-         const arch::buf<BFieldFsGrid> & bGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
+      ) override;
+      virtual Real fieldSolverBoundaryCondMagneticField(
+         BFieldFsGrid & bGrid,
+         BgBFsGrid & bgbGrid,
+         TechnicalFsGrid & technicalGrid,
          cint i,
          cint j,
          cint k,
-         creal& dt,
-         cuint& component
-      ) {
-         return fieldBoundary->fieldSolverBoundaryCondMagneticField(bGrid, technicalGrid, i, j, k, dt, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondMagneticFieldProjection(
-         const arch::buf<BFieldFsGrid> & bGrid,
-         const arch::buf<TechnicalFsGrid> & technicalGrid,
-         cint i,
-         cint j,
-         cint k
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondMagneticFieldProjection(bGrid, technicalGrid, i, j, k);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondElectricField(
-         const arch::buf<EFieldFsGrid> & EGrid,
+         creal dt,
+         cuint component
+      ) override;
+      virtual void fieldSolverBoundaryCondElectricField(
+         EFieldFsGrid & EGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondElectricField(EGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondHallElectricField(
-         const arch::buf<EHallFsGrid> & EHallGrid,
+      ) override;
+      virtual void fieldSolverBoundaryCondHallElectricField(
+         EHallFsGrid & EHallGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondHallElectricField(EHallGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondGradPeElectricField(
-         const arch::buf<EGradPeFsGrid> & EGradPeGrid,
+      ) override;
+      virtual void fieldSolverBoundaryCondGradPeElectricField(
+         EGradPeFsGrid & EGradPeGrid,
          cint i,
          cint j,
          cint k,
          cuint component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondGradPeElectricField(EGradPeGrid, i, j, k, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondDerivatives(
-         const arch::buf<DPerBFsGrid> & dPerBGrid,
-         const arch::buf<DMomentsFsGrid> & dMomentsGrid,
+      ) override;
+      virtual void fieldSolverBoundaryCondDerivatives(
+         DPerBFsGrid & dPerBGrid,
+         DMomentsFsGrid & dMomentsGrid,
          cint i,
          cint j,
          cint k,
-         cuint& RKCase,
-         cuint& component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondDerivatives(dPerBGrid, dMomentsGrid, i, j, k, RKCase, component);
-      }
-      ARCH_HOSTDEV void fieldSolverBoundaryCondBVOLDerivatives(
-         const arch::buf<VolFsGrid> & volGrid,
+         cuint RKCase,
+         cuint component
+      ) override;
+      virtual void fieldSolverBoundaryCondBVOLDerivatives(
+         VolFsGrid & volGrid,
          cint i,
          cint j,
          cint k,
-         cuint& component
-      ) {
-         fieldBoundary->fieldSolverBoundaryCondBVOLDerivatives(volGrid, i, j, k, component);
-      }
+         cuint component
+      ) override;
       // Compute and store the EXB drift into the cell's BULKV_FORCING_X/Y/Z fields and set counter to 1
       virtual void mapCellPotentialAndGetEXBDrift(
          std::array<Real, CellParams::N_SPATIAL_CELL_PARAMS>& cellParams
-      );
+      ) override;
       virtual void vlasovBoundaryCondition(
-         const dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+         dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
          const CellID& cellID,
          const uint popID,
          const bool calculate_V_moments
-      );
+      ) override;
+      virtual void updateState(
+         dccrg::Dccrg<SpatialCell, dccrg::Cartesian_Geometry>& mpiGrid,
+         BFieldFsGrid& perBGrid,
+         BgBFsGrid& BgBGrid,
+         creal t
+      ) override;
       
-      virtual std::string getName() const;
-      virtual uint getIndex() const;
+      virtual void getFaces(bool *faces) override;
+      virtual std::string getName() const override;
+      virtual uint getIndex() const override;
+      virtual void gpuClear() override;
       static Real radius; /*!< Radius of the inner simulation boundary */
       static std::vector<IonosphereSpeciesParameters> speciesParams;
 
@@ -437,15 +424,15 @@ namespace SBC {
       static Real ridleyParallelConductivity; /*!< Constant parallel conductivity */
       
       // TODO: Make these parameters of the IonosphereGrid
-      static Real recombAlpha; // Recombination parameter, determining atmosphere ionizability (parameter)
-      static Real F10_7; // Solar 10.7 Flux value (parameter)
-      static Real backgroundIonisation; // Background ionisation due to stellar UV and cosmic rays
-      static Real downmapRadius; // Radius from which FACs are downmapped (RE)
-      static Real unmappedNodeRho; // Electron density of ionosphere nodes that don't couple to the magnetosphere
-      static Real unmappedNodeTe; // Electron temperature of ionosphere nodes that don't couple to the magnetosphere
-      static Real couplingTimescale; // Magnetosphere->Ionosphere coupling timescale (seconds)
-      static Real couplingInterval; // Ionosphere update interval
-      static int solveCount; // Counter for the number of ionosphere solvings
+      static Real recombAlpha; /*!< Recombination parameter, determining atmosphere ionizability (parameter) */
+      static Real F10_7; /*!< Solar 10.7 Flux value (parameter) */
+      static Real backgroundIonisation; /*!< Background ionisation due to stellar UV and cosmic rays */
+      static Real downmapRadius; /*!< Radius from which FACs are downmapped (RE) */
+      static Real unmappedNodeRho; /*!< Electron density of ionosphere nodes that don't couple to the magnetosphere */
+      static Real unmappedNodeTe; /*!< Electron temperature of ionosphere nodes that don't couple to the magnetosphere */
+      static Real couplingTimescale; /*!< Magnetosphere->Ionosphere coupling timescale (seconds) */
+      static Real couplingInterval; /*!< Ionosphere update interval */
+      static int solveCount; /*!< Counter for the number of ionosphere solvings */
       static enum IonosphereConductivityModel { // How should the conductivity tensor be assembled?
          GUMICS,   // Like GUMICS-5 does it? (Only SigmaH and SigmaP, B perp to surface)
          Ridley,   // Or like the Ridley 2004 paper (with 1000 mho longitudinal conductivity)
@@ -466,21 +453,25 @@ namespace SBC {
          const uint popID
       );
       
+      std::array<Real, 3> fieldSolverGetNormalDirection(
+         TechnicalFsGrid & technicalGrid,
+         cint i,
+         cint j,
+         cint k
+      );
+      
       Real center[3]; /*!< Coordinates of the centre of the ionosphere. */
       uint geometry; /*!< Geometry of the ionosphere, 0: inf-norm (diamond), 1: 1-norm (square), 2: 2-norm (circle, DEFAULT), 3: polar-plane cylinder with line dipole. */
 
 
-      std::string baseShape; // Basic mesh shape (sphericalFibonacci / icosahedron / tetrahedron)
-      int fibonacciNodeNum;  // If spherical fibonacci: number of nodes to generate
-      Real earthAngularVelocity; // Earth rotation vector, in radians/s
-      Real plasmapauseL; // L-Value at which the plasma pause resides (everything inside corotates)
-      std::string atmosphericModelFile; // MSIS data file
+      std::string baseShape; /*!< Basic mesh shape (sphericalFibonacci / icosahedron / tetrahedron) */
+      int fibonacciNodeNum;  /*!< If spherical fibonacci: number of nodes to generate */
+      Real earthAngularVelocity; /*!< Earth rotation vector, in radians/s */
+      Real plasmapauseL; /*!< L-Value at which the plasma pause resides (everything inside corotates) */
+      std::string atmosphericModelFile; /*!< MSIS data file */
       // Boundaries of refinement latitude bands
       std::vector<Real> refineMinLatitudes;
       std::vector<Real> refineMaxLatitudes;
-      
-      uint nSpaceSamples;
-      uint nVelocitySamples;
       
       spatial_cell::SpatialCell templateCell;
 

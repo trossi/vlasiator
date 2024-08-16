@@ -124,7 +124,7 @@ namespace projects {
       RP::get("Distributions.lambda", this->lambda);
    }
 
-   Real Distributions::getDistribValue(
+   inline Real Distributions::getDistribValue(
       creal& x, creal& y, creal& z,
       creal& vx, creal& vy, creal& vz,
       const uint popID
@@ -174,12 +174,12 @@ namespace projects {
          const auto localSize = BgBGrid.getLocalSize();
          
 #pragma omp parallel for collapse(3)
-         for (int x = 0; x < localSize[0]; ++x) {
-            for (int y = 0; y < localSize[1]; ++y) {
-               for (int z = 0; z < localSize[2]; ++z) {
+         for (FsGridTools::FsIndex_t x = 0; x < localSize[0]; ++x) {
+            for (FsGridTools::FsIndex_t y = 0; y < localSize[1]; ++y) {
+               for (FsGridTools::FsIndex_t z = 0; z < localSize[2]; ++z) {
                   auto cell = perBGrid.get(x, y, z);
                   const int64_t cellid = perBGrid.GlobalIDForCoords(x, y, z);
-                  auto xyz = perBGrid.getPhysicalCoords(x, y, z);
+                  const auto xyz = perBGrid.getPhysicalCoords(x, y, z);
                   
                   std::default_random_engine rndState;
                   setRandomSeed(cellid,rndState);

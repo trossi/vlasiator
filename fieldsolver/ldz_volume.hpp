@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "fs_common.h"
-#include "../spatial_cell.hpp"
+#include "../spatial_cell_wrapper.hpp"
 
 /*! \brief Top-level field averaging function.
  * 
@@ -32,11 +32,11 @@
  * \sa reconstructionCoefficients
  */
 void calculateVolumeAveragedFields(
-   arch::buf<BFieldFsGrid> & perBGrid,
-   arch::buf<EFieldFsGrid> & EGrid,
-   arch::buf<DPerBFsGrid> & dPerBGrid,
-   arch::buf<VolFsGrid> & volGrid,
-   arch::buf<TechnicalFsGrid> & technicalGrid
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   DPerBFsGrid & dPerBGrid,
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid
 );
 
 #endif

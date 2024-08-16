@@ -29,7 +29,7 @@
 #include <vlsv_writer.h>
 
 #include "definitions.h"
-#include "spatial_cell.hpp"
+#include "spatial_cell_wrapper.hpp"
 #include "datareduction/datareducer.h"
 
 /*!
@@ -42,24 +42,24 @@
 \param writeGhosts Write ghost zones
 */
 bool writeGrid(
-      dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-      BFieldFsGrid & perBGrid,
-      EFieldFsGrid & EGrid,
-      EHallFsGrid & EHallGrid,
-      EGradPeFsGrid & EGradPeGrid,
-      MomentsFsGrid & momentsGrid,
-      DPerBFsGrid & dPerBGrid,
-      DMomentsFsGrid & dMomentsGrid,
-      BgBFsGrid & BgBGrid,
-      VolFsGrid & volGrid,
-      TechnicalFsGrid & technicalGrid,
-      const std::string& versionInfo,
-      const std::string& configInfo,
-      DataReducer* dataReducer,
-      const uint& index,
-      const int& stripe,
-      const bool writeGhosts
-   );
+   dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid,
+   const std::string& versionInfo,
+   const std::string& configInfo,
+   DataReducer* dataReducer,
+   const uint& index,
+   const int& stripe,
+   const bool writeGhosts
+);
 
 /*!
 
@@ -71,24 +71,24 @@ bool writeGrid(
 \param fileIndex  File index, file will be called "name.index.vlsv"
 */
 bool writeRestart(
-      dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
-      BFieldFsGrid & perBGrid,
-      EFieldFsGrid & EGrid,
-      EHallFsGrid & EHallGrid,
-      EGradPeFsGrid & EGradPeGrid,
-      MomentsFsGrid & momentsGrid,
-      DPerBFsGrid & dPerBGrid,
-      DMomentsFsGrid & dMomentsGrid,
-      BgBFsGrid & BgBGrid,
-      VolFsGrid & volGrid,
-      TechnicalFsGrid & technicalGrid,
-      const std::string& versionInfo,
-      const std::string& configInfo,
-      DataReducer& dataReducer,
-      const std::string& name,
-      const uint& fileIndex,
-      const int& stripe
-   );
+   dccrg::Dccrg<SpatialCell,dccrg::Cartesian_Geometry>& mpiGrid,
+   BFieldFsGrid & perBGrid,
+   EFieldFsGrid & EGrid,
+   EHallFsGrid & EHallGrid,
+   EGradPeFsGrid & EGradPeGrid,
+   MomentsFsGrid & momentsGrid,
+   DPerBFsGrid & dPerBGrid,
+   DMomentsFsGrid & dMomentsGrid,
+   BgBFsGrid & BgBGrid,
+   VolFsGrid & volGrid,
+   TechnicalFsGrid & technicalGrid,
+   const std::string& versionInfo,
+   const std::string& configInfo,
+   DataReducer& dataReducer,
+   const std::string& name,
+   const uint& fileIndex,
+   const int& stripe
+);
 
 /*!
 
