@@ -241,7 +241,7 @@ bool propagateFields(
       creal targetT = P::t + dt;
       uint subcycleCount = 0;
       uint maxSubcycleCount = std::numeric_limits<uint>::max();
-      int myRank = perBGrid.getRank();
+      int myRank = technicalGrid.getRank();  // used only for logging
 
       while (subcycleCount < maxSubcycleCount ) {
          // In case of subcycling, we decided to go for a blunt Runge-Kutta subcycling even though e.g. moments are not going along.
