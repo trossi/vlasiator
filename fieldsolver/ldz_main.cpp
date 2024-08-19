@@ -350,7 +350,7 @@ bool propagateFields(
          for(FsGridTools::FsIndex_t z=0; z<localSize[2]; z++) {
             for(FsGridTools::FsIndex_t y=0; y<localSize[1]; y++) {
                for(FsGridTools::FsIndex_t x=0; x<localSize[0]; x++) {
-                  fsgrids::technical* cell = technicalGrid.get(x,y,z);
+                  auto cell = technicalGrid.get(x,y,z);
                   if ( cell->sysBoundaryFlag == sysboundarytype::NOT_SYSBOUNDARY ||
                         (cell->sysBoundaryLayer == 1 && cell->sysBoundaryFlag != sysboundarytype::NOT_SYSBOUNDARY )) {
                      dtMaxLocal=min(dtMaxLocal, cell->maxFsDt);
